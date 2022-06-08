@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ticketsquery.iml" filepath="$PROJECT_DIR$/.idea/ticketsquery.iml" />
       <module fileurl="file://$PROJECT_DIR$/ticketsquery-demo/ticketsquery-demo.iml" filepath="$PROJECT_DIR$/ticketsquery-demo/ticketsquery-demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ticketsquery-vue/ticketsquery-vue.iml" filepath="$PROJECT_DIR$/ticketsquery-vue/ticketsquery-vue.iml" />
     </modules>
   </component>
 </project>
