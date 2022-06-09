@@ -1,7 +1,7 @@
-package com.seven.ticketsquery;
+package team.seven.ticketsquery;
 
-import com.seven.ticketsquery.domain.tb_trainstation;
-import com.seven.ticketsquery.mapper.TrainStationMapper;
+import team.seven.ticketsquery.domain.TrainStation;
+import team.seven.ticketsquery.mapper.TrainStationMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +19,7 @@ class TicketsqueryDemoApplicationTests {
 
     @Test
     void trainStationQueryTest() {
-        List<tb_trainstation> trainStationList;
+        List<TrainStation> trainStationList;
         trainStationList = trainStationMapper.selectList(null);
         assert (trainStationList.size() > 0);
     }
