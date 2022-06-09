@@ -1,6 +1,7 @@
 package team.seven.ticketsquery.domain;
 
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import lombok.Data;
 @Data
 @TableName("tb_trainstation")
 public class TrainStation {
+    @TableId
     private String trainstationId;
     private Integer cityId;
     private String trainstationName;
