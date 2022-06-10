@@ -21,6 +21,6 @@ public class RouterDetailsTests {
 
     @Test
     void listTest() {
-        List<RouteDetails> l = service.getRouteDetailsList();
+        List<RouteDetails> l = service.list();
     }
 }

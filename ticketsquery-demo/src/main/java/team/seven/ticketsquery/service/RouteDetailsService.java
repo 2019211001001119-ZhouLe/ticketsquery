@@ -15,7 +15,4 @@ import java.util.List;
  */
 @Service
 public class RouteDetailsService extends ServiceImpl<RouteDetailsMapper, RouteDetails> {
-    public List<RouteDetails> getRouteDetailsList() {
-        return list();
-    }
 }
