@@ -15,7 +15,7 @@ import java.util.Date;
 @TableName("tb_routerdetail")
 public class RouteDetails {
     @TableId
-    private int routerdetailId;
+    private Integer routerdetailId;
     private String trainstationId;
     private String routertrainId;
     private Date arrivalTime;

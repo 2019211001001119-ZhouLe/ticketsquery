@@ -30,7 +30,7 @@ public class TrainController {
     @RequestMapping(value = "/train", method = RequestMethod.POST)
     ResultVO<?> saveTrain(@RequestBody Train train) {
         service.save(train);
-        return new ResultVO<>(ResultStatusEnum.CREATE_SUCCESS);
+        return new ResultVO<>(ResultStatusEnum.CREATE_SUCCESS, train);
     }
 
     @RequestMapping(value = "/train/{trainId}", method = RequestMethod.DELETE)
@@ -41,8 +41,16 @@ public class TrainController {
     }
 
     @RequestMapping(value = "/train/{trainId}", method = RequestMethod.PUT)
-    ResultVO<?> updTrain(@RequestBody Train train) {
-        service.update(train, null);
-        return new ResultVO<>();
+    ResultVO<?> updTrain(@RequestBody Train train, @PathVariable String trainId) {
+        if(train.getTrainId().equals(trainId)) {
+            if(service.updateById(train)) {
+                return new ResultVO<>(train);
+            }
+            else {
+                return new ResultVO<>(ResultStatusEnum.NOT_FOUND);
+            }
+        } else {
+            return new ResultVO<>(ResultStatusEnum.UNAUTHORIZED);
+        }
     }
 }

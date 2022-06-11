@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import team.seven.ticketsquery.domain.RouteDetails;
 import team.seven.ticketsquery.mapper.RouteDetailsMapper;
 
-import java.util.List;
 
 /**
  * @description:
@@ -15,4 +14,5 @@ import java.util.List;
  */
 @Service
 public class RouteDetailsService extends ServiceImpl<RouteDetailsMapper, RouteDetails> {
+
 }
