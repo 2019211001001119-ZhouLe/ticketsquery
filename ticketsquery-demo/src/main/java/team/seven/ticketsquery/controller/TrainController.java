@@ -29,28 +29,25 @@ public class TrainController {
 
     @RequestMapping(value = "/train", method = RequestMethod.POST)
     ResultVO<?> saveTrain(@RequestBody Train train) {
-        service.save(train);
-        return new ResultVO<>(ResultStatusEnum.CREATE_SUCCESS, train);
+        return new ResultVO<>(
+                service.save(train) ? ResultStatusEnum.CREATE_SUCCESS : ResultStatusEnum.NOT_FOUND
+        );
     }
 
     @RequestMapping(value = "/train/{trainId}", method = RequestMethod.DELETE)
-    ResultVO<?> delTrain(@PathVariable String trainId)
-    {
-        service.removeById(trainId);
-        return new ResultVO<>(ResultStatusEnum.DELETE_SUCCESS);
+    ResultVO<?> delTrain(@PathVariable String trainId) {
+        return new ResultVO<>(
+                service.removeById(trainId) ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
+        );
     }
 
     @RequestMapping(value = "/train/{trainId}", method = RequestMethod.PUT)
     ResultVO<?> updTrain(@RequestBody Train train, @PathVariable String trainId) {
-        if(train.getTrainId().equals(trainId)) {
-            if(service.updateById(train)) {
-                return new ResultVO<>(train);
-            }
-            else {
-                return new ResultVO<>(ResultStatusEnum.NOT_FOUND);
-            }
-        } else {
+        if(!train.getTrainId().equals(trainId)) {
             return new ResultVO<>(ResultStatusEnum.UNAUTHORIZED);
         }
+        return new ResultVO<>(
+                service.updateById(train) ? ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
+        );
     }
 }

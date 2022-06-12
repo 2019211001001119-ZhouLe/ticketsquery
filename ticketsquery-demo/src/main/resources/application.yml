@@ -17,7 +17,7 @@ server:
 # 打印日志配置
 logging:
   level:
-    com.baomidou.mybatisplus.samples.quickstart: debug
+    team.seven.ticketsquery.mapper: debug
 
 # 开启自动驼峰命名规则映射
 mybatis-plus:
