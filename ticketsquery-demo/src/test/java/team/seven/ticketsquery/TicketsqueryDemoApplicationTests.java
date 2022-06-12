@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @SpringBootTest
 class TicketsqueryDemoApplicationTests {
@@ -23,4 +24,6 @@ class TicketsqueryDemoApplicationTests {
         trainStationList = trainStationMapper.selectList(null);
         assert (trainStationList.size() > 0);
     }
+
+
 }
