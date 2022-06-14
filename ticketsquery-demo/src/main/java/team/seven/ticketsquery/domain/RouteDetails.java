@@ -20,14 +20,14 @@ public class RouteDetails {
     private Integer routerdetailId;
     private String trainstationId;
     private String routertrainId;
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "CST")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "UTC+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date arrivalTime;
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "CST")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "UTC+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date departureTime;
     private int routerdetailStatus;
-    @JsonFormat(pattern = "hh:mm:ss", timezone = "CST")
+    @JsonFormat(pattern = "hh:mm:ss", timezone = "UTC+8")
     @DateTimeFormat(pattern = "hh:mm:ss")
     private Date laterTime;
 }

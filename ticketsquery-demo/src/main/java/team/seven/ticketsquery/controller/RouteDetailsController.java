@@ -31,20 +31,24 @@ public class RouteDetailsController {
         return new ResultVO<>(service.trainNameList(routertrainId));
     }
 
-    @RequestMapping(value = "/details/{routerdetailId}", method = RequestMethod.PUT)
-    ResultVO<?> updDetail(@PathVariable String routerdetailId, @RequestBody RouteDetails routeDetails) {
-        if (routeDetails.getRouterdetailId() != Integer.parseInt(routerdetailId)) {
-            return new ResultVO<>(ResultStatusEnum.UNAUTHORIZED);
-        }
+    @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.GET)
+    ResultVO<?> oneDetail(@PathVariable String routertrainId, @PathVariable String trainstationId) {
+        return new ResultVO<>(service.getOneByTIdAndSId(routertrainId, trainstationId));
+    }
+
+    @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.PUT)
+    ResultVO<?> updDetail(@PathVariable String routertrainId, @PathVariable String trainstationId , @RequestBody RouteDetails routeDetails) throws Exception {
+        if (!routeDetails.getRoutertrainId().equals(routertrainId) || !routeDetails.getTrainstationId().equals(trainstationId))
+            throw new Exception();
         return new ResultVO<>(
-                service.updateById(routeDetails) ? ResultStatusEnum.SUCCESS :ResultStatusEnum.NOT_FOUND
+                service.updateById(routeDetails)?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
 
-    @RequestMapping(value = "/details/{routerdetailId}", method = RequestMethod.DELETE)
-    ResultVO<?> delDetail(@PathVariable String routerdetailId) {
+    @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.DELETE)
+    ResultVO<?> delDetail(@PathVariable String routertrainId, @PathVariable String trainstationId) {
         return new ResultVO<>(
-                service.removeById(routerdetailId) ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
+                service.removeById(service.getOneByTIdAndSId(routertrainId, trainstationId)) ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
 
