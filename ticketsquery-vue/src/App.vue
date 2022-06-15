@@ -1,6 +1,6 @@
 <template>
-  <el-container>
-    <el-header>火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统</el-header>
+  <el-container id="app">
+    <el-header>火车后台管理</el-header>
     <el-container>
       <el-aside>
         <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" router>
@@ -17,6 +17,12 @@
 
               <el-menu-item index="/test">
                 test
+              </el-menu-item>
+              <el-menu-item index="/train">
+                列车管理
+              </el-menu-item>
+              <el-menu-item index="/traintion">
+                车站管理
               </el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="分组2">
@@ -43,13 +49,7 @@
       </el-aside>
 
       <el-main>
-        <el-row>
-          <el-col :span="16" :offset="4">
             <router-view />
-          </el-col>
-
-        </el-row>
-
       </el-main>
     </el-container>
   </el-container>
@@ -70,14 +70,9 @@ export default {
 </script>
 
 <style>
-/* #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+#app {
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-} */
+}
 
 a {
   text-decoration: none;
