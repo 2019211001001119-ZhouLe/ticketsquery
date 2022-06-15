@@ -1,77 +1,132 @@
 <template>
-  <div style="padding: 5px 20px;">
-    <br>
-    <el-form :inline="true" class="demo-form-inline">
-
-      <el-form-item label="车站名称">
-        <el-input placeholder="车站站点名"></el-input>
-      </el-form-item>
-      <el-form-item>
-
-        <el-button type="primary" icon="el-icon-search">查询</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="success" icon="el-icon-edit">添加</el-button>
-      </el-form-item>
-    </el-form>
-
-
-    <!-- 将获取到的数据进行计算 -->
-    <el-table  border :data="tableData.slice((currentPage-1)*PageSize,currentPage*PageSize)" style="width:100%">
-      <el-table-column align="center" prop="trainstationId" label="火车站编号" width="300"></el-table-column>
-      <el-table-column align="center" prop="cityId" label="所属城市编号" width="400"></el-table-column>
-      <el-table-column align="center" prop="trainstationName" label="车站名称"></el-table-column>
-
-    </el-table>
-    <div class="tabListPage">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                     :current-page="currentPage" :page-size="PageSize" layout="total, sizes, prev, pager, next, jumper"
-                     :total="totalCount" background>
-      </el-pagination>
-    </div>
-  </div>
+  <el-container>
+    <el-header></el-header>
+    <data-tables :data="trainstations">
+      <el-table-column prop="trainstationId" label="车站编号" width="180">
+      </el-table-column>
+      <el-table-column prop="cityId" label="城市编号" width="180">
+      </el-table-column>
+      <el-table-column prop="trainstationName" label="车站名称">
+      </el-table-column>
+      <el-table-column>
+        <template slot="header">
+          <el-button @click="handleAddClick()" icon="el-icon-plus" circle></el-button>
+        </template>
+        <template slot-scope="scope">
+          <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle></el-button>
+          <el-popconfirm title="确认删除这行吗?" @confirm="deletetrainstation(scope.$index, scope.row)">
+            <el-button slot="reference" icon="el-icon-delete" circle>
+            </el-button>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </data-tables>
+    <el-dialog title="编辑列车" :visible.sync="dialogVisible">
+      <el-form :modle="trainstation">
+        <el-form-item label="车站编号">
+          <el-input v-model="trainstation.trainstationId" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="城市编号">
+          <el-input v-model="trainstation.cityId"></el-input>
+        </el-form-item>
+        <el-form-item label="车站名称">
+          <el-input v-model="trainstation.trainstationName"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="handleEditSaveClick(trainstation)">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <el-dialog title="添加列车" :visible.sync="addVisible">
+      <el-form :modle="newtrainstation">
+        <el-form-item label="车站编号">
+          <el-input v-model="newtrainstation.trainstationId"></el-input>
+        </el-form-item>
+        <el-form-item label="城市编号">
+          <el-input v-model="newtrainstation.cityId"></el-input>
+        </el-form-item>
+        <el-form-item label="车站名称">
+          <el-input v-model="newtrainstation.trainstationName"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="handleAddSaveClick(newtrainstation)">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <el-dialog title="删除" :visible.sync="deleteVisible">
+      <el-button @click="handleDeleteConfirmClick(trainstation)" type="danger">确认删除</el-button>
+    </el-dialog>
+  </el-container>
 </template>
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
-      // 总数据
-      tableData: [],
-      // 默认显示第几页
-      currentPage: 1,
-      // 总条数，根据接口获取数据长度(注意：这里不能为空)
-      totalCount: 1,
-      // 默认每页显示的条数（可修改）
-      PageSize: 10
+      trainstations: [],
+      trainstation: [],
+      newtrainstation: {
+        trainstationId: "",
+        cityId: "",
+        trainstationName: ""
+      },
+      dialogVisible: false,
+      deleteVisible: false,
+      addVisible: false,
     }
+  },
+  mounted() {
+    this.querytrainstations()
   },
   methods: {
-    getData () {
-      // 这里使用axios，使用时请提前引入
-      this.axios.get('/trainstation').then(reponse => {
-        console.log(reponse.data.data)
-        // 将数据赋值给tableData
-        this.tableData = reponse.data.data
-        // 将数据的长度赋值给totalCount
-        this.totalCount = reponse.data.data.length
+    querytrainstations() {
+      axios.get("http://127.0.0.1:8888/trainstation").then((response) => {
+        this.trainstations = response.data.data
+        console.log(response)
       })
     },
-    // 分页
-    // 每页显示的条数
-    handleSizeChange (val) {
-      // 改变每页显示的条数
-      this.PageSize = val
-      // 注意：在改变每页显示的条数时，要将页码显示到第一页
-      this.currentPage = 1
+
+    savetrainstation(trainstation) {
+      axios.put(("http://127.0.0.1:8888/trainstation/" + trainstation["trainstationId"]), trainstation).then((response) => {
+        console.log(response)
+        this.querytrainstations()
+      })
     },
-    // 显示第几页
-    handleCurrentChange (val) {
-      // 改变默认的页数
-      this.currentPage = val
+
+    deletetrainstation(index, row) {
+      console.log(index)
+      axios.delete("http://127.0.0.1:8888/trainstation/" + row["trainstationId"]).then((response) => {
+        console.log(response)
+        this.querytrainstations()
+      })
+    },
+
+    addtrainstation(trainstation) {
+      axios.post("http://127.0.0.1:8888/trainstation", trainstation).then((response) => {
+        console.log(response)
+        this.querytrainstations()
+      })
+    },
+
+    handleEditClick(index, row) {
+      console.log(index)
+      this.trainstation = row
+      this.dialogVisible = true
+    },
+
+    handleEditSaveClick(trainstation) {
+      this.savetrainstation(trainstation)
+      this.dialogVisible = false
+    },
+
+    handleAddClick() {
+      this.addVisible = true
+    },
+
+    handleAddSaveClick(trainstation) {
+      this.addtrainstation(trainstation)
+      this.addVisible = false
     }
   },
-  created () {
-    this.getData()
-  }
 }
 </script>

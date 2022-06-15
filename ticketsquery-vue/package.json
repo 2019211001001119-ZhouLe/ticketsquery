@@ -14,7 +14,11 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@babel/runtime": "^7.18.3",
+    "@femessage/el-data-table": "^1.23.0",
+    "@femessage/el-form-renderer": "^1.23.0",
     "axios": "^0.27.2",
+    "el-data-table": "^1.6.1",
     "element-ui": "^2.15.9",
     "vue": "^2.5.2",
     "vue-axios": "^3.4.1",

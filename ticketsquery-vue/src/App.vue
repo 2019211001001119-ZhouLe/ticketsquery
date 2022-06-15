@@ -21,7 +21,7 @@
               <el-menu-item index="/train">
                 列车管理
               </el-menu-item>
-              <el-menu-item index="/traintion">
+              <el-menu-item index="/trainstation">
                 车站管理
               </el-menu-item>
             </el-menu-item-group>

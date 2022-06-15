@@ -31,7 +31,7 @@ export default new Router({
       component: Train
     },
     {
-      path: '/traintion',
+      path: '/trainstation',
       name: 'TrainStation',
       component: TrainStation
     }
