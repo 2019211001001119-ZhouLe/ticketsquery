@@ -3,7 +3,7 @@
     <el-header>火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统火车后台管理系统</el-header>
     <el-container>
       <el-aside>
-        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" router="true">
+        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" router>
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -57,7 +57,15 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  methods: {
+    handleOpen () {
+      console.log(' open ')
+    },
+    handleClose () {
+      console.log(' close ')
+    }
+  }
 }
 </script>
 
