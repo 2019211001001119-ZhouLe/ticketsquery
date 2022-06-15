@@ -1,5 +1,6 @@
 package team.seven.ticketsquery.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.ResultVO;
 import team.seven.ticketsquery.domain.Train;
@@ -50,5 +51,11 @@ public class TrainController {
         return new ResultVO<>(
                 service.updateById(train) ? ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
         );
+    }
+
+    @RequestMapping(value = "/trains")
+    ResultVO<?> pageTrain() {
+        Page<Train> trainPage = new Page<>();
+        return new ResultVO<>(service.page(trainPage));
     }
 }
