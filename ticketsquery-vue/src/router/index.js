@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Home from '@/components/Home'
 import Test from '@/components/Test'
 import TrainStation from '@/components/TrainStation'
+import Train from '@/components/Train'
 
 Vue.use(Router)
 
@@ -23,6 +24,11 @@ export default new Router({
       path: '/test',
       name: 'Test',
       component: Test
+    },
+    {
+      path: '/train',
+      name: 'Train',
+      component: Train
     },
     {
       path: '/traintion',

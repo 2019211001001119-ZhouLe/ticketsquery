@@ -14,6 +14,7 @@ import java.util.List;
  * @create: 2022-06-09
  * @version: 1.0
  */
+@CrossOrigin
 @RestController
 public class TrainController {
     private final TrainService service;
