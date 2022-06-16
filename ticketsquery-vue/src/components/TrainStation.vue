@@ -1,16 +1,25 @@
 <template>
   <el-container>
     <el-header></el-header>
+    <el-row>
+      <el-col :span="12">
+        <el-input clearable v-model="input" suffix-icon="el-icon-trainlocation-outline" placeholder="请输入火车站名称"></el-input>
+      </el-col>
+      <el-col :span="1">
+        <el-button @click="searchtrainstation($event)" icon="el-icon-search" circle></el-button>
+      </el-col>
+    </el-row>
     <data-tables :data="trainstations">
       <el-table-column prop="trainstationId" label="车站编号" width="180">
       </el-table-column>
       <el-table-column prop="cityId" label="城市编号" width="180">
       </el-table-column>
-      <el-table-column prop="trainstationName" label="车站名称">
+      <el-table-column prop="trainstationName" label="车站名称" width="215">
       </el-table-column>
       <el-table-column>
         <template slot="header">
           <el-button @click="handleAddClick()" icon="el-icon-plus" circle></el-button>
+          <el-button @click="flush($event)" style="margin-left: 0px;" icon="el-icon-refresh" circle></el-button>
         </template>
         <template slot-scope="scope">
           <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle></el-button>
@@ -61,72 +70,118 @@
 <script>
 import axios from 'axios'
 export default {
-  data() {
+  data () {
     return {
       trainstations: [],
       trainstation: [],
       newtrainstation: {
-        trainstationId: "",
-        cityId: "",
-        trainstationName: ""
+        trainstationId: '',
+        cityId: '',
+        trainstationName: ''
       },
+      input: '',
       dialogVisible: false,
       deleteVisible: false,
-      addVisible: false,
+      addVisible: false
     }
   },
-  mounted() {
+  mounted () {
     this.querytrainstations()
   },
   methods: {
-    querytrainstations() {
-      axios.get("http://127.0.0.1:8888/trainstation").then((response) => {
+    querytrainstations () {
+      axios.get('http://127.0.0.1:8888/trainstation').then((response) => {
         this.trainstations = response.data.data
-        console.log(response)
       })
     },
 
-    savetrainstation(trainstation) {
-      axios.put(("http://127.0.0.1:8888/trainstation/" + trainstation["trainstationId"]), trainstation).then((response) => {
+    savetrainstation (trainstation) {
+      axios.put(('http://127.0.0.1:8888/trainstation/' + trainstation['trainstationId']), trainstation).then((response) => {
         console.log(response)
+        if (response.data.code == '200') {
+          this.$message({
+            message: '修改成功',
+            type: 'success',
+            center: true
+          })
+        }
         this.querytrainstations()
       })
     },
 
-    deletetrainstation(index, row) {
+    deletetrainstation (index, row) {
       console.log(index)
-      axios.delete("http://127.0.0.1:8888/trainstation/" + row["trainstationId"]).then((response) => {
+      axios.delete('http://127.0.0.1:8888/trainstation/' + row['trainstationId']).then((response) => {
         console.log(response)
+        if (response.data.code == '204') {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 1000
+          })
+        }
         this.querytrainstations()
       })
     },
 
-    addtrainstation(trainstation) {
-      axios.post("http://127.0.0.1:8888/trainstation", trainstation).then((response) => {
+    addtrainstation (trainstation) {
+      axios.post('http://127.0.0.1:8888/trainstation', trainstation).then((response) => {
         console.log(response)
+        if (response.data.code == '201') {
+          this.$notify({
+            title: '成功',
+            message: '添加成功',
+            type: 'success',
+            duration: 1000
+          })
+        }
         this.querytrainstations()
       })
     },
 
-    handleEditClick(index, row) {
+    searchtrainstation (event) {
+      let target = event.target
+      if (target.nodeName == 'I') {
+        target = event.target.parentNode
+      }
+      target.blur()
+      let data = this.input
+      axios.get('http://127.0.0.1:8888/trainstation/' + data).then((res) => {
+        this.trainstations = res.data.data
+        console.log(res.data.data)
+      })
+    },
+
+    flush (event) {
+      let target = event.target
+      if (target.nodeName == 'I') {
+        target = event.target.parentNode
+      }
+      target.blur()
+      this.querytrainstations()
+      this.input = ''
+    },
+
+    handleEditClick (index, row) {
       console.log(index)
       this.trainstation = row
       this.dialogVisible = true
     },
 
-    handleEditSaveClick(trainstation) {
+    handleEditSaveClick (trainstation) {
       this.savetrainstation(trainstation)
       this.dialogVisible = false
     },
 
-    handleAddClick() {
+    handleAddClick () {
       this.addVisible = true
     },
 
-    handleAddSaveClick(trainstation) {
+    handleAddSaveClick (trainstation) {
       this.addtrainstation(trainstation)
       this.addVisible = false
     }
-  },
+  }
 }
 </script>
