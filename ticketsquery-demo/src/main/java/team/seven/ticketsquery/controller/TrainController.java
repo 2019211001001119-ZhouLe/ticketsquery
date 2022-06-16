@@ -1,5 +1,6 @@
 package team.seven.ticketsquery.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.ResultVO;
@@ -24,8 +25,17 @@ public class TrainController {
     }
 
     @RequestMapping(value = "/train", method = RequestMethod.GET)
-    ResultVO<?> getTrainList() {
-        List<Train> trains = service.list();
+    ResultVO<?> getTrainList(@RequestParam(value = "keyword", required = false) String keyword) {
+        List<Train> trains;
+        if (keyword!=null) {
+            QueryWrapper<Train> trainQueryWrapper = new QueryWrapper<>();
+            trainQueryWrapper.like("train_name", keyword);
+
+            trains = service.list(trainQueryWrapper);
+        } else {
+            trains = service.list();
+        }
+
         return new ResultVO<>(trains);
     }
 

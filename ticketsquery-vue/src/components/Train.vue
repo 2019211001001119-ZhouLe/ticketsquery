@@ -1,27 +1,47 @@
 <template>
-    <el-container>
-        <el-header></el-header>
-        <data-tables :data="trains">
-            <el-table-column prop="trainId" label="列车ID" width="180">
-            </el-table-column>
-            <el-table-column prop="trainName" label="列车名" width="180">
-            </el-table-column>
-            <el-table-column prop="trainSpeed" label="列车速度">
-            </el-table-column>
-            <el-table-column>
-                <template slot="header">
-                    <el-button @click="handleAddClick()" icon="el-icon-plus" circle></el-button>
-                </template>
-                <template slot-scope="scope">
-                    <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle></el-button>
-                    <el-popconfirm title="确认删除这行吗?" @confirm="deleteTrain(scope.$index, scope.row)">
-                        <el-button slot="reference" icon="el-icon-delete" circle>
+    <el-container id="a">
+        <el-header>
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>列车管理</el-breadcrumb-item>
+            </el-breadcrumb>
+
+        </el-header>
+        <el-main>
+            <el-row align="middle" type="flex">
+                <el-col :span="4">
+                    <div>列车名关键字搜索:</div>
+                </el-col>
+                <el-col :span="16">
+                    <el-input v-model="keyword"></el-input>
+                </el-col>
+                <el-col :span="4">
+                    <el-button @click="likeQueryTrains(keyword)">搜索</el-button>
+                </el-col>
+            </el-row>
+            <data-tables :data="trains">
+                <el-table-column prop="trainId" label="列车ID" width="180">
+                </el-table-column>
+                <el-table-column prop="trainName" label="列车名" width="180">
+                </el-table-column>
+                <el-table-column prop="trainSpeed" label="列车速度">
+                </el-table-column>
+                <el-table-column>
+                    <template slot="header">
+                        <el-button @click="handleAddClick()" icon="el-icon-plus" circle></el-button>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle>
                         </el-button>
-                    </el-popconfirm>
-                </template>
-            </el-table-column>
-        </data-tables>
-        <el-button @click="queryTrains">刷新表格</el-button>
+                        <el-popconfirm title="确认删除这行吗?" @confirm="deleteTrain(scope.$index, scope.row)">
+                            <el-button slot="reference" icon="el-icon-delete" circle>
+                            </el-button>
+                        </el-popconfirm>
+                    </template>
+                </el-table-column>
+            </data-tables>
+            <el-button @click="queryTrains">刷新表格</el-button>
+        </el-main>
         <el-dialog title="编辑列车" :visible.sync="dialogVisible">
             <el-form :modle="train">
                 <el-form-item label="列车ID">
@@ -54,9 +74,6 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <el-dialog title="删除" :visible.sync="deleteVisible">
-            <el-button @click="handleDeleteConfirmClick(train)" type="danger">确认删除</el-button>
-        </el-dialog>
     </el-container>
 </template>
 <script>
@@ -74,6 +91,7 @@ export default {
             dialogVisible: false,
             deleteVisible: false,
             addVisible: false,
+            keyword: ''
         }
     },
     mounted() {
@@ -82,6 +100,17 @@ export default {
     methods: {
         queryTrains() {
             axios.get("http://127.0.0.1:8888/train").then((response) => {
+                this.trains = response["data"]["data"]
+                console.log(response)
+            })
+        },
+
+        likeQueryTrains(kw) {
+            axios.get("http://127.0.0.1:8888/train", {
+                params: {
+                    keyword: kw
+                }
+            }).then((response) => {
                 this.trains = response["data"]["data"]
                 console.log(response)
             })
@@ -131,3 +160,5 @@ export default {
     },
 }
 </script>
+<style>
+</style>
