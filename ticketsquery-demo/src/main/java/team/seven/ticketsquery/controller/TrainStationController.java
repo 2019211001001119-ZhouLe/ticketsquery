@@ -16,6 +16,7 @@ import team.seven.ticketsquery.service.TrainStationService;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class TrainStationController {
     private TrainStationService trainStationService;

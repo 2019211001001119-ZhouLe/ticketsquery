@@ -2,11 +2,13 @@ package team.seven.ticketsquery.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.Admin;
 import team.seven.ticketsquery.domain.ResultVO;
 import team.seven.ticketsquery.enums.ResultStatusEnum;
 import team.seven.ticketsquery.service.AdminService;
+import team.seven.ticketsquery.utils.RandomAdminIdUtils;
 
 import java.util.List;
 
@@ -14,35 +16,40 @@ import java.util.List;
  * User: 谢礼治
  * Date: 2022/6/13
  * Time: 9:09
- * Description: No Description
+ * Description: 管理员信息管理模块
  */
 
 @RestController
 @RequestMapping("/admin")
+@Transactional
 public class AdminController {
 
     @Autowired
     private AdminService adminService;
 
 
+    // 根据id删除管理员
     @DeleteMapping("/remove/{adminId}")
     public ResultVO removeAdmin(@PathVariable String adminId){
         boolean flag = adminService.removeById(adminId);
         return new ResultVO(ResultStatusEnum.SUCCESS);
     }
 
+    // 更新管理员信息
     @PostMapping("/update")
     public ResultVO updateAdmin(@RequestBody Admin admin){
         adminService.updateById(admin);
         return new ResultVO(ResultStatusEnum.SUCCESS);
     }
 
+    // 根据id获取管理员信息
     @GetMapping("/getById/{adminId}")
     public ResultVO selectAdminById(@PathVariable String adminId){
         Admin admin = adminService.getById(adminId);
         return new ResultVO(ResultStatusEnum.SUCCESS,admin);
     }
 
+    // 获取该权限的所有管理员
     @GetMapping("/getByAccess/{permission}")
     public ResultVO selectAdminByAccess(@PathVariable Integer permission){
         QueryWrapper<Admin> wrapper = new QueryWrapper<>();
@@ -59,6 +66,15 @@ public class AdminController {
         wrapper.eq("admin_pwd",adminPwd);
         Admin admin = adminService.getOne(wrapper);
         return new ResultVO(ResultStatusEnum.SUCCESS,admin);
+    }
+
+    //添加管理员信息
+    @PostMapping("/add")
+    public ResultVO addAdmin(@RequestBody Admin admin){
+        String adminId = RandomAdminIdUtils.verifyUserName(4, 6);
+        admin.setAdminId(adminId);
+        adminService.save(admin);
+        return new ResultVO(ResultStatusEnum.SUCCESS);
     }
 
 
