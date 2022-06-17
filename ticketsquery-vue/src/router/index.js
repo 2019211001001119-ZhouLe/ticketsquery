@@ -5,6 +5,7 @@ import Home from '@/components/Home'
 import Test from '@/components/Test'
 import TrainStation from '@/components/TrainStation'
 import Train from '@/components/Train'
+import UserQuery from '@/components/UserQuery'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/trainstation',
       name: 'TrainStation',
       component: TrainStation
+    },
+    {
+      path: '/userquery',
+      name: 'UserQuery',
+      component: UserQuery,
     }
   ]
 })

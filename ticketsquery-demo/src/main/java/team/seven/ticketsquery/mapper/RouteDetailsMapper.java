@@ -16,6 +16,9 @@ import java.util.Map;
  */
 @Mapper
 public interface RouteDetailsMapper extends BaseMapper<RouteDetails> {
-    @Select("SELECT trainstation_name FROM tb_routerdetail ,tb_trainstation WHERE routertrain_id = #{routeID, jdbcType=VARCHAR} AND tb_routerdetail.trainstation_id = tb_trainstation.trainstation_id")
+    @Select("SELECT trainstation_name " +
+            "FROM tb_routerdetail ,tb_trainstation " +
+            "WHERE routertrain_id = #{routeID, jdbcType=VARCHAR} " +
+            "AND tb_routerdetail.trainstation_id = tb_trainstation.trainstation_id")
     List<Map<String, Object>> findTrainStationNameByRouteID(String routeId);
 }

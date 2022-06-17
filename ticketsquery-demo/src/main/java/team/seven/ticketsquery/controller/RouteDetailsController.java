@@ -52,4 +52,10 @@ public class RouteDetailsController {
         );
     }
 
+    @RequestMapping(value = "/details/{start}/{end}", method = RequestMethod.GET)
+    ResultVO<?> startToEndTrainNumber(@PathVariable String start, @PathVariable String end) {
+        
+        return new ResultVO<>();
+    }
+
 }
