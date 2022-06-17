@@ -14,6 +14,7 @@ import java.util.Date;
  * @create: 2022-06-11
  * @version: 1.0
  */
+@CrossOrigin
 @RestController
 public class RouteDetailsController {
     private final RouteDetailsService service;
@@ -26,9 +27,9 @@ public class RouteDetailsController {
         return new ResultVO<>(service.list());
     }
 
-    @RequestMapping(value = "/details/{routertrainId}", method = RequestMethod.GET)
-    ResultVO<?> trainStationNameList(@PathVariable String routertrainId) {
-        return new ResultVO<>(service.trainNameList(routertrainId));
+    @RequestMapping(value = "/details/query/{routertrainId}", method = RequestMethod.GET)
+    ResultVO<?> DetailListById(@PathVariable String routertrainId) {
+        return new ResultVO<>(service.findDetailsByRouteID(routertrainId));
     }
 
     @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.GET)
@@ -51,11 +52,4 @@ public class RouteDetailsController {
                 service.removeById(service.getOneByTIdAndSId(routertrainId, trainstationId)) ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
-
-    @RequestMapping(value = "/details/{start}/{end}", method = RequestMethod.GET)
-    ResultVO<?> startToEndTrainNumber(@PathVariable String start, @PathVariable String end) {
-        
-        return new ResultVO<>();
-    }
-
 }

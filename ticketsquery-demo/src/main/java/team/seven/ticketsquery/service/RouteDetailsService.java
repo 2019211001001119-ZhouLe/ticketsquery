@@ -8,7 +8,6 @@ import team.seven.ticketsquery.domain.RouteDetails;
 import team.seven.ticketsquery.mapper.RouteDetailsMapper;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -21,8 +20,8 @@ import java.util.Map;
 public class RouteDetailsService extends ServiceImpl<RouteDetailsMapper, RouteDetails> {
     @Autowired
     RouteDetailsMapper mapper;
-    public List<Map<String, Object>> trainNameList(String trainName) {
-        return mapper.findTrainStationNameByRouteID(trainName);
+    public List<RouteDetails> findDetailsByRouteID(String trainName) {
+        return mapper.findDetailsByRouteID(trainName);
     }
     public RouteDetails getOneByTIdAndSId(String routertrainId, String trainstationId) {
         QueryWrapper<RouteDetails> routeDetailsQueryWrapper = new QueryWrapper<>();

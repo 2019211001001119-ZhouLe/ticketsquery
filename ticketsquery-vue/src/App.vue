@@ -14,7 +14,12 @@
               <el-menu-item index="/">
                 首页
               </el-menu-item>
-
+              <el-menu-item index="/trainnumberquery">
+                用户车次查询
+              </el-menu-item>
+              <el-menu-item index="/detailsquery">
+                用户经停信息
+              </el-menu-item>
               <el-menu-item index="/test">
                 test
               </el-menu-item>

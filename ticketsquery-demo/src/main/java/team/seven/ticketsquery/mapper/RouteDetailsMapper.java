@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Select;
 import team.seven.ticketsquery.domain.RouteDetails;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @description: 经停信息mapper
@@ -16,9 +15,9 @@ import java.util.Map;
  */
 @Mapper
 public interface RouteDetailsMapper extends BaseMapper<RouteDetails> {
-    @Select("SELECT trainstation_name " +
-            "FROM tb_routerdetail ,tb_trainstation " +
-            "WHERE routertrain_id = #{routeID, jdbcType=VARCHAR} " +
-            "AND tb_routerdetail.trainstation_id = tb_trainstation.trainstation_id")
-    List<Map<String, Object>> findTrainStationNameByRouteID(String routeId);
+    @Select("SELECT r.routerdetail_id, r.routertrain_id, t.trainstation_name AS trainstation_id, r.arrival_time, departure_time \n" +
+            "FROM tb_routerdetail as r,tb_trainstation AS t \n" +
+            "WHERE routertrain_id = #{routeID, jdbcType=VARCHAR}\n" +
+            "AND r.trainstation_id = t.trainstation_id")
+    List<RouteDetails> findDetailsByRouteID(String routeId);
 }
