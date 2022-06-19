@@ -18,12 +18,12 @@ class TicketsqueryDemoApplicationTests {
     void contextLoads() {
     }
 
-    @Test
-    void trainStationQueryTest() {
-        List<TrainStation> trainStationList;
-        trainStationList = trainStationMapper.selectList(null);
-        assert (trainStationList.size() > 0);
-    }
+//    @Test
+//    void trainStationQueryTest() {
+//        List<TrainStation> trainStationList;
+//        trainStationList = trainStationMapper.selectList(null);
+//        assert (trainStationList.size() > 0);
+//    }
 
 
 }
