@@ -8,7 +8,7 @@ import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import DataTables from 'vue-data-tables'
-
+import dataV from '@jiaminghi/data-view'
 axios.defaults.baseURL = 'http://localhost:8888'
 
 Vue.prototype.axios = axios
@@ -16,6 +16,7 @@ Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(DataTables)
+Vue.use(dataV)
 
 /* eslint-disable no-new */
 new Vue({

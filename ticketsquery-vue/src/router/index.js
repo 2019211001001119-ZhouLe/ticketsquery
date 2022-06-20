@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import Home from '@/components/Home'
+import HomeView from '@/components/HomeView'
 import Test from '@/components/Test'
 import TrainStation from '@/components/TrainStation'
 import Train from '@/components/Train'
 import TrainNumberQuery from '@/components/TrainNumberQuery'
 import DetailsQuery from '@/components/DetailsQuery'
+import TrainType from '@/components/TrainType'
+import Manage from '@/components/Manage'
+import LoginView from '@/components/LoginView'
 
 Vue.use(Router)
 
@@ -14,13 +16,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'LoginView',
+      component: LoginView
     },
     {
-      path: '/home',
-      name: 'Home',
-      component: Home
+      path: '/homeview',
+      name: 'HomeView',
+      component: HomeView
     },
     {
       path: '/test',
@@ -40,12 +42,22 @@ export default new Router({
     {
       path: '/trainnumberquery',
       name: 'TrainNumberQuery',
-      component: TrainNumberQuery,
+      component: TrainNumberQuery
     },
     {
       path: '/detailsquery',
       name: 'DetailsQuery',
-      component: DetailsQuery,
+      component: DetailsQuery
+    },
+    {
+      path: '/traintype',
+      name: 'TrainType',
+      component: TrainType
+    },
+    {
+      path: '/manage',
+      name: 'Manage',
+      component: Manage
     }
   ]
 })

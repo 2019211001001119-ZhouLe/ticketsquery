@@ -17,6 +17,7 @@
     "@babel/runtime": "^7.18.3",
     "@femessage/el-data-table": "^1.23.0",
     "@femessage/el-form-renderer": "^1.23.0",
+    "@jiaminghi/data-view": "^2.10.0",
     "axios": "^0.27.2",
     "el-data-table": "^1.6.1",
     "element-ui": "^2.15.9",
