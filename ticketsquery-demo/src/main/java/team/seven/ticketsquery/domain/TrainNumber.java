@@ -1,5 +1,6 @@
 package team.seven.ticketsquery.domain;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -16,6 +17,7 @@ import java.util.Date;
 @Data
 @TableName("tb_routertrain")
 public class TrainNumber {
+    @TableId
     private String routertrainId;
     private String trainId;
     private String routertrainType;

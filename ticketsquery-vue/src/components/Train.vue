@@ -2,18 +2,14 @@
     <el-container id="a">
         <el-header>
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/homeview' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item>列车管理</el-breadcrumb-item>
             </el-breadcrumb>
-
         </el-header>
         <el-main>
             <el-row align="middle" type="flex">
-                <el-col :span="4">
-                    <div>列车名关键字搜索:</div>
-                </el-col>
                 <el-col :span="16">
-                    <el-input v-model="keyword"></el-input>
+                    <el-input v-model="keyword" placeholder="请输入列车名关键字"></el-input>
                 </el-col>
                 <el-col :span="4">
                     <el-button @click="likeQueryTrains(keyword)">搜索</el-button>

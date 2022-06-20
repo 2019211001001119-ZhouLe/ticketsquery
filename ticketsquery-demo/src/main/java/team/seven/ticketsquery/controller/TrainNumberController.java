@@ -1,12 +1,10 @@
 package team.seven.ticketsquery.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.ResultVO;
 import team.seven.ticketsquery.domain.TrainNumber;
+import team.seven.ticketsquery.enums.ResultStatusEnum;
 import team.seven.ticketsquery.service.TrainNumberService;
 
 import java.util.List;
@@ -28,4 +26,28 @@ public class TrainNumberController {
         List<TrainNumber> tnList = service.TrainNumberByDepartAndArrive(departureStationId, arrivalStationId);
         return new ResultVO<>(tnList);
     }
+
+    @RequestMapping(value = "/train_number", method = RequestMethod.GET)
+    ResultVO<?> allTrainNumber() {
+        return new ResultVO<>(service.list());
+    }
+
+    @RequestMapping(value = "/train_number", method = RequestMethod.POST)
+    ResultVO<?> addTrainNumber(@RequestBody TrainNumber trainNumber) {
+        return new ResultVO<>(service.save(trainNumber) ? ResultStatusEnum.SUCCESS : ResultStatusEnum.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/train_number/{trainNumberId}", method = RequestMethod.PUT)
+    ResultVO<?> updTrainNumber(@RequestBody TrainNumber trainNumber, @PathVariable String trainNumberId) throws Exception {
+        if(!trainNumber.getTrainId().equals(trainNumberId))
+            throw new Exception();
+        return new ResultVO<>(service.updateById(trainNumber) ? ResultStatusEnum.SUCCESS : ResultStatusEnum.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/train_number/{trainNumberId}", method = RequestMethod.DELETE)
+    ResultVO<?> delTrainNumber(@PathVariable String trainNumberId) {
+        return new ResultVO<>(service.removeById(trainNumberId) ? ResultStatusEnum.SUCCESS : ResultStatusEnum.BAD_REQUEST);
+    }
+
+
 }

@@ -99,8 +99,12 @@ export default {
               label: '车型管理'
             },
             {
-              path: '/trainnumberquery',
+              path: '/trainnumber',
               label: '车次管理'
+            },
+            {
+              path: '/details',
+              label: '经停信息管理'
             }
           ]
         },
@@ -145,6 +149,22 @@ export default {
             {
               path: '/manage/managerinfo',
               label: '信息管理'
+            }
+          ]
+        },
+        {
+          path: '/user',
+          name: 'userquery',
+          label: '用户查询',
+          icon: 'user',
+          children: [
+            {
+              path: '/trainNumberquery',
+              label: '车站查询'
+            },
+            {
+              path: '/detailsquery',
+              label: '车次查询'
             }
           ]
         }
@@ -221,6 +241,6 @@ export default {
   box-shadow: 0 -30px 30px 3px black;
 }
 #app {
-  background-color: #fffff;
+  background-color: #ffffff;
 }
 </style>
