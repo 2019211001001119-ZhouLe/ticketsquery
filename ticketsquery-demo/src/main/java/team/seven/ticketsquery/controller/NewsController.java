@@ -37,22 +37,22 @@ public class NewsController {
      */
     @PostMapping("/add")
     public ResultVO saveNews(@RequestBody News news){
-        newsService.save(news);
-        return new ResultVO(ResultStatusEnum.SUCCESS);
+        boolean flag = newsService.save(news);
+        return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.NEWS_ADD_FAILED);
     }
 
     //更新新闻
     @PostMapping("/update")
     public ResultVO updateNews(@RequestBody News news){
-        newsService.updateById(news);
-        return new ResultVO(ResultStatusEnum.SUCCESS);
+        boolean flag = newsService.updateById(news);
+        return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.NEWS_UPDATE_FAILED);
     }
 
     //删除新闻
     @DeleteMapping("/delete/{newsId}")
     public ResultVO deleteNews(@PathVariable String newsId){
-        newsService.removeById(newsId);
-        return new ResultVO(ResultStatusEnum.SUCCESS);
+        boolean flag = newsService.removeById(newsId);
+        return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.NEWS_REMOVE_FAILED);
     }
 
     //获取所有新闻
