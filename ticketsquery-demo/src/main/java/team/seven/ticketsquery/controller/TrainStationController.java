@@ -35,7 +35,7 @@ public class TrainStationController {
         return new ResultVO<>(trainStationList);
     }
 
-    //根据车站名查询
+    //根据车站名关键字查询
     @RequestMapping(value = "/trainstation/{trainstationName}", method = RequestMethod.GET)
     ResultVO<?> queryByTrainStationName(@PathVariable String trainstationName) {
             return new ResultVO<>(trainStationService.queryByTrainStationName(trainstationName));

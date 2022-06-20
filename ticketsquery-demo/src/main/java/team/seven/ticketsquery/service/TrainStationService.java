@@ -23,12 +23,13 @@ public class TrainStationService extends ServiceImpl<TrainStationMapper, TrainSt
 
     @Autowired
     TrainStationMapper trainStationMapper;
+
     //查询所有车站
     public List<TrainStationVo> trainStationList() {
         return trainStationMapper.queryTrainStationList();
     }
 
-    //根据车站名称来查询
+    //根据车站名称关键字查询
     public List<TrainStationVo> queryByTrainStationName(String trainstationName) {
         return trainStationMapper.queryByTrainstationName(trainstationName);
     }

@@ -8,6 +8,7 @@ import lombok.Data;
 /**
  * @version 1.8
  * @date 2022/6/8 15:44
+ * @des 车站实体类
  */
 
 @Data
