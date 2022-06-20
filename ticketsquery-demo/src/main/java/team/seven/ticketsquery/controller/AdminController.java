@@ -20,6 +20,7 @@ import java.util.List;
  */
 
 @RestController
+@CrossOrigin
 @RequestMapping("/admin")
 @Transactional
 public class AdminController {
