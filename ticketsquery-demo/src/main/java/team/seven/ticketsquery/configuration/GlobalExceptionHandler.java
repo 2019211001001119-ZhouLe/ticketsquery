@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public <T> ResultVO<T> handleAllException(Exception e) {
         e.printStackTrace();
-        return  new ResultVO<T>(ResultStatusEnum.BAD_REQUEST);
+        return new ResultVO<>(ResultStatusEnum.BAD_REQUEST); //默认异常处理 返回code为400
     }
 
 }
