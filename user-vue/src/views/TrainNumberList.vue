@@ -29,33 +29,33 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       // 传递过来的车次
-      trainNumber: '',
+      trainNumber: "",
       // 储存查询到的车次信息
-      tableData: []
-    }
+      tableData: [],
+    };
   },
   methods: {
-    gteTrainNumberList () {
+    gteTrainNumberList() {
       // 把vue对象先保存到第三方变量中
-      let _this = this
-      this.axios
-        .get('/train_number/', this.trainNumber)
+      let _this = this;
+      this.myAxios
+        .get("/train_number/" ,this.trainNumber)
         .then(function (res) {
-          _this.tableData = res.data.data
+          _this.tableData = res.data.data;
         })
         .catch(function (error) {
-          console.log(error)
-        })
+          console.log(error);
+        });
     },
-    goBack () {
-      this.$router.go(-1)
-    }
-  }
-}
+    goBack() {
+      this.$router.go(-1);
+    },
+  },
+};
 </script>
 
-<style>
+<style  scoped>
 </style>

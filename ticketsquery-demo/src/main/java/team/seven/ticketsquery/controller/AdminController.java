@@ -2,6 +2,8 @@ package team.seven.ticketsquery.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.Admin;
@@ -59,26 +61,32 @@ public class AdminController {
         return new ResultVO(ResultStatusEnum.SUCCESS,admins);
     }
 
-    //TODO 登录功能
+    /*
     @GetMapping("/login")
     public ResultVO selectAdminByAccess(@RequestParam String adminId,@RequestParam String adminPwd){
-        QueryWrapper<Admin> wrapper = new QueryWrapper<>();
-        wrapper.eq("admin_id",adminId);
-        wrapper.eq("admin_pwd",adminPwd);
-        Admin admin = adminService.getOne(wrapper);
+
+        UserDetails admin = adminService.loadUserByUsername(adminId);
+
         if (admin!=null){
+            BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+            String encode = encoder.encode(adminPwd);//加密返回密文密码
+            boolean flag = encoder.matches(encode, adminPwd);
             return new ResultVO(ResultStatusEnum.SUCCESS,admin);
         }else{
             return new ResultVO(ResultStatusEnum.USER_LOGIN_FAIL);
         }
-
-    }
+    }*/
 
     //添加管理员信息
     @PostMapping("/add")
     public ResultVO addAdmin(@RequestBody Admin admin){
         String adminId = RandomAdminIdUtils.verifyUserName(4, 6);
+        String password = admin.getAdminPwd();
+        //加密存储密码
+        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+        String encode = encoder.encode(password);//加密返回密文密码
         admin.setAdminId(adminId);
+        admin.setAdminPwd(encode);
         boolean flag = adminService.save(admin);
         return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.USER_ADD_FAILED);
     }

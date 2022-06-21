@@ -25,48 +25,46 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
-  data () {
+  data() {
     return {
       // 起点站
-      starTrainsStation: '',
+      starTrainsStation: "",
       // 终点站
-      endTrainsStation: '',
+      endTrainsStation: "",
       // 将查询的车次储存在这
-      tableData: []
-    }
+      tableData: [],
+    };
   },
   // 生命周期钩子函数
-  created () {
+  created() {
     // 获取到路由传参传递过来的starTrainsStation 给data中的对应的变量进行赋值
-    this.starTrainsStation = this.$route.query.formInline.starTrainsStation
+    this.starTrainsStation = this.$route.query.formInline.starTrainsStation;
     // 获取到路由传参传递进来的endTrainsStation
-    this.endTrainsStation = this.$route.query.formInline.endTrainsStation
+    this.endTrainsStation = this.$route.query.formInline.endTrainsStation;
     // 自动查询传递过来的路线车次
-    this.gteRoutrList()
+    gteRoutrList();
   },
   methods: {
-    gteRoutrList () {
+    gteRoutrList() {
       // 把vue对象先保存到第三方变量中
-      let _this = this
-      this.axios
-        .get('/trainstation/{trainstationName}')
+      let _this = this;
+      this.myAxios
+        .get("/trainstation/{trainstationName}")
         .then(function (res) {
-          console.log(res)
-          _this.tableData = res.data
+          console.log(res);
+          _this.tableData = response.data;
         })
         .catch(function (error) {
-          console.log(error)
-        })
+          console.log(error);
+        });
     },
-    goBack () {
-      this.$router.go(-1)
-    }
-  }
-}
+    goBack() {
+      this.$router.go(-1);
+    },
+  },
+};
 </script>
 
-<style>
+<style  scoped>
 </style>

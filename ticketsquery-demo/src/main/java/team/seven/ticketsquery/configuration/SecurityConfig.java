@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()//请求授权
                 //设置允许前端跨域设置
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/**").permitAll() //放行login
+                .antMatchers("/**","/login").permitAll() //放行login
                 .anyRequest().authenticated()//其他请求需要身份认证
                 .and().formLogin()  //自定义登录处理器
                 .successHandler(userAuthenticationSuccessHandler)//注册登录成功处理

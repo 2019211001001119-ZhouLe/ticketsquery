@@ -1,5 +1,6 @@
 package team.seven.ticketsquery.configuration;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,10 +15,17 @@ import team.seven.ticketsquery.enums.ResultStatusEnum;
  */
 @RestControllerAdvice(annotations = RestController.class)
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(value = Exception.class)
     public <T> ResultVO<T> handleAllException(Exception e) {
         e.printStackTrace();
         return new ResultVO<>(ResultStatusEnum.BAD_REQUEST); //默认异常处理 返回code为400
+    }
+
+    @ExceptionHandler(value = UsernameNotFoundException.class)
+    public <T> ResultVO<T> handleUserNameNotFoundException(Exception e) {
+        //e.printStackTrace();
+        return new ResultVO<>(ResultStatusEnum.USER_NOT_EXIST); //默认异常处理 返回code为400
     }
 
 }
