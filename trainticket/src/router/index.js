@@ -32,6 +32,10 @@ const routes = [
         component: () => import('../views/TrainNumber/TrainInfo.vue')
       },
       {
+        path:'detailsquery',
+        component: () => import('../views/TrainNumber/DetailsQuery.vue')
+      },
+      {
         path:'potmanage',
         component: () => import('../views/Pot/PotManage.vue')
       },
