@@ -19,5 +19,6 @@ html,body,#app{
 .box-card {
   width: 100%;
   height: auto;
+  min-height: 600px;
 }
 </style>
