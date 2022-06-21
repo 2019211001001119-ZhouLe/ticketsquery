@@ -4,6 +4,7 @@
   </div>
 </template>
 
+
 <style>
 /* 全局设置样式 */
 html,body,#app{
