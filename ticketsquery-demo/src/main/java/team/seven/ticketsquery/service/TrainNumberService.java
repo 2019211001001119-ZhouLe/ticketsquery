@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import team.seven.ticketsquery.domain.TrainNumber;
 import team.seven.ticketsquery.mapper.TrainNumberMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,5 +22,10 @@ public class TrainNumberService extends ServiceImpl<TrainNumberMapper, TrainNumb
     TrainNumberMapper mapper;
     public List<TrainNumber> TrainNumberByDepartAndArrive(String departureStationId, String arrivalStationId) {
         return mapper.findTrainNumberByDepartAndArrive(departureStationId, arrivalStationId);
+    }
+
+    public List<Map<String, String>> cityName() {
+
+        return new ArrayList<>(mapper.findCity());
     }
 }

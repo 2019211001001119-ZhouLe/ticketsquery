@@ -39,6 +39,12 @@ public class TrainNumberController {
         return new ResultVO<>(service.list());
     }
 
+    //车次所属城市名
+    @RequestMapping(value = "/train_number/city", method = RequestMethod.GET)
+    ResultVO<?> allTrainNumberCity() {
+        return new ResultVO<>(service.cityName());
+    }
+
     //新增车次信息
     //返回code为201
     @RequestMapping(value = "/train_number", method = RequestMethod.POST)
