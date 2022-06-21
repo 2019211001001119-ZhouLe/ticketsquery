@@ -27,7 +27,7 @@ public class TrainStationService extends ServiceImpl<TrainStationMapper, TrainSt
     TrainStationMapper trainStationMapper;
 
     //查询所有车站
-    public List<TrainStationVo> trainStationList(Page page) {
+    public Page<TrainStationVo> trainStationList(Page page) {
         return trainStationMapper.queryTrainStationList(page);
     }
 

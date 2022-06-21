@@ -33,9 +33,10 @@ public class TrainStationController {
 
     //分页查询所有车站
     @RequestMapping(value = "/trainstationbypage", method = RequestMethod.GET)
-    ResultVO<?> getTrainStationList( @RequestParam(value = "current" ,required = false) Integer current,
+    public Page<TrainStationVo> getTrainStationList( @RequestParam(value = "current" ,required = false) Integer current,
                                      @RequestParam(value = "size" ,required = false) Integer size) {
-        return new ResultVO<>(trainStationService.getPageInfo(current,size));
+        Page<TrainStationVo> page = new Page<>(current,size);
+        return trainStationService.trainStationList(page);
 
     }
 
