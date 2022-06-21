@@ -1,0 +1,273 @@
+html,body {
+    width: 100%;
+    height: 100%
+}
+
+body{
+    background-color: black;
+}
+
+#app{
+    width: 100%;
+    height: 100%
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+    background-image: url("https://simstatic.plopco.com/bgimg/000036.jpg");
+    background-size: cover;
+    /* transition: all .2s linear; */
+    position: relative;
+    text-align: center;
+}
+
+.centerBox{
+    position: relative;
+    width: auto;
+    height: auto;
+    display: inline-block;
+    font-size: 0;
+    background-color: transparent;
+    top: 38%;
+    margin-top: -56px;
+    vertical-align: top;
+    overflow: visible;
+}
+
+.box1{
+    width: 288px;
+    height: 288px;
+    display: inline-block;
+    background-size: cover;
+    border-radius: 0 0 288px 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+.box2{
+    width: 288px;
+    height: 288px;
+    display: inline-block;
+    background-size: cover;
+    border-radius: 0 0 0 288px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+.box3{
+    width: 288px;
+    height: 288px;
+    display: inline-block;
+    background-size: cover;
+    border-radius: 288px 0 0 0;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
+}
+.box4{
+    width: 288px;
+    height: 288px;
+    display: inline-block;
+    background-size: cover;
+    border-radius: 0 288px 0 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    cursor: pointer;
+}
+.innerBox1{
+    width: 96px;
+    height: 96px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    line-height: 96px;
+    font-size: 0;
+}
+.innerBox2{
+    width: 96px;
+    height: 96px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    line-height: 96px;
+    font-size: 0;
+}
+.innerBox3{
+    width: 96px;
+    height: 96px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    line-height: 96px;
+    font-size: 0;
+}
+.innerBox4{
+    width: 96px;
+    height: 96px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    line-height: 96px;
+    font-size: 0;
+}
+.innerSpan1,.innerSpan2,.innerSpan3,.innerSpan4{
+    vertical-align: middle;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    font-size: 25px;
+    background-size: cover;
+    color: white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: all .3s linear;
+}
+
+.innerSpan1{
+    background-image: url(../images/太阳184.png);
+}
+
+.innerSpan2{
+    background-image: url(../images/shutter164.png);
+    background-color: rgb(102, 102, 102);
+}
+
+.innerSpan3{
+    background-image: url(../images/同心圆图164.png);
+    background-color: rgb(102, 102, 102);
+}
+
+.innerSpan4{
+    background-image: url(../images/花朵160.png);
+    background-color: rgb(102, 102, 102);
+}
+
+.box1:hover .innerSpan1{
+    opacity: 1;
+    transform: scale(2) rotate(150deg);
+}
+
+.innerBox1:hover .innerSpan1{
+    transform: scale(2) rotate(240deg);
+}
+
+
+.box2:hover .innerSpan2{
+    opacity: 1;
+    transform: scale(2) rotate(150deg);
+}
+
+.innerBox2:hover .innerSpan2{
+    transform: scale(2) rotate(240deg);
+}
+
+
+.box3:hover .innerSpan3{
+    opacity: 1;
+    transform: scale(2) rotate(150deg);
+}
+
+.innerBox3:hover .innerSpan3{
+    transform: scale(2) rotate(240deg);
+}
+
+
+.box4:hover .innerSpan4{
+    opacity: 1;
+    transform: scale(2) rotate(150deg);
+}
+
+.innerBox4:hover .innerSpan4{
+    transform: scale(2) rotate(240deg);
+}
+
+#maskBox{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    text-align: center;
+    overflow: hidden;
+    font-size: 0;
+    background-color: transparent;
+    visibility: hidden;
+}
+
+
+.textBox{
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    /* visibility: hidden; */
+    overflow: hidden;
+}
+.textBox .tiangourj{
+    position: relative;
+    display: inline-block;
+    top: 38%;
+    font-size: 20px;
+    font-weight: 300;
+    color: rgb(34, 34, 34);
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Arial,Microsoft Yahei,Heiti SC,sans-serif;
+}
+
+.textBox .buttonBox1{
+    position: absolute;
+    display: block;
+    bottom: 100px;
+    left: 50%;
+    margin-left: -104px;
+    width: 208px;
+    height: 32px;
+    text-align: center;
+}
+
+.textBox .buttonBox1 a{
+    box-sizing: border-box;
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    width: 156px;
+    height: 32px;
+    line-height: 1.15;
+    line-height: 32px;
+    background-color: hsla(0,0%,100%,.21);
+    color: rgb(34, 34, 34);
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 16px 16px 16px 16px;
+    cursor: pointer;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Arial,Microsoft Yahei,Heiti SC,sans-serif;
+}
+
+
+.bgMask{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -9;
+    float: left;
+    text-align: center;
+    overflow: hidden;
+    border: 0;
+    background-image: url("https://simstatic.plopco.com/bgimg/000036.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+    /* background-position: 50%; */
+    background-repeat: no-repeat;
+    /* filter: blur(10px); */
+    /* transform: scale(1.1); */
+    visibility: hidden;
+    /* box-shadow: 0 0 100px 300px rgba(0, 0, 0, 0.473) inset; */
+}
