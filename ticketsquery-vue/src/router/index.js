@@ -17,6 +17,34 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'userHome',
+      component: () => import('../components/User/userHome'),
+    },
+    {
+      path: '/trainNumberList',
+      component: () => import('../components/User/TrainNumberList')
+    },
+
+    {
+      path: '/news',
+      component: () => import('../components/User/News')
+    },
+    {
+      path: '/routeList',
+      component: () => import('../components/User/RouteList'),
+      children: [
+        {
+          path: '/trainList',
+          component: () => import('../components/User/TrainList'),
+        }
+      ]
+    },
+    {
+      path: '/queryTrainNumber',
+      component: () => import('../components/User/QueryTrainNumber')
+    },
+    {
+      path: '/',
       name: 'LoginView',
       component: LoginView
     },

@@ -27,7 +27,7 @@ import axios from 'axios'
 import Bus from '../utils/bus.js'
 
 export default {
-    data() {
+  data() {
         return {
             trainNumber: '',
             keyword: '',
