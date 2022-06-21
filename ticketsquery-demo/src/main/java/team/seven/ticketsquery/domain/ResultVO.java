@@ -1,9 +1,12 @@
 package team.seven.ticketsquery.domain;
 
-import lombok.AllArgsConstructor;
+import com.alibaba.fastjson.JSON;
 import lombok.Getter;
 import lombok.Setter;
 import team.seven.ticketsquery.enums.ResultStatusEnum;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @description: 返回对象实体
@@ -39,4 +42,13 @@ public class ResultVO<T> {
         this.data =data;
     }
 
+    /**
+     * 输出json 响应信息
+     * @param response
+     * @throws IOException
+     */
+    public void out(HttpServletResponse response)throws IOException {
+        response.setContentType("text/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(this));
+    }
 }
