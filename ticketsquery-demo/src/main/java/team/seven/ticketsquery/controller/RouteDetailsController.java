@@ -32,7 +32,7 @@ public class RouteDetailsController {
 
     //根据车次号查询经停信息
     @RequestMapping(value = "/details/query/{routertrainId}", method = RequestMethod.GET)
-    ResultVO<?> DetailListById(@PathVariable String routertrainId) {
+    ResultVO<?> DetailListById(@PathVariable(value = "routertrainId", required = false) String routertrainId) {
         return new ResultVO<>(service.findDetailsByRouteID(routertrainId));
     }
 
@@ -70,7 +70,7 @@ public class RouteDetailsController {
 
     //分页查询
     @RequestMapping(value = "/detailspage", method = RequestMethod.GET)
-    ResultVO<?> detailsPage(@RequestParam int current, @RequestParam int size) {
+    ResultVO<?> detailsPage(@RequestParam(value = "current", required = false) int current, @RequestParam(value = "size", required = false) int size) {
         Page<RouteDetails> routeDetailsPage = new Page<>(current, size);
         Page<RouteDetails> page = new LambdaQueryChainWrapper<>(service.getBaseMapper()).page(routeDetailsPage);
         return new ResultVO<>(page);

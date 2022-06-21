@@ -63,7 +63,7 @@ public class TrainNumberController {
 
     //分页查询
     @RequestMapping(value = "/train_number_page", method = RequestMethod.GET)
-    ResultVO<?> trainNumberPage(@RequestParam int current, @RequestParam int size) {
+    ResultVO<?> trainNumberPage(@RequestParam(value = "current", required = false) int current, @RequestParam(value = "size", required = false) int size) {
         Page<TrainNumber> trainNumberPage = new Page<>(current, size);
         Page<TrainNumber> page = new LambdaQueryChainWrapper<>(service.getBaseMapper()).page(trainNumberPage);
         return new ResultVO<>(page);
