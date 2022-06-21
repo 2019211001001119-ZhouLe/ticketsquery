@@ -20,8 +20,10 @@ import java.util.List;
 public class RouteDetailsService extends ServiceImpl<RouteDetailsMapper, RouteDetails> {
     @Autowired
     RouteDetailsMapper mapper;
-    public List<RouteDetails> findDetailsByRouteID(String trainName) {
-        return mapper.findDetailsByRouteID(trainName);
+    public List<RouteDetails> findDetailsByRouteID(String routertrainId) {
+        QueryWrapper<RouteDetails> routeDetailsQueryWrapper = new QueryWrapper<>();
+        routeDetailsQueryWrapper.eq("routertrain_id", routertrainId);
+        return mapper.findDetailsByRouteID(routertrainId);
     }
     public RouteDetails getOneByTIdAndSId(String routertrainId, String trainstationId) {
         QueryWrapper<RouteDetails> routeDetailsQueryWrapper = new QueryWrapper<>();

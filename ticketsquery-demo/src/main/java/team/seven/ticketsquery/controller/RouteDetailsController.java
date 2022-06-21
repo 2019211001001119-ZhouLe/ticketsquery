@@ -32,7 +32,7 @@ public class RouteDetailsController {
 
     //根据车次号查询经停信息
     @RequestMapping(value = "/details/query/{routertrainId}", method = RequestMethod.GET)
-    ResultVO<?> DetailListById(@PathVariable(value = "routertrainId", required = false) String routertrainId) {
+    ResultVO<?> DetailListById(@PathVariable String routertrainId) {
         return new ResultVO<>(service.findDetailsByRouteID(routertrainId));
     }
 
