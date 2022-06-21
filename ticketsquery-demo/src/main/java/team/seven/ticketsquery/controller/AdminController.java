@@ -20,6 +20,7 @@ import java.util.List;
  */
 
 @RestController
+@CrossOrigin
 @RequestMapping("/admin")
 @Transactional
 public class AdminController {
@@ -32,14 +33,14 @@ public class AdminController {
     @DeleteMapping("/remove/{adminId}")
     public ResultVO removeAdmin(@PathVariable String adminId){
         boolean flag = adminService.removeById(adminId);
-        return new ResultVO(ResultStatusEnum.SUCCESS);
+        return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.USER_REMOVE_FAILED);
     }
 
     // 更新管理员信息
     @PostMapping("/update")
     public ResultVO updateAdmin(@RequestBody Admin admin){
-        adminService.updateById(admin);
-        return new ResultVO(ResultStatusEnum.SUCCESS);
+        boolean flag = adminService.updateById(admin);
+        return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.USER_UPDATE_FAILED);
     }
 
     // 根据id获取管理员信息
@@ -65,7 +66,12 @@ public class AdminController {
         wrapper.eq("admin_id",adminId);
         wrapper.eq("admin_pwd",adminPwd);
         Admin admin = adminService.getOne(wrapper);
-        return new ResultVO(ResultStatusEnum.SUCCESS,admin);
+        if (admin!=null){
+            return new ResultVO(ResultStatusEnum.SUCCESS,admin);
+        }else{
+            return new ResultVO(ResultStatusEnum.USER_LOGIN_FAIL);
+        }
+
     }
 
     //添加管理员信息
@@ -73,8 +79,8 @@ public class AdminController {
     public ResultVO addAdmin(@RequestBody Admin admin){
         String adminId = RandomAdminIdUtils.verifyUserName(4, 6);
         admin.setAdminId(adminId);
-        adminService.save(admin);
-        return new ResultVO(ResultStatusEnum.SUCCESS);
+        boolean flag = adminService.save(admin);
+        return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.USER_ADD_FAILED);
     }
 
 

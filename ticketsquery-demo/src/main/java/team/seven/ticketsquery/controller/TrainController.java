@@ -1,6 +1,7 @@
 package team.seven.ticketsquery.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.ResultVO;
@@ -24,6 +25,7 @@ public class TrainController {
         this.service = service;
     }
 
+    //获取所有车辆信息
     @RequestMapping(value = "/train", method = RequestMethod.GET)
     ResultVO<?> getTrainList(@RequestParam(value = "keyword", required = false) String keyword) {
         List<Train> trains;
@@ -39,6 +41,8 @@ public class TrainController {
         return new ResultVO<>(trains);
     }
 
+    //新增车辆信息
+    //返回code为201
     @RequestMapping(value = "/train", method = RequestMethod.POST)
     ResultVO<?> saveTrain(@RequestBody Train train) {
         return new ResultVO<>(
@@ -46,6 +50,8 @@ public class TrainController {
         );
     }
 
+    //删除车辆信息
+    //返回code为204
     @RequestMapping(value = "/train/{trainId}", method = RequestMethod.DELETE)
     ResultVO<?> delTrain(@PathVariable String trainId) {
         return new ResultVO<>(
@@ -53,6 +59,7 @@ public class TrainController {
         );
     }
 
+    //更新车辆信息
     @RequestMapping(value = "/train/{trainId}", method = RequestMethod.PUT)
     ResultVO<?> updTrain(@RequestBody Train train, @PathVariable String trainId) {
         if(!train.getTrainId().equals(trainId)) {
@@ -63,9 +70,11 @@ public class TrainController {
         );
     }
 
-    @RequestMapping(value = "/trains")
-    ResultVO<?> pageTrain() {
-        Page<Train> trainPage = new Page<>();
-        return new ResultVO<>(service.page(trainPage));
+    //分页查询
+    @RequestMapping(value = "/trainpage")
+    ResultVO<?> trainPage(@RequestParam(value = "current", required = false) int current, @RequestParam(value = "size", required = false) int size) {
+        Page<Train> trainPage = new Page<>(current, size);
+        Page<Train> page = new LambdaQueryChainWrapper<>(service.getBaseMapper()).page(trainPage);
+        return new ResultVO<>(page);
     }
 }

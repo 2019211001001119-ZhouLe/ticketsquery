@@ -1,5 +1,6 @@
 <template>
     <div>
+      <Manage></Manage>
         <el-row>
             <el-col :span="10">
                 <el-input v-model="trainNumber" placeholder="请输入车次"></el-input>
@@ -26,18 +27,18 @@
 import axios from 'axios'
 
 export default {
-    data() {
-        return {
-            trainNumber: '',
-            details: [],
-        }
-    },
-    methods: {
-        handleBtnClick() {
-            axios.get("http://127.0.0.1:8888/details/query/" + this.trainNumber).then((response) => {
-                this.details = response.data.data
-            })
-        }
+  data () {
+    return {
+      trainNumber: '',
+      details: []
     }
+  },
+  methods: {
+    handleBtnClick () {
+      axios.get('http://127.0.0.1:8888/details/query/' + this.trainNumber).then((response) => {
+        this.details = response.data.data
+      })
+    }
+  }
 }
 </script>
