@@ -7,16 +7,16 @@
 
 <script>
 export default {
-  data () {
-    return {
-    }
-  },
-  components: {
-  }
+ data () {
+ return {
+ }
+ },
+ components:{
+ }
 }
 
 </script>
 
-<style>
+<style lang='scss' scoped>
 
 </style>

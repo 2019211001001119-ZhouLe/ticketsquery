@@ -29,37 +29,37 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       // 储存新闻数据
-      newsData: []
-    }
+      newsData: [],
+    };
   },
-  created () {
+  created() {
     // 自动获取更多新闻
-    this.gteNews()
+    this.gteNews();
   },
   methods: {
     // 获取新闻列表
-    gteNews () {
+    gteNews() {
       // 把vue对象先保存到第三方变量中
-      let _this = this
-      this.axios
-        .get('/news/all')
+      let _this = this;
+      this.myAxios
+        .get("/news/all")
         .then(function (res) {
-          console.log(res.data.data)
-          _this.newsData = res.data.data
+          console.log(res.data.data);
+          _this.newsData = res.data.data;
         })
         .catch(function (error) {
-          console.log(error)
-        })
+          console.log(error);
+        });
     },
-    goBack () {
-      this.$router.go(-1)
-    }
-  }
-}
+    goBack() {
+      this.$router.go(-1);
+    },
+  },
+};
 </script>
 
-<style>
+<style  scoped>
 </style>
