@@ -25,4 +25,9 @@ public interface TrainNumberMapper extends BaseMapper<TrainNumber> {
             "AND a.trainstation_name LIKE '%${departureStationId}%' " +
             "AND b.trainstation_name LIKE '%${arrivalStationId}%'")
     List<TrainNumber> findTrainNumberByDepartAndArrive(String departureStationId, String arrivalStationId);
+
+    @Select("SELECT r.*, c.city_name FROM tb_routertrain AS r, tb_city AS c, tb_trainstation AS ts " +
+            "WHERE r.departure_station_id = ts.trainstation_id " +
+            "AND ts.city_id = c.city_id")
+    List<Map<String, String>> findCity();
 }
