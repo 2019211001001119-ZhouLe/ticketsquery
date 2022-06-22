@@ -13,8 +13,6 @@
         :cell-style="tableRowStyle"
         :header-cell-style="tableHeaderColor"
         style="width: 100%; overflow-y: auto"
-        highlightCurrentRow="{true}"
-        stripe="{true}"
       >
         <el-table-column fixed prop="newsId" label="新闻编号" width="450">
         </el-table-column>

@@ -17,8 +17,6 @@
         :cell-style="tableRowStyle"
         :header-cell-style="tableHeaderColor"
         style="width: 100%; overflow-y: auto"
-        highlightCurrentRow="{true}"
-        stripe="{true}"
         >
         <el-table-column fixed prop="routertrainId" label="车次" width="260">
         </el-table-column>
