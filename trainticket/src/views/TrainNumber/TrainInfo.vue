@@ -399,6 +399,7 @@ export default {
     this.queryAll();
   },
 };
+ 
 </script>
 <style>
 .tableButton button {

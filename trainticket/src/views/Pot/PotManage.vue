@@ -285,6 +285,7 @@ export default {
       this.input = "";
     },
 
+
     handleEditClick(index, row) {
       console.log(index);
       this.trainstation = row;
