@@ -3,30 +3,27 @@
   <div>
     <!-- 顶部导航 -->
     <div>
-      <el-page-header @back="goBack" content="更多新闻"> </el-page-header>
+      <el-page-header @back="goBack" content="更多新闻" style="color: #4490f1">
+      </el-page-header>
     </div>
     <!-- 数据部分 -->
     <div>
       <el-table
-       :data="newsData"
-        style="width: 100%"
-        height="550"
+        :data="newsData"
+        :cell-style="tableRowStyle"
+        :header-cell-style="tableHeaderColor"
+        style="width: 100%; overflow-y: auto"
       >
-        <el-table-column fixed prop="newsId" label="新闻编号" width="250" v-model="newsData.newsId">
+        <el-table-column fixed prop="newsId" label="新闻编号" width="450">
         </el-table-column>
-        <el-table-column prop="adminId" label="发布人" width="250" v-model="newsData.adminId">
+        <el-table-column prop="newsTitle" label="新闻标题" width="450">
         </el-table-column>
-        <el-table-column prop="newsTitle" label="新闻标题" width="250" v-model="newsData.newsTitle">
-        </el-table-column>
-        <el-table-column prop="newsPublishTime" label="发布时间" width="250" v-model="newsData.newsPublishTime">
-        </el-table-column>
-        <el-table-column prop="newsUrl" label="新闻地址" width="250" v-model="newsData.newsUrl">
+        <el-table-column prop="newsPublishTime" label="发布时间" width="450">
         </el-table-column>
       </el-table>
     </div>
   </div>
 </template>
-
 <script>
 export default {
   data() {
@@ -44,15 +41,18 @@ export default {
     gteNews() {
       // 把vue对象先保存到第三方变量中
       let _this = this;
-      this.myAxios
-        .get("/news/all")
-        .then(function (res) {
-          console.log(res.data.data);
-          _this.newsData = res.data.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      this.myAxios.get("/news/all").then(function (res) {
+        // console.log(res.data.data);
+        _this.newsData = res.data.data;
+      });
+    },
+    //设置表格行的样式
+    tableRowStyle() {
+      return "background-color:white;font-size:10px; color:black;text-align:center";
+    },
+    //设置表头行的样式
+    tableHeaderColor() {
+      return "font-wight:200;font-size:15px; background-color:cadetblue;color:black;text-align:center";
     },
     goBack() {
       this.$router.go(-1);

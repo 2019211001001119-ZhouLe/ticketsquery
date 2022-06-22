@@ -29,18 +29,19 @@
       <div class="tl3_select">
         <div class="tl3_select1">
           <span>路线查询</span>
-          <el-form :inline="true" :model="formInline" class="demo-form-inline">
+          <el-form
+            :inline="true"
+            :model="formInline"
+            class="demo-form-inline"
+          >
             <el-form-item label="始发站">
               <el-input
                 v-model="formInline.star"
-                placeholder="北京站"
+                placeholder="成都"
               ></el-input> </el-form-item
             ><br />
             <el-form-item label="终点站">
-              <el-input
-                v-model="formInline.end"
-                placeholder="南昌站"
-              ></el-input>
+              <el-input v-model="formInline.end" placeholder="深圳"></el-input>
             </el-form-item>
             <br />
             <el-form-item>
@@ -52,42 +53,25 @@
     </div>
     <!--会员服务-->
     <div class="tl5">
-      <div><img src="../../public\imgs\abanner01.jpg" width="100%" /></div>
+      <div>
+        <a href="https://cx.12306.cn/tlcx/index.html"
+          ><img src="../../public\imgs\abanner01.jpg" width="100%"
+        /></a>
+      </div>
       <div class="tl5_fw">
-        <img src="../../public\imgs\abanner02.jpg" width="100%" />
+        <a href="https://exservice.12306.cn/excater/index.html">
+          <img src="../../public\imgs\abanner02.jpg" width="100%" />
+        </a>
       </div>
       <div class="tl5_fw2">
-        <img src="../../public\imgs\abanner03.jpg" width="100%" />
+        <a href="https://kyfw.12306.cn/otn/resources/login.html">
+          <img src="../../public\imgs\abanner03.jpg" width="100%" />
+        </a>
       </div>
       <div class="tl5_fw tl5_fw2">
-        <img src="../../public\imgs\abanner04.jpg" width="100%" />
-      </div>
-    </div>
-    <!--更多内容-->
-    <div class="tl6">
-      <span>铁路旅游</span>
-    </div>
-    <!--铁路旅游信息展示-->
-    <div class="tl7">
-      <div class="tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
-      </div>
-      <div class="tl7_div1 tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
-      </div>
-      <div class="tl7_div1 tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
-      </div>
-      <div class="tl7_div1 tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
+        <a href="https://kyfw.12306.cn/otn/resources/login.html">
+          <img src="../../public\imgs\abanner04.jpg" width="100%" />
+        </a>
       </div>
     </div>
     <!--信息位置展示-->
@@ -115,16 +99,25 @@
 
 <script>
 export default {
-  header: ["列1", "列2", "列3"],
   data() {
     return {
-      newsList: [],
+      newsData: [],
       formInline: {
         star: "",
         end: "",
       },
       config: {
-        data: [],
+        data: [
+          ["公告"],
+          ["关于调整互联网、电话订票起售时间的公告  (2014-11-26)"],
+          ["中国铁路南宁局集团有限公司加开列车公告  (2022-06-11)"],
+          [
+            "中国铁路成都局集团有限公司关于2022年6月11日至19日加开部分列车的公告  (2022-06-11)",
+          ],
+          [
+            "中国铁路上海局集团有限公司关于2022年6月10日-2022年6月12日增开部分旅客列车的公告  (2022-06-09)",
+          ],
+        ],
         index: true,
         columnWidth: [60],
         align: ["center"],
@@ -145,29 +138,10 @@ export default {
     gteNews() {
       // 把vue对象先保存到第三方变量中
       let _this = this;
-      this.myAxios
-        .get("/news/all")
-        .then(function (res) {
-          console.log(res.data.data);
-          _this.config.data = res.data.data;
-          // 创建新数组储存新闻数据
-          var newArr = [];
-          //  使用map函数，在里面定义一个sevm{}对象
-          res.data.data.rows.map(function (item, index) {
-            var sevm = {};
-            sevm["name"] = item.newsId;
-            sevm["value"] = item.newsTitle;
-            sevm["value"] = item.newsPublishTime;
-            newArr.push(sevm);
-          });
-          console.log("newarr", newArr);
-          this.config = {
-            data: newArr,
-          };
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      this.myAxios.get("/news/all").then(function (res) {
+        // console.log(res.data.data);
+        _this.newsData = res.data.data;
+      });
     },
     toNewsPage() {
       // 跳转到新闻查询页面
@@ -190,9 +164,9 @@ export default {
         path: "/routeList",
         query: {
           // 起始站
-          starTrainsStation: this.formInline.star,
+          departureStation: this.formInline.star,
           // 终点站
-          endTrainsStation: this.formInline.end,
+          arrivalStation: this.formInline.end,
         },
       });
     },
