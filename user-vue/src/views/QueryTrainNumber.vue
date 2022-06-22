@@ -33,7 +33,7 @@
             <el-form-item label="车次">
               <el-input
                 v-model="formInline.trainNunber"
-                placeholder="k567"
+                placeholder="K288"
               ></el-input> </el-form-item
             ><br />
             <el-form-item>
@@ -45,44 +45,26 @@
         </div>
       </div>
     </div>
-    <!--会员服务-->
+ <!--会员服务-->
     <div class="tl5">
-      <div><img src="../../public\imgs\abanner01.jpg" width="100%" /></div>
+      <div><a href="https://cx.12306.cn/tlcx/index.html"><img src="../../public\imgs\abanner01.jpg" width="100%" /></a></div>
       <div class="tl5_fw">
-        <img src="../../public\imgs\abanner02.jpg" width="100%" />
+        <a href="https://exservice.12306.cn/excater/index.html">
+          <img src="../../public\imgs\abanner02.jpg" width="100%" />
+        </a>
+        
       </div>
       <div class="tl5_fw2">
-        <img src="../../public\imgs\abanner03.jpg" width="100%" />
+        <a href="https://kyfw.12306.cn/otn/resources/login.html">
+          <img src="../../public\imgs\abanner03.jpg" width="100%" />
+        </a>
+        
       </div>
       <div class="tl5_fw tl5_fw2">
-        <img src="../../public\imgs\abanner04.jpg" width="100%" />
-      </div>
-    </div>
-    <!--更多内容-->
-    <div class="tl6">
-      <span>铁路旅游</span>
-    </div>
-    <!--铁路旅游信息展示-->
-    <div class="tl7">
-      <div class="tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
-      </div>
-      <div class="tl7_div1 tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
-      </div>
-      <div class="tl7_div1 tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
-      </div>
-      <div class="tl7_div1 tl7_div2">
-        <div class="tl7_img">
-          <img src="../../public\imgs\scope1.jpg" width="100%" />
-        </div>
+        <a href="https://kyfw.12306.cn/otn/resources/login.html">
+           <img src="../../public\imgs\abanner04.jpg" width="100%" />
+        </a>
+       
       </div>
     </div>
     <!--信息位置展示-->
@@ -110,9 +92,9 @@
 
 <script>
 export default {
-  header: ["列1", "列2", "列3"],
   data() {
     return {
+      newsList:[],
       formInline: {
         trainNunber: "",
       },
@@ -141,9 +123,10 @@ export default {
   // 钩子函数
   created() {
     // 自动获取首页新闻
-    gteNews();
+    this.gteNews();
   },
   methods: {
+    
     // 获取新闻列表
     gteNews() {
       // 把vue对象先保存到第三方变量中
@@ -153,9 +136,6 @@ export default {
         .then(function (res) {
           _this.newsList = res.data.data;
         })
-        .catch(function (error) {
-          console.log(error);
-        });
     },
     toHome() {
       // 跳转到路线查询页面
@@ -172,8 +152,15 @@ export default {
         // 把查询的车次号传到trainNumberList页面
         query: {
           // 车次
-          trainNumber: this.formInline.trainNumber,
+          trainNumber: this.formInline.trainNunber,
         },
+      });
+    },
+     toNewsPage() {
+      // 跳转到新闻查询页面
+      this.$router.push({
+        // 页面的路径
+        path: "/news",
       });
     },
   },

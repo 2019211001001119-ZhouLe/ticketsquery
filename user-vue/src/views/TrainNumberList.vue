@@ -3,24 +3,32 @@
   <div>
     <!-- 顶部导航 -->
     <div>
-      <el-page-header @back="goBack" content="车次查询页面"> </el-page-header>
+      <el-page-header
+        @back="goBack"
+        :content="this.$route.query.trainNumber + '车次信息'"
+        style="color: #4490f1"
+      >
+      </el-page-header>
     </div>
     <!-- 数据部分 -->
     <div>
-      <el-table :data="tableData" style="width: 100%" height="450">
-        <el-table-column fixed prop="trainNumber" label="车次" width="150">
+      <el-table
+        :data="tableData"
+        :cell-style="tableRowStyle"
+        :header-cell-style="tableHeaderColor"
+        style="width: 100%; overflow-y: auto"
+        highlightCurrentRow="{true}"
+        stripe="{true}"
+        >
+        <el-table-column fixed prop="routertrainId" label="车次" width="260">
         </el-table-column>
-        <el-table-column prop="starStation" label="始发站" width="150">
+        <el-table-column prop="trainstationId" label="始发站" width="260">
         </el-table-column>
-        <el-table-column prop="starTime" label="始发时间" width="150">
+        <el-table-column prop="departureTime" label="始发时间" width="260">
         </el-table-column>
-        <el-table-column prop="endStation" label="终点站" width="150">
+        <el-table-column prop="arrivalTime" label="到达时间" width="260">
         </el-table-column>
-        <el-table-column prop="endTime" label="到达终点站时间" width="150">
-        </el-table-column>
-        <el-table-column prop="type" label="列车类型" width="150">
-        </el-table-column>
-        <el-table-column prop="remark" label="备注" width="150">
+        <el-table-column prop="laterTime" label="晚点时间" width="260">
         </el-table-column>
       </el-table>
     </div>
@@ -37,18 +45,31 @@ export default {
       tableData: [],
     };
   },
+  created() {
+    // 获取到路由传参传递进来的arrivalStation
+    this.trainNumber = this.$route.query.trainNumber;
+    // 自动查询传递过来的路线车次
+    this.gteTrainNumberList();
+  },
   methods: {
     gteTrainNumberList() {
       // 把vue对象先保存到第三方变量中
       let _this = this;
       this.myAxios
-        .get("/train_number/" ,this.trainNumber)
+        .get("/details/query/" + _this.trainNumber)
         .then(function (res) {
+          console.log(res);
           _this.tableData = res.data.data;
-        })
-        .catch(function (error) {
-          console.log(error);
         });
+    },
+    //设置表格行的样式
+
+    tableRowStyle() {
+      return "background-color:white;font-size:10px; color:black;text-align:center";
+    },
+    //设置表头行的样式
+    tableHeaderColor() {
+      return "font-wight:200;font-size:15px;background-color:cadetblue;color:black;text-align:center";
     },
     goBack() {
       this.$router.go(-1);
