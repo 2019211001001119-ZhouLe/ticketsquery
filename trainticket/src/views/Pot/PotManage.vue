@@ -22,7 +22,7 @@
           </el-col>
           <el-col :span="1">
             <el-button
-              @click="flush($event)"
+              @click="flush()"
               style="margin-left: 0px"
               icon="el-icon-refresh"
               circle
@@ -41,7 +41,8 @@
             >
           </el-col>
         </el-row>
-
+        
+        <!-- 数据表格 -->
         <el-table
           ref="multipleTable"
           :data="trainstations"
@@ -49,18 +50,19 @@
           style="width: 100%"
           stripe
           :row-class-name="tableRowClassName"
+          :row-key="rowKey"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="65"></el-table-column>
-          <el-table-column prop="trainstationName" label="车站名称" width="180">
+          <el-table-column :reserve-selection="true" type="selection" width="65"></el-table-column>
+          <el-table-column :reserve-selection="true" prop="trainstationName" label="车站名称" width="180">
           </el-table-column>
-          <el-table-column prop="trainstationId" label="车站简称" width="180">
+          <el-table-column :reserve-selection="true" prop="trainstationId" label="车站简称" width="180">
           </el-table-column>
-          <el-table-column prop="provinceName" label="所属省" width="200">
+          <el-table-column :reserve-selection="true" prop="provinceName" label="所属省" width="200">
           </el-table-column>
-          <el-table-column prop="cityName" label="所属市" width="300">
+          <el-table-column :reserve-selection="true" prop="cityName" label="所属市" width="300">
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column :reserve-selection="true" label="操作">
             <template slot-scope="scope">
               <el-button
                 @click="handleEditClick(scope.$index, scope.row)"
@@ -83,7 +85,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
-            :page-size="4"
+            :page-size="pagesize"
             layout="prev, pager, next, jumper"
             :total="totalStation"
             class="departPaging"
@@ -147,6 +149,8 @@ export default {
     return {
       // 批量删除是否可用
       noAnySelection: true,
+      // 每页数据
+      pagesize: 4,
       // 总数据条数
       totalStation: 0,
       // 分页栏中当前页
@@ -177,11 +181,15 @@ export default {
         .get(
           "http://127.0.0.1:8888/trainstationbypage?current=" +
             this.currentPage +
-            "&size=4"
+            "&size="+this.pagesize
         )
         .then((response) => {
           this.trainstations = response.data.records;
           this.totalStation = response.data.total;
+          if(this.currentPage>Math.ceil(this.totalStation/this.pagesize)){
+            this.currentPage--;
+            this.querytrainstations()
+          }
           console.log(response.data);
         });
     },
@@ -209,6 +217,7 @@ export default {
 
     // 删除车站
     deletetrainstation(index, row) {
+      let that=this
       console.log(index);
       axios
         .delete("http://127.0.0.1:8888/trainstation/" + row["trainstationId"])
@@ -222,8 +231,17 @@ export default {
               type: "success",
               duration: 1500,
             });
+            this.querytrainstations()
+            that.$refs.multipleTable.clearSelection();
           }
-          this.querytrainstations();
+          else{
+            this.$notify({
+              title: "失败",
+              message: "删除失败",
+              type: "error",
+              duration: 1500,
+            });
+          }
           this.flush();
         });
     },
@@ -235,7 +253,6 @@ export default {
         .then((response) => {
           console.log(response);
           if (response.data.code == "201") {
-            this.input = "";
             this.$notify({
               title: "成功",
               message: "添加成功",
@@ -244,7 +261,6 @@ export default {
             });
           }
           else{
-            this.input = "";
             this.$notify({
               title: "失败",
               message: "添加失败",
@@ -275,12 +291,6 @@ export default {
 
     // 刷新所有车站信息
     flush($event) {
-      console.log($event);
-      let target = $event.target;
-      if (target.nodeName == "I") {
-        target = $event.target.parentNode;
-      }
-      target.blur();
       this.querytrainstations();
       this.input = "";
     },
@@ -301,10 +311,12 @@ export default {
       this.addVisible = true;
     },
 
+    
     handleAddSaveClick(trainstation) {
       this.addtrainstation(trainstation);
       this.addVisible = false;
     },
+
     // 当选中项发生改变时
     handleSelectionChange(selection) {
       console.log(selection);
@@ -313,9 +325,14 @@ export default {
       this.hasAnySelection();
     },
 
+    // 保留之前选中的数据
+    rowKey(row) {
+        return row.trainstationId
+    },
+
     // 批量删除车站
     batchDelete(rows) {
-      let that = this;
+      let that=this
       console.log(rows);
       if (rows.length !== 0) {
         that
@@ -335,14 +352,19 @@ export default {
                     type: "success",
                     duration: 1500,
                   });
+                  that.$refs.multipleTable.clearSelection();
                   that.querytrainstations();
                   that.ids=[]
                 }
+                else{
+                  that.$message({
+                    message: "删除失败",
+                    type: "error",
+                    duration: 1500,
+                  });
+                }
               });
           })
-          .then(() => {
-            that.input = "";
-          });
       } else {
         that.$message("未选择数据！");
       }

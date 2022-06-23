@@ -34,36 +34,25 @@
           style="width: 100%"
           stripe
           :row-class-name="tableRowClassName"
+          :row-key="rowKey"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="" width="120" prop="imageT">
+          <el-table-column :reserve-selection="true" type="selection" width="55"></el-table-column>
+          <el-table-column :reserve-selection="true" prop="trainName" label="列车简称" width="300">
             <template slot-scope="scope">
-              <span v-if="scope.row.visible">
-                <img :src="scope.row.img" alt="" class="imgTrain" />
-              </span>
-              <el-input v-else v-model="scope.row.img"></el-input>
+              <span v-if="scope.row.visible">{{ scope.row.trainId }}</span>
+              <el-input v-else v-model="scope.row.trainId" disabled></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="fullName" label="列车全称" width="120">
+          <el-table-column :reserve-selection="true" prop="trainName" label="列车全称" width="300">
             <template slot-scope="scope">
-              <span v-if="scope.row.visible">{{ scope.row.fullName }}</span>
-              <el-input v-else v-model="scope.row.fullName"></el-input>
+              <span v-if="scope.row.visible">{{ scope.row.trainName }}</span>
+              <el-input v-else v-model="scope.row.trainName"></el-input>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="easyName"
-            label="列车简称"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">
-              <span v-if="scope.row.visible">{{ scope.row.easyName }}</span>
-              <el-input v-else v-model="scope.row.easyName"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column
+          <el-table-column :reserve-selection="true"
             prop="trainSpeed"
-            label="列车速度"
+            label="列车速度(km/h)"
             show-overflow-tooltip
           >
             <template slot-scope="scope">
@@ -71,27 +60,35 @@
               <el-input v-else v-model="scope.row.trainSpeed"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" class="operateButton">
+          <el-table-column :reserve-selection="true" label="操作" class="operateButton">
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                v-if="scope.row.visible"
                 @click="handleEdit(scope.$index, scope.row)"
+                v-if="scope.row.visible"
+                :disabled="!editShow"
                 >编辑</el-button
               >
               <el-button
                 size="mini"
-                v-else
-                @click="handleEdit(scope.$index, scope.row)"
+                @click="handleFinish(scope.$index, scope.row)"
+                v-if="!scope.row.visible"
               >
                 完成</el-button
               >
-
+              <el-button
+                size="mini"
+                @click="handleCancel(scope.$index, scope.row)"
+                v-if="!scope.row.visible"
+              >
+                取消</el-button
+              >
               <el-popconfirm
                 title="确定删除这条数据吗？"
                 icon="el-icon-info"
                 icon-color="red"
-                @confirm="handleDelete(scope.$index, scope.row)"
+                @confirm="handleDelete(scope.row)"
+                v-if="scope.row.visible"
               >
                 <el-button slot="reference" size="mini" type="danger"
                   >删除</el-button
@@ -106,13 +103,14 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
-            :page-size="8"
+            :page-size="pagesize"
             layout="prev, pager, next, jumper"
-            :total="80"
+            :total="tableTotal"
             class="departPaging"
           >
           </el-pagination>
         </div>
+        <!-- 添加车型弹出框 -->
         <el-drawer
           title="添加车型"
           :before-close="handleClose"
@@ -123,23 +121,24 @@
         >
           <div class="demo-drawer__content formStyle">
             <el-form :model="typeForm" :rules="rules" ref="typeForm">
-              <el-form-item label="图片url" label-width="80px" prop="img">
-                <el-input v-model="typeForm.img" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="列车全称" label-width="80px" prop="fullName">
+              <el-form-item label="列车简称" label-width="80px" prop="trainId">
                 <el-input
-                  v-model="typeForm.fullName"
-                  autocomplete="off"
-                ></el-input>
-              </el-form-item>
-              <el-form-item label="列车简称" label-width="80px" prop="easyName">
-                <el-input
-                  v-model="typeForm.easyName"
+                  v-model="typeForm.trainId"
                   autocomplete="off"
                 ></el-input>
               </el-form-item>
               <el-form-item
-                label="列车速度"
+                label="列车全称"
+                label-width="80px"
+                prop="trainName"
+              >
+                <el-input
+                  v-model="typeForm.trainName"
+                  autocomplete="off"
+                ></el-input>
+              </el-form-item>
+              <el-form-item
+                label="列车速度(km/h)"
                 label-width="80px"
                 prop="trainSpeed"
               >
@@ -163,11 +162,37 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
+  mounted() {
+    this.querytrains();
+  },
   methods: {
+    // 分页查询所有车型
+    querytrains() {
+      axios
+        .get(
+          "http://127.0.0.1:8888/trainpage?current=" +
+            this.currentPage +
+            "&size="+this.pagesize
+        )
+        .then((response) => {
+          console.log(response);
+          this.tableData = [];
+          response.data.data.records.forEach((element) => {
+            element.visible = true;
+            this.tableData.push(element);
+          });
+          this.tableTotal = response.data.data.total;
+          if(this.currentPage>Math.ceil(this.tableTotal/this.pagesize)){
+            this.currentPage--;
+            this.querytrains()
+          }
+        });
+    },
     // 点击批量删除
     batchDelete() {
-      this.$confirm("此操作将删除多条, 是否继续?", "提示", {
+      this.$confirm("此操作将删除"+this.multipleSelection.length+"条数据, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -179,17 +204,14 @@ export default {
             type: "error",
           })
             .then(() => {
-              // 设置参数
-              let data = this.multipleSelection;
-              // 发送网络请求
-              // 赋值操作
+              this.multipleSelection.forEach(element => {
+                this.handleDelete(element)
+              });
+              // 清空multipleTable
+              this.$refs.multipleTable.clearSelection();
               // 清空multipleSelection
               this.multipleSelection = [];
-              // 重新获取数据 handleCurrentChange()方法
-              this.$message({
-                type: "success",
-                message: "删除成功!",
-              });
+              this.querytrains()
             })
             .catch(() => {
               this.$message({
@@ -205,30 +227,28 @@ export default {
           });
         });
     },
-    
+
     // 当pageSize改变时
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
     // 当当前页发生改变时
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      // 获取当前页,设置参数
-      let data = {
-        currentPage: this.currentPage,
-      };
-      // 发送网络请求
-      // 将请求到的数据赋值给tableData
+      this.querytrains()
     },
     //点击表格方框，选中一条信息
     handleSelectionChange(val) {
-      this.multipleSelection = val;
+      this.multipleSelection=val;
+      console.log(this.multipleSelection);
       // 当选择信息时，判断是否可用批量删除
       this.hasAnySelection();
     },
+    // 保留之前选中的数据
+    rowKey(row) {
+        return row.trainId
+    },
     // 设置表格内每一行的样式，呈斑马条纹样式
     tableRowClassName({ row, rowIndex }) {
-      console.log(rowIndex);
       if (rowIndex === 1) {
         return "warning-row";
       } else if (rowIndex === 3) {
@@ -238,18 +258,78 @@ export default {
     },
     // 点击编辑按钮，隐藏编辑按钮，显示完成按钮和输入框
     handleEdit(index, row) {
+      console.log(row);
       row.visible = !row.visible;
-      console.log(this.tableData[index].visible);
+      // 设置其他行编辑按钮失效
+      this.editShow = false;
+    },
+    // 点击取消按钮，显示编辑按钮，隐藏完成按钮和输入框，重新渲染数据
+    handleCancel(index, row) {
+      row.visible = !row.visible;
+      this.querytrains();
+      this.$message({
+        type: "info",
+        message: "取消修改!",
+      });
+      this.editShow = true;
+    },
+    // 点击完成按钮，显示编辑按钮，隐藏完成按钮和输入框，发送网络请求
+    handleFinish(index, row) {
+      this.editShow = true;
+      row.visible = !row.visible;
+      let data = {
+        trainId: row.trainId,
+        trainName: row.trainName,
+        trainSpeed: row.trainSpeed,
+      };
+      console.log(data);
+      axios
+        .put("http://127.0.0.1:8888/train/" + row.trainId, data)
+        .then((response) => {
+          if (response.data.code == 200) {
+            this.$notify({
+              title: "成功",
+              message: "修改成功",
+              type: "success",
+              duration: 1500,
+            });
+          } else {
+            this.$notify({
+              title: "失败",
+              message: "修改失败",
+              type: "error",
+              duration: 1500,
+            });
+          }
+          this.querytrains();
+        });
     },
     // 点击删除按钮，删除一条信息
-    handleDelete(index, row) {
-      this.tableData.splice(index, 1);
-      // 设置参数
-      let data = {
-        row,
-      };
-      // 发送网络请求
-      // 重新获取数据 handleCurrentChange()方法
+    handleDelete(row) {
+      axios
+        .delete("http://127.0.0.1:8888/train/" + row["trainId"])
+        .then((response) => {
+          console.log(response);
+          if (response.data.code == "204") {
+            this.input = "";
+            this.$notify({
+              title: "成功",
+              message: "已删除"+row["trainId"],
+              type: "success",
+              duration: 1500,
+            });
+            this.$refs.multipleTable.clearSelection();
+          }
+          else{
+            this.$notify({
+              title: "失败",
+              message: "删除失败",
+              type: "error",
+              duration: 1500,
+            });
+          }
+          this.querytrains();
+        });
     },
     // 查看是否有选中的信息
     hasAnySelection() {
@@ -259,12 +339,11 @@ export default {
         this.noAnySelection = true;
       }
     },
-    // 清空typeForm表单事件
+    // 清空typeForm表单
     clearTypeForm() {
       this.typeForm = {
-        img: "",
-        fullName: "",
-        easyName: "",
+        trainId: "",
+        trainName: "",
         trainSpeed: "",
       };
     },
@@ -272,7 +351,7 @@ export default {
     handleClose(done) {
       this.$confirm("确定要离开，将不会保存信息？")
         .then((_) => {
-          this.clearTypeForm()
+          this.clearTypeForm();
           done();
         })
         .catch((_) => {});
@@ -283,6 +362,7 @@ export default {
     },
     // 提交表单事件
     submitForm(formName) {
+      console.log(this.typeForm);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$confirm("是否要提交添加列车类型？", "提示", {
@@ -291,14 +371,27 @@ export default {
             type: "info",
           })
             .then(() => {
-              this.clearTypeForm()
-              this.cancelForm()
-              // 设置参数
+              console.log(this.typeForm);
               // 发送网络请求
-              this.$message({
-                type: "success",
-                message: "添加成功!",
-              });
+              axios
+                .post("http://127.0.0.1:8888/train", this.typeForm)
+                .then((response) => {
+                  console.log(response);
+                  if (response.data.code == 201) {
+                    this.$message({
+                      type: "success",
+                      message: "添加成功!",
+                    });
+                  } else {
+                    this.$message({
+                      type: "error",
+                      message: "添加失败!",
+                    });
+                  }
+                  this.querytrains()
+                  this.clearTypeForm();
+                  this.cancelForm();
+                });
             })
             .catch(() => {
               this.$message({
@@ -315,65 +408,33 @@ export default {
   },
   data() {
     return {
+      pagesize: 4,
       // 分页栏中当前页
       currentPage: 1,
       // 表格中的数据
-      tableData: [
-        {
-          img: "https://pic.baike.soso.com/ugc/baikepic2/4228/20210521133105-923552370_jpeg_1623_1080_726743.jpg/300",
-          fullName: "王小虎",
-          easyName: "上海市普陀区金沙江路 1518 弄",
-          trainSpeed: 100,
-          visible: true,
-        },
-        {
-          img: "https://pic.baike.soso.com/ugc/baikepic2/4228/20210521133105-923552370_jpeg_1623_1080_726743.jpg/300",
-          fullName: "王小虎",
-          easyName: "上海市普陀区金沙江路 1518 弄",
-          trainSpeed: 100,
-          visible: true,
-        },
-        {
-          img: "https://pic.baike.soso.com/ugc/baikepic2/4228/20210521133105-923552370_jpeg_1623_1080_726743.jpg/300",
-          fullName: "王小虎",
-          easyName: "上海市普陀区金沙江路 1518 弄",
-          trainSpeed: 100,
-          visible: true,
-        },
-        {
-          img: "https://pic.baike.soso.com/ugc/baikepic2/4228/20210521133105-923552370_jpeg_1623_1080_726743.jpg/300",
-          fullName: "王小虎",
-          easyName: "上海市普陀区金沙江路 1518 弄",
-          trainSpeed: 100,
-          visible: true,
-        },
-        {
-          img: "https://pic.baike.soso.com/ugc/baikepic2/4228/20210521133105-923552370_jpeg_1623_1080_726743.jpg/300",
-          fullName: "王小虎",
-          easyName: "上海市普陀区金沙江路 1518 弄",
-          trainSpeed: 100,
-          visible: true,
-        },
-      ],
+      tableData: [],
+      // 数据总条数
+      tableTotal: 0,
       // 选中的表格中的数据
       multipleSelection: [],
       // 批量删除是否可用
       noAnySelection: true,
+      // 增加表单是否出现
       dialog: false,
-      loading: false,
+      // 编辑是否可用
+      editShow: true,
+      // 增加的弹出框表单数据
       typeForm: {
-        img: "",
-        fullName: "",
-        easyName: "",
+        trainId: "",
+        trainName: "",
         trainSpeed: "",
       },
       rules: {
-        img: [{ required: true, message: "请输入图片的url", trigger: "blur" }],
-        fullName: [
-          { required: true, message: "请输入列车全称", trigger: "change" },
-        ],
-        easyName: [
+        trainId: [
           { required: true, message: "请输入列车简称", trigger: "change" },
+        ],
+        trainName: [
+          { required: true, message: "请输入列车全称", trigger: "change" },
         ],
         trainSpeed: [
           { required: true, message: "请输入列车速度", trigger: "change" },

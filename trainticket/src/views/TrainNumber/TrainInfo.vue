@@ -7,7 +7,7 @@
           <el-col :span="10">
             <el-input
               v-model="keyword"
-              placeholder="请输入起始站或终点站的ID"
+              placeholder="请输入车次号查询"
             ></el-input>
           </el-col>
           <el-col :span="1">
@@ -38,6 +38,7 @@
             >
           </el-col>
         </el-row>
+        <!-- 数据表 -->
         <el-table
           ref="multipleTable"
           :data="trainNumbers"
@@ -45,30 +46,31 @@
           style="width: 100%"
           stripe
           :row-class-name="tableRowClassName"
+          :row-key="rowKey"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="65"></el-table-column>
-          <el-table-column prop="routertrainId" label="车次" width="100">
+          <el-table-column :reserve-selection="true" type="selection" width="65"></el-table-column>
+          <el-table-column :reserve-selection="true" prop="routertrainId" label="车次" width="100">
           </el-table-column>
-          <el-table-column prop="routertrainType" label="车次类型" width="140">
+          <el-table-column :reserve-selection="true" prop="routertrainType" label="车次类型" width="140">
           </el-table-column>
-          <el-table-column prop="departureStationId" label="起始站" width="140">
+          <el-table-column :reserve-selection="true" prop="departureStationId" label="起始站" width="140">
           </el-table-column>
-          <el-table-column prop="arrivalStationId" label="终点站" width="140">
+          <el-table-column :reserve-selection="true" prop="arrivalStationId" label="终点站" width="140">
           </el-table-column>
-          <el-table-column
+          <el-table-column :reserve-selection="true"
             prop="departureTime"
             label="起始站出发时间"
             width="180"
           >
           </el-table-column>
-          <el-table-column
+          <el-table-column :reserve-selection="true"
             prop="arrivalTime"
             label="终点站到站时间"
             width="180"
           >
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column :reserve-selection="true" label="操作">
             <template slot-scope="scope">
               <el-button
                 @click="handleEditClick(scope.$index, scope.row)"
@@ -95,7 +97,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="currentPage"
-            :page-size="4"
+            :page-size="pagesize"
             layout="prev, pager, next, jumper"
             :total="totalStation"
             class="departPaging"
@@ -103,6 +105,7 @@
           </el-pagination>
         </div>
       </el-main>
+      <!-- 弹出窗编辑列车 -->
       <el-dialog title="编辑列车" :visible.sync="dialogVisible">
         <el-form :modle="trainNumbers">
           <el-form-item label="车次">
@@ -143,23 +146,24 @@
           </el-form-item>
         </el-form>
       </el-dialog>
+      <!-- 弹出窗添加列车 -->
       <el-dialog title="添加列车" :visible.sync="addVisible">
         <el-form :modle="newTrainNumbers">
           <el-form-item label="车次">
-            <el-input v-model="trainNumbers.routertrainId"></el-input>
+            <el-input v-model="newTrainNumbers.routertrainId"></el-input>
           </el-form-item>
           <el-form-item label="车次类型">
-            <el-input v-model="trainNumbers.routertrainType"></el-input>
+            <el-input v-model="newTrainNumbers.routertrainType"></el-input>
           </el-form-item>
           <el-form-item label="起始站">
-            <el-input v-model="trainNumbers.departureStationId"></el-input>
+            <el-input v-model="newTrainNumbers.departureStationId"></el-input>
           </el-form-item>
           <el-form-item label="终点站">
-            <el-input v-model="trainNumbers.arrivalStationId"></el-input>
+            <el-input v-model="newTrainNumbers.arrivalStationId"></el-input>
           </el-form-item>
           <el-form-item label="起始站出发时间">
             <el-date-picker
-              v-model="trainNumbers.departureTime"
+              v-model="newTrainNumbers.departureTime"
               type="datetime"
               placeholder="选择日期时间"
               align="right"
@@ -168,7 +172,7 @@
           </el-form-item>
           <el-form-item label="终点站到站时间">
             <el-date-picker
-              v-model="trainNumbers.arrivalTime"
+              v-model="newTrainNumbers.arrivalTime"
               type="datetime"
               placeholder="选择日期时间"
               align="right"
@@ -176,9 +180,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button @click="handleAddSaveClick(newTrainNumber)"
-              >保存</el-button
-            >
+            <el-button @click="addTrain()">保存</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -192,8 +194,17 @@ export default {
   data() {
     return {
       keyword: "",
+      // 要编辑的车次信息
       trainNumbers: [],
-      newTrainNumbers: [],
+      // 要添加的车次信息
+      newTrainNumbers: {
+        routertrainId: "",
+        routertrainType: "",
+        departureStationId: "",
+        arrivalStationId: "",
+        departureTime: "",
+        arrivalTime: "",
+      },
       dialogVisible: false,
       deleteVisible: false,
       addVisible: false,
@@ -203,6 +214,7 @@ export default {
       totalStation: 0,
       // 分页栏中当前页
       currentPage: 1,
+      pagesize: 4,
       // 要删除的车次表
       ids: [],
       // 选中的数据
@@ -216,14 +228,19 @@ export default {
         .get(
           "http://127.0.0.1:8888/train_number_page?current=" +
             this.currentPage +
-            "&size=4"
+            "&size="+this.pagesize
         )
         .then((response) => {
           this.trainNumbers = response.data.data.records;
           this.totalStation = response.data.data.total;
+          if(this.currentPage>Math.ceil(this.totalStation/this.pagesize)){
+            this.currentPage--;
+            this.queryAll()
+          }
         });
     },
 
+    // 更改车次信息
     saveTrain(trainNumbers) {
       axios
         .put(
@@ -243,38 +260,61 @@ export default {
         .delete("http://127.0.0.1:8888/train_number/" + row["routertrainId"])
         .then((response) => {
           console.log(response);
-          this.queryAll();
-          if(response.data.code==200){
+          if (response.data.code == 204) {
             this.$message({
-                type: "success",
-                message: row.routertrainId+"车次删除成功!",
-              });
-          }else{
+              type: "success",
+              message: row.routertrainId + "车次删除成功!",
+            });
+            this.queryAll();
+            this.$refs.multipleTable.clearSelection();
+          } else {
             this.$message({
-                type: "error",
-                message: row.routertrainId+"车次删除失败!",
-              });
+              type: "error",
+              message: row.routertrainId + "车次删除失败!",
+            });
           }
         });
     },
 
     // 增加车次信息
-    addTrain(trainNumbers) {
+    addTrain() {
+      this.addVisible = false;
+      this.newTrainNumbers.departureTime=this.setTimeToSec(this.newTrainNumbers.departureTime)
+      this.newTrainNumbers.arrivalTime=this.setTimeToSec(this.newTrainNumbers.arrivalTime)
+      console.log(this.newTrainNumbers);
       axios
-        .post("http://127.0.0.1:8888/train_number", trainNumbers)
+        .post("http://127.0.0.1:8888/train_number", this.newTrainNumbers)
         .then((response) => {
           console.log(response);
-          this.queryAll();
+          if (response.data.code == 201) {
+            this.$message({
+              type: "success",
+              message: "添加成功",
+            });
+            this.newTrainNumbers = {};
+            this.queryAll();
+          } else {
+            this.$message({
+              type: "error",
+              message: "添加失败",
+            });
+          }
         });
     },
 
     // 搜索栏搜索车次信息
     handleBtnClick(keyword) {
       console.log(keyword);
+      console.log(this.trainNumbers);
       axios
         .get("http://127.0.0.1:8888/train_number/" + keyword)
         .then((response) => {
-          this.trainNumbers = response.data.data;
+          console.log(response.data.data);
+          this.trainNumbers = [];
+          if (response.data.data) 
+            this.trainNumbers.push(response.data.data);
+          this.totalStation = 1;
+          console.log(this.trainNumbers);
         });
     },
 
@@ -289,15 +329,20 @@ export default {
       this.dialogVisible = false;
     },
 
+    // 时间转换器
+    setTimeToSec(date){
+      var year = date.getFullYear(); 
+      var month = date.getMonth() + 1; 
+      var day = date.getDate(); 
+      var hour = date.getHours(); 
+      var minute = date.getMinutes(); 
+      var second = date.getSeconds(); 
+      return year + "-" + month + "-" + day+ " " +hour+ ":" +minute+ ":" +second;
+    },
+
     // 点击添加车次按钮，显示出添加框
     handleAddClick() {
       this.addVisible = true;
-    },
-
-
-    handleAddSaveClick(trainNumber) {
-      this.addrainNumber(trainNumber);
-      this.addVisible = false;
     },
 
     checkDetails(index, row) {
@@ -339,12 +384,13 @@ export default {
           })
             .then(() => {
               // 批量删除
-              rows.forEach(element => {
-                this.deleteTrainNumber(element)
+              rows.forEach((element) => {
+                this.deleteTrainNumber(element);
               });
+              this.queryAll();
               // 清空multipleSelection
               this.multipleSelection = [];
-              this.ids=[];
+              this.ids = [];
             })
             .catch(() => {
               this.$message({
@@ -366,6 +412,10 @@ export default {
       this.multipleSelection = selection;
       this.ids = selection;
       this.hasAnySelection();
+    },
+    // 保留之前选中的数据
+    rowKey(row) {
+        return row.routertrainId
     },
     // 查看是否有选中的信息
     hasAnySelection() {
@@ -399,7 +449,6 @@ export default {
     this.queryAll();
   },
 };
- 
 </script>
 <style>
 .tableButton button {
