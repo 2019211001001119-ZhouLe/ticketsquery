@@ -4,43 +4,26 @@
       <el-row class="loginBox">
         <el-col :span="6" :offset="9">
           <el-container>
-            <el-header class="proHearder"><h1>后台管理系统</h1></el-header>
+            <el-header class="proHearder">
+              <h1>后台管理系统</h1>
+            </el-header>
             <el-main class="proMain">
               <div class="grid-content titleH">
                 <h1>用户登陆</h1>
-                <el-form
-                  :model="numberValidateForm"
-                  ref="numberValidateForm"
-                  class="demo-ruleForm"
-                  :rules="rules"
-                >
+                <el-form :model="numberValidateForm" ref="numberValidateForm" class="demo-ruleForm" :rules="rules">
                   <el-form-item prop="username">
-                    <el-input
-                      type="username"
-                      placeholder="用户名"
-                      prefix-icon="el-icon-s-custom"
-                      v-model="numberValidateForm.username"
-                      autocomplete="off"
-                    >
+                    <el-input type="username" placeholder="用户名" prefix-icon="el-icon-s-custom"
+                      v-model="numberValidateForm.username" autocomplete="off">
                     </el-input>
                   </el-form-item>
                   <el-form-item prop="password">
-                    <el-input
-                      type="password"
-                      placeholder="密码"
-                      prefix-icon="el-icon-lock"
-                      v-model="numberValidateForm.password"
-                      show-password
-                      autocomplete="off"
-                    >
+                    <el-input type="password" placeholder="密码" prefix-icon="el-icon-lock"
+                      v-model="numberValidateForm.password" show-password autocomplete="off">
                     </el-input>
                   </el-form-item>
                   <el-form-item>
-                    <el-button
-                      type="primary"
-                      @click="submitForm('numberValidateForm')"
-                      >登陆<i class="el-icon-right"></i
-                    ></el-button>
+                    <el-button type="primary" @click="submitForm('numberValidateForm')">登陆<i class="el-icon-right"></i>
+                    </el-button>
                   </el-form-item>
                 </el-form>
               </div>
@@ -55,6 +38,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     var validateUser = (rule, value, callback) => {
@@ -90,27 +74,34 @@ export default {
           // 设置对应的参数
           let data = {
             // 用户名
-            username: this.username,
+            adminId: this.numberValidateForm.username,
             // 密码
-            password: this.password
+            adminPwd: this.numberValidateForm.password
           }
           // 发送网络请求
-          // let res = await get('/BigWork/login.php', data)
-          // 判断用户登录是否成功
-          if (res.data.status == 200) {
-            // 登录成功 保存token
-            setToken(res.data.data.token)
-            // 跳转到首页
-            this.$router.push('/manage/home')
-          }else{
-            // 登录失败 提示一些登录失败相关的信息
+          // axios.get('/admin/login', {params:data}).then((response) => {
+          axios({
+            method: 'get',
+            url: 'admin/login',
+            params: data
+          }).then((response) => {
+            // 判断用户登录是否成功
+            if (response.data.code == 200) {
+              // 登录成功 保存token
+              // setToken(response.data.token)
+              // 跳转到首页
+              this.$router.push('/manage/home')
+            } else {
+              // 登录失败 提示一些登录失败相关的信息
               this.$notify.error({
                 title: "登陆失败",
                 message: "账号或密码错误",
               });
-              this.numberValidateForm.username=""
-              this.numberValidateForm.password=""
-          }
+              this.numberValidateForm.username = ""
+              this.numberValidateForm.password = ""
+            }
+          })
+
           // 拿到用户的token进行保存
           // 跳转到首页
         } else {
@@ -133,24 +124,34 @@ export default {
   color: white;
   margin-top: 50px;
 }
+
 .proMain {
   background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  border: solid;
+  border-width: thin;
+  border-color: #d3dce6;
 }
+
 .proHearder {
   text-align: center;
   line-height: 60px;
 }
+
 .loginBox h1 {
   color: white;
   font-weight: 300 !important;
   font-size: 24px;
 }
+
 .loginBox {
   margin: 160px 0;
 }
+
 #app {
   overflow: hidden;
 }
+
 #bgimage {
   width: 100%;
   height: 100%;
@@ -165,28 +166,35 @@ export default {
   left: 0;
   z-index: -100;
 }
+
 .el-row {
   margin-bottom: 20px;
 }
+
 .el-col {
   border-radius: 4px;
 }
+
 .bg-purple {
   background: #d3dce6;
 }
+
 .grid-content {
   border-radius: 4px;
 }
+
 .row-bg {
   padding: 10px 0;
   background-color: #f9fafc;
 }
+
 .titleH h1 {
   color: white;
   font-weight: 300 !important;
   font-size: 18px;
   margin-bottom: 25px;
 }
+
 .titleH .el-button {
   float: right;
 }

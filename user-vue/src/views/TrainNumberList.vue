@@ -20,11 +20,11 @@
         >
         <el-table-column fixed prop="routertrainId" label="车次" width="260">
         </el-table-column>
-        <el-table-column prop="trainstationId" label="始发站" width="260">
+        <el-table-column prop="trainstationId" label="经过站" width="260">
         </el-table-column>
-        <el-table-column prop="departureTime" label="始发时间" width="260">
+        <el-table-column prop="departureTime" label="该站始发时间" width="260">
         </el-table-column>
-        <el-table-column prop="arrivalTime" label="到达时间" width="260">
+        <el-table-column prop="arrivalTime" label="到达下一站时间" width="260">
         </el-table-column>
         <el-table-column prop="laterTime" label="晚点时间" width="260">
         </el-table-column>

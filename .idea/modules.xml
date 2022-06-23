@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ticketsquery.iml" filepath="$PROJECT_DIR$/.idea/ticketsquery.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ticketsquery-demo/ticketsquery-demo.iml" filepath="$PROJECT_DIR$/ticketsquery-demo/ticketsquery-demo.iml" />
-    </modules>
-  </component>
-</project>
