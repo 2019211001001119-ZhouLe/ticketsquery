@@ -45,26 +45,27 @@
         </div>
       </div>
     </div>
- <!--会员服务-->
+    <!--会员服务-->
     <div class="tl5">
-      <div><a href="https://cx.12306.cn/tlcx/index.html"><img src="../../public\imgs\abanner01.jpg" width="100%" /></a></div>
+      <div>
+        <a href="https://cx.12306.cn/tlcx/index.html"
+          ><img src="../../public\imgs\abanner01.jpg" width="100%"
+        /></a>
+      </div>
       <div class="tl5_fw">
         <a href="https://exservice.12306.cn/excater/index.html">
           <img src="../../public\imgs\abanner02.jpg" width="100%" />
         </a>
-        
       </div>
       <div class="tl5_fw2">
         <a href="https://kyfw.12306.cn/otn/resources/login.html">
           <img src="../../public\imgs\abanner03.jpg" width="100%" />
         </a>
-        
       </div>
       <div class="tl5_fw tl5_fw2">
         <a href="https://kyfw.12306.cn/otn/resources/login.html">
-           <img src="../../public\imgs\abanner04.jpg" width="100%" />
+          <img src="../../public\imgs\abanner04.jpg" width="100%" />
         </a>
-       
       </div>
     </div>
     <!--信息位置展示-->
@@ -76,10 +77,14 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <dv-scroll-board
-          :config="config"
-          style="width: 1204px; height: 255px"
-        />
+        <el-table :data="newsData" height="250" ref="table" style="width: 100%">
+          <el-table-column prop="newsId" label="热搜排行" width="180">
+          </el-table-column>
+          <el-table-column prop="newsTitle" label="标题" width="780">
+          </el-table-column>
+          <el-table-column prop="newsPublishTime" label="发布时间">
+          </el-table-column>
+        </el-table>
       </div>
     </div>
     <div class="tl10"></div>
@@ -94,7 +99,7 @@
 export default {
   data() {
     return {
-      newsList:[],
+      newsData: [],
       formInline: {
         trainNunber: "",
       },
@@ -125,17 +130,18 @@ export default {
     // 自动获取首页新闻
     this.gteNews();
   },
+  mounted() {
+    // 初始化表格
+    this.init();
+  },
   methods: {
-    
     // 获取新闻列表
     gteNews() {
       // 把vue对象先保存到第三方变量中
       let _this = this;
-      this.myAxios
-        .get("/news/all")
-        .then(function (res) {
-          _this.newsList = res.data.data;
-        })
+      this.myAxios.get("/news/all").then(function (res) {
+        _this.newsData = res.data.data;
+      });
     },
     toHome() {
       // 跳转到路线查询页面
@@ -156,12 +162,28 @@ export default {
         },
       });
     },
-     toNewsPage() {
+    toNewsPage() {
       // 跳转到新闻查询页面
       this.$router.push({
         // 页面的路径
         path: "/news",
       });
+    },
+    init() {
+      // 拿到表格挂载后的真实DOM
+      const table = this.$refs.table;
+      // 拿到表格中承载数据的div元素
+      const divData = table.bodyWrapper;
+      // 拿到元素后，对元素进行定时增加距离顶部距离，实现滚动效果(此配置为每100毫秒移动1像素)
+      setInterval(() => {
+        // 元素自增距离顶部1像素
+        divData.scrollTop += 1;
+        // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
+        if (divData.clientHeight + divData.scrollTop == divData.scrollHeight) {
+          // 重置table距离顶部距离
+          divData.scrollTop = 0;
+        }
+      }, 100);
     },
   },
 };

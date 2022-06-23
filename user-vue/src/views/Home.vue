@@ -29,11 +29,7 @@
       <div class="tl3_select">
         <div class="tl3_select1">
           <span>路线查询</span>
-          <el-form
-            :inline="true"
-            :model="formInline"
-            class="demo-form-inline"
-          >
+          <el-form :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item label="始发站">
               <el-input
                 v-model="formInline.star"
@@ -83,10 +79,14 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <dv-scroll-board
-          :config="config"
-          style="width: 1204px; height: 255px"
-        />
+        <el-table :data="newsData" height="250" ref="table" style="width: 100%">
+          <el-table-column prop="newsId" label="热搜排行" width="180">
+          </el-table-column>
+          <el-table-column prop="newsTitle" label="标题" width="780">
+          </el-table-column>
+          <el-table-column prop="newsPublishTime" label="发布时间">
+          </el-table-column>
+        </el-table>
       </div>
     </div>
     <div class="tl10"></div>
@@ -106,26 +106,6 @@ export default {
         star: "",
         end: "",
       },
-      config: {
-        data: [
-          ["公告"],
-          ["关于调整互联网、电话订票起售时间的公告  (2014-11-26)"],
-          ["中国铁路南宁局集团有限公司加开列车公告  (2022-06-11)"],
-          [
-            "中国铁路成都局集团有限公司关于2022年6月11日至19日加开部分列车的公告  (2022-06-11)",
-          ],
-          [
-            "中国铁路上海局集团有限公司关于2022年6月10日-2022年6月12日增开部分旅客列车的公告  (2022-06-09)",
-          ],
-        ],
-        index: true,
-        columnWidth: [60],
-        align: ["center"],
-        hoverPause: true,
-        headerBGC: "#bdc3c7",
-        oddRowBGC: "#bdc3c7",
-        evenRowBGC: "#bdc3c7",
-      },
     };
   },
   // 钩子函数
@@ -133,13 +113,16 @@ export default {
     // 自动获取首页新闻
     this.gteNews();
   },
+  mounted() {
+    // 初始化表格
+    this.init();
+  },
   methods: {
     // 获取新闻列表
     gteNews() {
       // 把vue对象先保存到第三方变量中
       let _this = this;
       this.myAxios.get("/news/all").then(function (res) {
-        // console.log(res.data.data);
         _this.newsData = res.data.data;
       });
     },
@@ -169,6 +152,22 @@ export default {
           arrivalStation: this.formInline.end,
         },
       });
+    },
+    init() {
+      // 拿到表格挂载后的真实DOM
+      const table = this.$refs.table;
+      // 拿到表格中承载数据的div元素
+      const divData = table.bodyWrapper;
+      // 拿到元素后，对元素进行定时增加距离顶部距离，实现滚动效果(此配置为每100毫秒移动1像素)
+      setInterval(() => {
+        // 元素自增距离顶部1像素
+        divData.scrollTop += 1;
+        // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
+        if (divData.clientHeight + divData.scrollTop == divData.scrollHeight) {
+          // 重置table距离顶部距离
+          divData.scrollTop = 0;
+        }
+      }, 100);
     },
   },
 };
