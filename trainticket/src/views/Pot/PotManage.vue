@@ -5,14 +5,6 @@
       <el-card class="box-card">
         <el-header></el-header>
         <el-row>
-          <el-col :span="1">
-            <el-button
-              @click="batchDelete(ids)"
-              style="margin-left: -2px"
-              icon="el-icon-delete-solid"
-              circle
-            ></el-button>
-          </el-col>
           <el-col :span="10">
             <el-input
               clearable
@@ -28,9 +20,35 @@
               circle
             ></el-button>
           </el-col>
+          <el-col :span="1">
+            <el-button
+              @click="flush($event)"
+              style="margin-left: 0px"
+              icon="el-icon-refresh"
+              circle
+            ></el-button>
+          </el-col>
+          <el-col :span="12" class="tableButton">
+            <el-button
+              type="danger"
+              plain
+              :disabled="noAnySelection"
+              @click="batchDelete(ids)"
+              ><span class="el-icon-close"></span> 批量删除</el-button
+            >
+            <el-button type="primary" @click="handleAddClick()"
+              ><span class="el-icon-plus"></span> 添加车站</el-button
+            >
+          </el-col>
         </el-row>
-        <data-tables
+
+        <el-table
+          ref="multipleTable"
           :data="trainstations"
+          tooltip-effect="dark"
+          style="width: 100%"
+          stripe
+          :row-class-name="tableRowClassName"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="65"></el-table-column>
@@ -40,22 +58,9 @@
           </el-table-column>
           <el-table-column prop="provinceName" label="所属省" width="200">
           </el-table-column>
-          <el-table-column prop="cityName" label="所属市" width="200">
+          <el-table-column prop="cityName" label="所属市" width="300">
           </el-table-column>
-          <el-table-column>
-            <template slot="header">
-              <el-button
-                @click="handleAddClick()"
-                icon="el-icon-plus"
-                circle
-              ></el-button>
-              <el-button
-                @click="flush($event)"
-                style="margin-left: 0px"
-                icon="el-icon-refresh"
-                circle
-              ></el-button>
-            </template>
+          <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button
                 @click="handleEditClick(scope.$index, scope.row)"
@@ -71,9 +76,21 @@
               </el-popconfirm>
             </template>
           </el-table-column>
-        </data-tables>
-
-        <el-dialog title="编辑列车" :visible.sync="dialogVisible">
+        </el-table>
+        <!-- 分页栏 -->
+        <div class="block">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size="4"
+            layout="prev, pager, next, jumper"
+            :total="totalStation"
+            class="departPaging"
+          >
+          </el-pagination>
+        </div>
+        <el-dialog title="编辑车站" :visible.sync="dialogVisible">
           <el-form :modle="trainstation">
             <el-form-item label="车站编号">
               <el-input
@@ -94,7 +111,7 @@
             </el-form-item>
           </el-form>
         </el-dialog>
-        <el-dialog title="添加列车" :visible.sync="addVisible">
+        <el-dialog title="添加车站" :visible.sync="addVisible">
           <el-form :modle="newtrainstation">
             <el-form-item label="车站编号">
               <el-input v-model="newtrainstation.trainstationId"></el-input>
@@ -128,6 +145,12 @@ import axios from "axios";
 export default {
   data() {
     return {
+      // 批量删除是否可用
+      noAnySelection: true,
+      // 总数据条数
+      totalStation: 0,
+      // 分页栏中当前页
+      currentPage: 1,
       trainstations: [], // 存放所有车站信息
       trainstation: [], // 存放编辑车站信息
       newtrainstation: {
@@ -150,10 +173,17 @@ export default {
   methods: {
     // 查询所有车站
     querytrainstations() {
-      axios.get("http://127.0.0.1:8888/trainstation").then((response) => {
-        this.trainstations = response.data.data;
-        console.log(response.data);
-      });
+      axios
+        .get(
+          "http://127.0.0.1:8888/trainstationbypage?current=" +
+            this.currentPage +
+            "&size=4"
+        )
+        .then((response) => {
+          this.trainstations = response.data.records;
+          this.totalStation = response.data.total;
+          console.log(response.data);
+        });
     },
 
     // 修改车站
@@ -200,8 +230,8 @@ export default {
 
     // 增加车站
     addtrainstation(trainstation) {
-      axios
-        .post("http://127.0.0.1:8888/trainstation", trainstation)
+      console.log(trainstation);
+      axios.post("http://127.0.0.1:8888/trainstation", trainstation)
         .then((response) => {
           console.log(response);
           if (response.data.code == "201") {
@@ -213,8 +243,18 @@ export default {
               duration: 1500,
             });
           }
+          else{
+            this.input = "";
+            this.$notify({
+              title: "失败",
+              message: "添加失败",
+              type: "error",
+              duration: 1500,
+            });
+          }
           this.querytrainstations();
-        });
+        })
+        .catch
     },
 
     // 通过车站名查询
@@ -227,6 +267,8 @@ export default {
       let data = this.input;
       axios.get("http://127.0.0.1:8888/trainstation/" + data).then((res) => {
         this.trainstations = res.data.data;
+        this.totalStation=1
+        this.currentPage=1
         console.log(res.data.data);
       });
     },
@@ -242,6 +284,7 @@ export default {
       this.querytrainstations();
       this.input = "";
     },
+
 
     handleEditClick(index, row) {
       console.log(index);
@@ -262,18 +305,15 @@ export default {
       this.addtrainstation(trainstation);
       this.addVisible = false;
     },
-
+    // 当选中项发生改变时
     handleSelectionChange(selection) {
       console.log(selection);
+      this.multipleSelection=selection
       this.ids = selection.map((item) => item.trainstationId);
-      this.multipleSelectionFlag = true;
-      if (this.multipleSelection.length == 0) {
-        // 如不进行判断则勾选完毕后批量删除按钮还是会在
-        this.multipleSelectionFlag = false;
-      }
+      this.hasAnySelection();
     },
 
-    // 批量删除房源
+    // 批量删除车站
     batchDelete(rows) {
       let that = this;
       console.log(rows);
@@ -296,6 +336,7 @@ export default {
                     duration: 1500,
                   });
                   that.querytrainstations();
+                  that.ids=[]
                 }
               });
           })
@@ -306,9 +347,44 @@ export default {
         that.$message("未选择数据！");
       }
     },
+    
+    // 查看是否有选中的信息
+    hasAnySelection() {
+      if (this.multipleSelection.length !== 0) {
+        this.noAnySelection = false;
+      } else {
+        this.noAnySelection = true;
+      }
+    },
+    // 当pageSize改变时
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    // 当当前页发生改变时
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.querytrainstations();
+    },
+    // 设置表格内每一行的样式，呈斑马条纹样式
+    tableRowClassName({ row, rowIndex }) {
+      console.log(rowIndex);
+      if (rowIndex === 1) {
+        return "warning-row";
+      } else if (rowIndex === 3) {
+        return "success-row";
+      }
+      return "";
+    },
   },
 };
 </script>
 <style>
-
+.tableButton button{
+  float: right;
+  margin: 0 20px;
+}
+.departPaging {
+  margin: 20px 0;
+  text-align: center;
+}
 </style>

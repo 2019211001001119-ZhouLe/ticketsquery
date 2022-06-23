@@ -23,6 +23,11 @@ import java.util.Map;
 public class TrainNumberController {
     @Autowired
     TrainNumberService service;
+    //
+    @RequestMapping(value = "/train_number/{train_number_id}", method = RequestMethod.GET)
+    ResultVO<?> trainNumberById(@PathVariable String train_number_id) {
+        return new ResultVO<>(service.getById(train_number_id));
+    }
     //根据出发地和目的地模糊查询符合条件的车次
     //例如 成都 武汉 会查出G2963和Z334这两条数据
     //分别是 成都东 到  深圳北
