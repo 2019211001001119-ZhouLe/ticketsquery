@@ -61,9 +61,9 @@ public class AdminController {
         return new ResultVO(ResultStatusEnum.SUCCESS,admins);
     }
 
-    /*
+
     @GetMapping("/login")
-    public ResultVO selectAdminByAccess(@RequestParam String adminId,@RequestParam String adminPwd){
+    public ResultVO selectAdminByAccess(@RequestParam(value = "adminId") String adminId,@RequestParam(value = "adminPwd") String adminPwd){
 
         UserDetails admin = adminService.loadUserByUsername(adminId);
 
@@ -75,7 +75,7 @@ public class AdminController {
         }else{
             return new ResultVO(ResultStatusEnum.USER_LOGIN_FAIL);
         }
-    }*/
+    }
 
     //添加管理员信息
     @PostMapping("/add")
