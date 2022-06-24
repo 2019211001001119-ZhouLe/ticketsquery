@@ -3,14 +3,12 @@
   <div>
     <!--顶部布局的实现-->
     <div class="tl1">
-      <img class="tl1_img" src="../../public\imgs\logo.jpg" />
+      <img class="tl1_img" src="../../public/imgs/logo.jpg" />
 
       <div class="tl1_sh">
         <div class="tl1_sh_list">
           <ul>
-            <li><a href="" class="tl1_sh_a">管理员登录</a></li>
-            <li><span>|</span></li>
-            <li><p class="tl1_sh_a1">请先登录</p></li>
+            <li><a href="" class="tl1_sh_a">管理员登录  <i class="el-icon-user-solid"></i></a></li>
           </ul>
         </div>
       </div>
@@ -29,19 +27,31 @@
       <div class="tl3_select">
         <div class="tl3_select1">
           <span>路线查询</span>
-          <el-form :inline="true" :model="formInline" class="demo-form-inline">
+          <el-form
+            :inline="true"
+            :model="formInline"
+            :rules="rules"
+            class="demo-form-inline"
+          >
             <el-form-item label="始发站">
               <el-input
                 v-model="formInline.star"
                 placeholder="成都"
+                prop="star"
               ></el-input> </el-form-item
             ><br />
             <el-form-item label="终点站">
-              <el-input v-model="formInline.end" placeholder="深圳"></el-input>
+              <el-input
+                v-model="formInline.end"
+                placeholder="深圳"
+                prop="end"
+              ></el-input>
             </el-form-item>
             <br />
             <el-form-item>
-              <el-button type="primary" @click="toRoutePage">查询</el-button>
+              <el-button type="primary" @click="toRoutePage('formInline')"
+                >查询</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
@@ -79,7 +89,7 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <el-table :data="newsData" height="250" ref="table" style="width: 100%">
+        <el-table :data="newsData" height="350" ref="table" style="width: 100%">
           <el-table-column prop="newsId" label="热搜排行" width="180">
           </el-table-column>
           <el-table-column prop="newsTitle" label="标题" width="780">
@@ -103,8 +113,16 @@ export default {
     return {
       newsData: [],
       formInline: {
+        name:"",
         star: "",
         end: "",
+      },
+      // 表单校验
+      rules: {
+        star: [
+          { required: true, message: "字段名称不能为空", trigger: "blur" },
+        ],
+        end: [{ required: true, message: "字段类型不能为空", trigger: "blur" }],
       },
     };
   },
