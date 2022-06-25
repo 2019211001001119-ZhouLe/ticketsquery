@@ -7,8 +7,12 @@
 
       <div class="tl1_sh">
         <div class="tl1_sh_list">
-           <ul>
-            <li><a href="" class="tl1_sh_a">管理员登录  <i class="el-icon-user-solid"></i></a></li>
+          <ul>
+            <li>
+              <a href="" class="tl1_sh_a"
+                >管理员登录 <i class="el-icon-user-solid"></i
+              ></a>
+            </li>
           </ul>
         </div>
       </div>
@@ -33,11 +37,10 @@
             :rules="rules"
             class="demo-form-inline"
           >
-            <el-form-item label="车次">
+            <el-form-item label="车次" prop="trainNunber">
               <el-input
                 v-model="formInline.trainNunber"
                 placeholder="K288"
-                prop="trainNunber"
               ></el-input> </el-form-item
             ><br />
             <el-form-item>
@@ -111,7 +114,13 @@ export default {
       // 验证规则
       rules: {
         trainNunber: [
-          { required: true, message: "车次不能为空", trigger: "blur" },
+          { required: true, message: "车次号不能为空", trigger: "blur" },
+           {
+            pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{4,20}$/,
+            required: true,
+            message: "车次号由数字字母组成",
+            trigger: "blur",
+          },
         ],
       },
     };
