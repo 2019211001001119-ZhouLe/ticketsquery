@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class TicketsqueryDemoApplication {
 
+
     public static void main(String[] args) {
         SpringApplication.run(TicketsqueryDemoApplication.class, args);
     }
