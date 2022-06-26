@@ -99,9 +99,6 @@ export default {
               this.numberValidateForm.password = ""
             }
           })
-
-          // 拿到用户的token进行保存
-          // 跳转到首页
         } else {
           console.log("error!!");
           return false;

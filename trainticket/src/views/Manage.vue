@@ -236,7 +236,7 @@ export default {
     this.getUserData();
   },
   methods: {
-    // 提交密码
+    // 提交修改密码
     submitForm(formName) {
       console.log(this.numberValidateForm);
       this.$refs[formName].validate((valid) => {
@@ -253,18 +253,30 @@ export default {
             )
             .then((response) => {
               console.log(response);
-              let admindata={
+              let admindata = {
                 adminId: this.userObj.adminId,
                 adminPwd: this.numberValidateForm.newpassword,
                 adminName: this.userObj.adminName,
                 permission: this.userObj.permission,
-              }
-              // 判断用户登录是否成功
+              };
+              // 验证用户密码是否正确
               if (response.data.code == 200) {
                 // 验证成功 修改密码
-                axios.post("/admin/update",admindata)
-                this.numberValidateForm={}
-                this.modyVisible=false
+                axios.post("/admin/update", admindata)
+                .then((response) => {
+                  console.log(response.data.code);
+                  
+                  this.$alert("请重新登陆!", "修改成功！", {
+                    type: "success",
+                    confirmButtonText: "确定",
+                    showClose: false,
+                    center: true,
+                    callback: (action) => {
+                      delToken();
+                      this.$router.push("/");
+                    },
+                  });
+                });
               } else {
                 // 验证失败 提示一些修改失败相关的信息
                 this.$message({
@@ -283,19 +295,24 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
+
+    // 重新登陆提示
+    reLogin() {
+      this.$alert("你还没有登陆，请先登陆!", "未登录", {
+        type: "info",
+        confirmButtonText: "确定",
+        showClose: false,
+        center: true,
+        callback: (action) => {
+          this.$router.push("/");
+        },
+      });
+    },
     // 获取并渲染用户信息
     getUserData() {
       let userName = getToken();
       if (!userName) {
-        this.$alert("你还没有登陆，请先登陆!", "未登录", {
-          type: "info",
-          confirmButtonText: "确定",
-          showClose: false,
-          center: true,
-          callback: (action) => {
-            this.$router.push("/");
-          },
-        });
+        this.reLogin();
       } else {
         // 发送网络请求
         axios.get("/admin/getById/" + userName).then((response) => {
@@ -314,7 +331,6 @@ export default {
               title: "数据获取失败",
               message: "请重新登陆",
             });
-
           }
         });
       }
