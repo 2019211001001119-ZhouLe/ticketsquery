@@ -17,6 +17,9 @@
                     <el-col :span="1">
                         <el-button @click="queryOne()" icon="el-icon-search" circle></el-button>
                     </el-col>
+                    <el-col :span="1">
+                        <el-button @click="queryNews()" icon="el-icon-refresh" circle></el-button>
+                    </el-col>
                 </el-row>
                 <el-table :data="news">
                     <el-table-column prop="newsId" label="新闻ID">
@@ -44,14 +47,17 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button @click="queryNews">刷新表格</el-button>
                 <el-dialog title="编辑列车" :visible.sync="dialogVisible">
                     <el-form :modle="editNews">
                         <el-form-item label="新闻ID">
                             <el-input v-model="editNews.newsId" :disabled="true"></el-input>
                         </el-form-item>
                         <el-form-item label="管理员ID">
-                            <el-input v-model="editNews.adminId"></el-input>
+                            <el-select v-model="editNews.adminId" placeholder="请选择">
+                                <el-option v-for="item in adminOptions" :key="item.adminId" :label="item.adminName"
+                                    :value="item.adminId">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                         <el-form-item label="新闻标题">
                             <el-input v-model="editNews.newsTitle"></el-input>
@@ -108,6 +114,7 @@ export default {
             input: '',
             news: [],
             editNews: [],
+            adminOptions: [],
             newNews: {
                 newsId: '',
                 adminId: '',
@@ -123,6 +130,9 @@ export default {
     },
     mounted() {
         this.queryNews()
+        axios.get("/admin/all").then(res=>{
+            this.adminOptions = res['data']['data']
+        })
     },
     methods: {
         queryNews() {

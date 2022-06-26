@@ -347,10 +347,9 @@ export default {
 
     checkDetails(index, row) {
       console.log(index);
-      Bus.$emit("tn", row.routertrainId);
       this.$router.push({
         path: "/manage/detailsquery",
-        params: {
+        query: {
           routertrainId: row.routertrainId,
         },
       });
