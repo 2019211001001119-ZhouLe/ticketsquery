@@ -41,6 +41,10 @@ public class AdminController {
     // 更新管理员信息
     @PostMapping("/update")
     public ResultVO updateAdmin(@RequestBody Admin admin){
+        String password = admin.getAdminPwd();
+        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+        String encode = encoder.encode(password);//加密返回密文密码
+        admin.setAdminPwd(encode);
         boolean flag = adminService.updateById(admin);
         return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.USER_UPDATE_FAILED);
     }
@@ -91,5 +95,9 @@ public class AdminController {
         return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.USER_ADD_FAILED);
     }
 
+    @GetMapping("/all")
+    public ResultVO<?> adminList() {
+        return new ResultVO<>(adminService.list());
+    }
 
 }

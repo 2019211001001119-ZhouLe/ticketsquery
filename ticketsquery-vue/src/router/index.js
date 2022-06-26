@@ -10,6 +10,8 @@ import Details from '@/components/Details'
 import TrainType from '@/components/TrainType'
 import Manage from '@/components/Manage'
 import LoginView from '@/components/LoginView'
+import NewsDetail from '@/components/NewsDetail'
+import News from '@/components/News'
 
 Vue.use(Router)
 
@@ -64,6 +66,16 @@ export default new Router({
       path: '/manage',
       name: 'Manage',
       component: Manage
+    },
+    {
+      path: '/newsdetail',
+      name: 'NewsDetail',
+      component: NewsDetail
+    },
+    {
+      path: '/news',
+      name: 'News',
+      component: News
     }
   ]
 })

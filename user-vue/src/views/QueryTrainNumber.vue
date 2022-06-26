@@ -8,9 +8,11 @@
       <div class="tl1_sh">
         <div class="tl1_sh_list">
           <ul>
-            <li><a href="" class="tl1_sh_a">管理员登录</a></li>
-            <li><span>|</span></li>
-            <li><p class="tl1_sh_a2">请先登录</p></li>
+            <li>
+              <a href="" class="tl1_sh_a"
+                >管理员登录 <i class="el-icon-user-solid"></i
+              ></a>
+            </li>
           </ul>
         </div>
       </div>
@@ -29,8 +31,13 @@
       <div class="tl3_select">
         <div class="tl3_select1">
           <span>车次查询</span>
-          <el-form :inline="true" :model="formInline" class="demo-form-inline">
-            <el-form-item label="车次">
+          <el-form
+            :inline="true"
+            :model="formInline"
+            :rules="rules"
+            class="demo-form-inline"
+          >
+            <el-form-item label="车次" prop="trainNunber">
               <el-input
                 v-model="formInline.trainNunber"
                 placeholder="K288"
@@ -77,7 +84,7 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <el-table :data="newsData" height="250" ref="table" style="width: 100%">
+        <el-table :data="newsData" height="350" ref="table" style="width: 100%">
           <el-table-column prop="newsId" label="热搜排行" width="180">
           </el-table-column>
           <el-table-column prop="newsTitle" label="标题" width="780">
@@ -94,34 +101,27 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
   data() {
     return {
+      // 新闻数据
       newsData: [],
+      // 表单数据
       formInline: {
         trainNunber: "",
       },
-      config: {
-        data: [
-          ["公告"],
-          ["关于调整互联网、电话订票起售时间的公告  (2014-11-26)"],
-          ["中国铁路南宁局集团有限公司加开列车公告  (2022-06-11)"],
-          [
-            "中国铁路成都局集团有限公司关于2022年6月11日至19日加开部分列车的公告  (2022-06-11)",
-          ],
-          [
-            "中国铁路上海局集团有限公司关于2022年6月10日-2022年6月12日增开部分旅客列车的公告  (2022-06-09)",
-          ],
+      // 验证规则
+      rules: {
+        trainNunber: [
+          { required: true, message: "车次号不能为空", trigger: "blur" },
+           {
+            pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{4,20}$/,
+            required: true,
+            message: "车次号由数字字母组成",
+            trigger: "blur",
+          },
         ],
-        index: true,
-        columnWidth: [60],
-        align: ["center"],
-        hoverPause: true,
-        headerBGC: "#bdc3c7",
-        oddRowBGC: "#bdc3c7",
-        evenRowBGC: "#bdc3c7",
       },
     };
   },

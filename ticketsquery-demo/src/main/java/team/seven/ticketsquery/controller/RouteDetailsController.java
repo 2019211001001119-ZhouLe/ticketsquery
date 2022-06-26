@@ -2,12 +2,15 @@ package team.seven.ticketsquery.controller;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.ResultVO;
 import team.seven.ticketsquery.domain.RouteDetails;
 import team.seven.ticketsquery.enums.ResultStatusEnum;
 import team.seven.ticketsquery.service.RouteDetailsService;
+import team.seven.ticketsquery.vo.RouteDetailsVo;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -74,5 +77,31 @@ public class RouteDetailsController {
         Page<RouteDetails> routeDetailsPage = new Page<>(current, size);
         Page<RouteDetails> page = new LambdaQueryChainWrapper<>(service.getBaseMapper()).page(routeDetailsPage);
         return new ResultVO<>(page);
+    }
+    //新闻管理模块 -- 经停站信息
+    @RequestMapping(value = "/newsdetails", method = RequestMethod.GET)
+    public Page<RouteDetailsVo> getTrainStationList(@RequestParam(value = "current", required = false) Integer current,
+                                                    @RequestParam(value = "size", required = false) Integer size) {
+        Page<RouteDetailsVo> page = new Page<>(current, size);
+        return service.RouteDetailsList(page);
+
+    }
+
+    //新闻管理模块 -- 通过车次号查询
+    @RequestMapping(value = "/newdetailsbycondition", method = RequestMethod.GET)
+    Page<RouteDetailsVo> queryByTrainStationName(@Param("current") Integer current,
+                                                 @Param("size")    Integer size,
+                                                 @Param("routertrain_id") String routertrainId) {
+        long total = 0;
+        Page page = new Page<>(current,size, total);
+        return service.queryAllByRoutertrainId(page,routertrainId);
+    }
+
+    //批量删除车站
+    @RequestMapping(value = "/newdetails/{routerdetailId}", method = RequestMethod.DELETE)
+    ResultVO<?> delTrainStations(@PathVariable String[] routerdetailId) {
+        return new ResultVO<>(
+                service.removeByIds(Arrays.asList(routerdetailId)) ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
+        );
     }
 }
