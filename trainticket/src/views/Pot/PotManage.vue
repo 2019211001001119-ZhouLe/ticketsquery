@@ -179,7 +179,7 @@ export default {
     querytrainstations() {
       axios
         .get(
-          "http://127.0.0.1:8888/trainstationbypage?current=" +
+          "/trainstationbypage?current=" +
             this.currentPage +
             "&size="+this.pagesize
         )
@@ -198,7 +198,7 @@ export default {
     savetrainstation(trainstation) {
       axios
         .put(
-          "http://127.0.0.1:8888/trainstation/" +
+          "/trainstation/" +
             trainstation["trainstationId"],
           trainstation
         )
@@ -220,7 +220,7 @@ export default {
       let that=this
       console.log(index);
       axios
-        .delete("http://127.0.0.1:8888/trainstation/" + row["trainstationId"])
+        .delete("/trainstation/" + row["trainstationId"])
         .then((response) => {
           console.log(response);
           if (response.data.code == "204") {
@@ -249,7 +249,7 @@ export default {
     // 增加车站
     addtrainstation(trainstation) {
       console.log(trainstation);
-      axios.post("http://127.0.0.1:8888/trainstation", trainstation)
+      axios.post("/trainstation", trainstation)
         .then((response) => {
           console.log(response);
           if (response.data.code == "201") {
@@ -281,7 +281,7 @@ export default {
       }
       target.blur();
       let data = this.input;
-      axios.get("http://127.0.0.1:8888/trainstation/" + data).then((res) => {
+      axios.get("/trainstation/" + data).then((res) => {
         this.trainstations = res.data.data;
         this.totalStation=1
         this.currentPage=1
@@ -344,7 +344,7 @@ export default {
           .then(function () {
             let data = that.ids;
             axios
-              .delete("http://127.0.0.1:8888/trainstations/" + data)
+              .delete("/trainstations/" + data)
               .then((res) => {
                 if (res.data.code == "204") {
                   that.$message({

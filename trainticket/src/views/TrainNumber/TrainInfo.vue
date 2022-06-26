@@ -226,7 +226,7 @@ export default {
     queryAll() {
       axios
         .get(
-          "http://127.0.0.1:8888/train_number_page?current=" +
+          "/train_number_page?current=" +
             this.currentPage +
             "&size="+this.pagesize
         )
@@ -244,7 +244,7 @@ export default {
     saveTrain(trainNumbers) {
       axios
         .put(
-          "http://127.0.0.1:8888/train_number/" + trainNumbers["routertrainId"],
+          "/train_number/" + trainNumbers["routertrainId"],
           trainNumbers
         )
         .then((response) => {
@@ -257,7 +257,7 @@ export default {
     deleteTrainNumber(row) {
       console.log(row);
       axios
-        .delete("http://127.0.0.1:8888/train_number/" + row["routertrainId"])
+        .delete("/train_number/" + row["routertrainId"])
         .then((response) => {
           console.log(response);
           if (response.data.code == 204) {
@@ -283,7 +283,7 @@ export default {
       this.newTrainNumbers.arrivalTime=this.setTimeToSec(this.newTrainNumbers.arrivalTime)
       console.log(this.newTrainNumbers);
       axios
-        .post("http://127.0.0.1:8888/train_number", this.newTrainNumbers)
+        .post("/train_number", this.newTrainNumbers)
         .then((response) => {
           console.log(response);
           if (response.data.code == 201) {
@@ -307,7 +307,7 @@ export default {
       console.log(keyword);
       console.log(this.trainNumbers);
       axios
-        .get("http://127.0.0.1:8888/train_number/" + keyword)
+        .get("/train_number/" + keyword)
         .then((response) => {
           console.log(response.data.data);
           this.trainNumbers = [];

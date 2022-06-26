@@ -172,7 +172,7 @@ export default {
     querytrains() {
       axios
         .get(
-          "http://127.0.0.1:8888/trainpage?current=" +
+          "/trainpage?current=" +
             this.currentPage +
             "&size="+this.pagesize
         )
@@ -284,7 +284,7 @@ export default {
       };
       console.log(data);
       axios
-        .put("http://127.0.0.1:8888/train/" + row.trainId, data)
+        .put("/train/" + row.trainId, data)
         .then((response) => {
           if (response.data.code == 200) {
             this.$notify({
@@ -307,7 +307,7 @@ export default {
     // 点击删除按钮，删除一条信息
     handleDelete(row) {
       axios
-        .delete("http://127.0.0.1:8888/train/" + row["trainId"])
+        .delete("/train/" + row["trainId"])
         .then((response) => {
           console.log(response);
           if (response.data.code == "204") {
@@ -374,7 +374,7 @@ export default {
               console.log(this.typeForm);
               // 发送网络请求
               axios
-                .post("http://127.0.0.1:8888/train", this.typeForm)
+                .post("/train", this.typeForm)
                 .then((response) => {
                   console.log(response);
                   if (response.data.code == 201) {

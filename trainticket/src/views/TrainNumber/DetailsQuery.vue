@@ -40,7 +40,7 @@ export default {
   methods: {
     handleBtnClick() {
       axios
-        .get("http://127.0.0.1:8888/details/query/" + this.trainNumber)
+        .get("/details/query/" + this.trainNumber)
         .then((response) => {
           this.details = response.data.data;
         });

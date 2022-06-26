@@ -39,6 +39,7 @@
 
 <script>
 import axios from 'axios';
+import { setToken } from '../utils/tokenUtils'
 export default {
   data() {
     var validateUser = (rule, value, callback) => {
@@ -74,28 +75,25 @@ export default {
           // 设置对应的参数
           let data = {
             // 用户名
-            adminId: this.numberValidateForm.username,
+            username: this.numberValidateForm.username,
             // 密码
-            adminPwd: this.numberValidateForm.password
+            password: this.numberValidateForm.password
           }
           // 发送网络请求
-          // axios.get('/admin/login', {params:data}).then((response) => {
-          axios({
-            method: 'get',
-            url: 'admin/login',
-            params: data
-          }).then((response) => {
+          axios.post("/login?username="+data.username+"&password="+data.password).then((response) => {
+            console.log(response);
             // 判断用户登录是否成功
             if (response.data.code == 200) {
               // 登录成功 保存token
-              // setToken(response.data.token)
+              // setToken()
+              setToken(response.data.data.adminId)
               // 跳转到首页
               this.$router.push('/manage/home')
             } else {
               // 登录失败 提示一些登录失败相关的信息
               this.$notify.error({
                 title: "登陆失败",
-                message: "账号或密码错误",
+                message: response.data.msg,
               });
               this.numberValidateForm.username = ""
               this.numberValidateForm.password = ""
