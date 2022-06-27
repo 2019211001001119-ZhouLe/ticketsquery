@@ -358,7 +358,7 @@ export default {
     },
     // 提交表单事件
     submitForm(formName) {
-      console.log(this.typeForm);
+      console.log(this.$refs);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$confirm("是否要提交添加列车类型？", "提示", {

@@ -205,11 +205,11 @@ export default {
           children: [
             {
               path: "/manage/newsmody",
-              label: "动态修改",
+              label: "最新发布",
             },
             {
               path: "/manage/newsissue",
-              label: "动态发布",
+              label: "晚点新闻",
             },
           ],
         },
