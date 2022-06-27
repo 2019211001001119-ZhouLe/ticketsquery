@@ -36,6 +36,7 @@
             :model="formInline"
             :rules="rules"
             class="demo-form-inline"
+            ref="formInline"
           >
             <el-form-item label="始发站" prop="star">
               <el-input
@@ -127,8 +128,9 @@ export default {
             trigger: "blur",
           },
         ],
-        end: [{ required: true, message: "终点站不能为空", trigger: "blur" },
-        {
+        end: [
+          { required: true, message: "终点站不能为空", trigger: "blur" },
+          {
             pattern: /^[a-zA-Z\u4e00-\u9fa5]+$/,
             required: true,
             message: "车站名为中文",
@@ -171,19 +173,27 @@ export default {
         path: "/queryTrainNumber",
       });
     },
-    toRoutePage() {
-      // 跳转到路线查询列表页面
-      this.$router.push({
-        // 页面的路径
-        path: "/routeList",
-        query: {
-          // 起始站
-          departureStation: this.formInline.star,
-          // 终点站
-          arrivalStation: this.formInline.end,
-        },
+    toRoutePage(formInline) {
+      this.$refs[formInline].validate((valid) => {
+        if (valid) {
+          // 跳转到路线查询列表页面
+          this.$router.push({
+            // 页面的路径
+            path: "/routeList",
+            query: {
+              // 起始站
+              departureStation: this.formInline.star,
+              // 终点站
+              arrivalStation: this.formInline.end,
+            },
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
     },
+
     init() {
       // 拿到表格挂载后的真实DOM
       const table = this.$refs.table;

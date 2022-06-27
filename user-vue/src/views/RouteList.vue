@@ -24,17 +24,17 @@
         :header-cell-style="tableHeaderColor"
         style="width: 100%; overflow-y: auto"
       >
-        <el-table-column fixed prop="routertrainId" label="车次" width="220">
+        <el-table-column fixed prop="routertrainId" label="车次">
         </el-table-column>
-        <el-table-column prop="routertrainType" label="列车类型" width="220">
+        <el-table-column prop="routertrainType" label="列车类型">
         </el-table-column>
-        <el-table-column prop="departureStationId" label="始发站" width="220">
+        <el-table-column prop="departureStationId" label="始发站">
         </el-table-column>
-        <el-table-column prop="arrivalStationId" label="终点站" width="220">
+        <el-table-column prop="arrivalStationId" label="终点站">
         </el-table-column>
-        <el-table-column prop="departureTime" label="始发站时间" width="220">
+        <el-table-column prop="departureTime" label="始发站时间">
         </el-table-column>
-        <el-table-column prop="arrivalTime" label="到达终点站时间" width="220">
+        <el-table-column prop="arrivalTime" label="到达终点站时间">
         </el-table-column>
       </el-table>
     </div>
