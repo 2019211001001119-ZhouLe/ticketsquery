@@ -1,5 +1,6 @@
 package team.seven.ticketsquery.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
@@ -34,6 +35,14 @@ public class RouteDetailsController {
     }
 
     //根据车次号查询经停信息
+    @RequestMapping(value = "/details/{routertrainId}", method = RequestMethod.GET)
+    ResultVO<?> getDetailsList(@PathVariable String routertrainId) {
+        QueryWrapper<RouteDetails> wrapper = new QueryWrapper<>();
+        wrapper.eq("routertrain_id", routertrainId);
+        return new ResultVO<>(service.list(wrapper));
+    }
+
+    //根据车次号查询经停信息
     @RequestMapping(value = "/details/query/{routertrainId}", method = RequestMethod.GET)
     ResultVO<?> DetailListById(@PathVariable String routertrainId) {
         return new ResultVO<>(service.findDetailsByRouteID(routertrainId));
@@ -53,21 +62,30 @@ public class RouteDetailsController {
     }
 
     //更新经停信息
-    @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.PUT)
-    ResultVO<?> updDetail(@PathVariable String routertrainId, @PathVariable String trainstationId , @RequestBody RouteDetails routeDetails) throws Exception {
-        if (!routeDetails.getRoutertrainId().equals(routertrainId) || !routeDetails.getTrainstationId().equals(trainstationId))
+    @RequestMapping(value = "/details/{rdID}/{routertrainId}", method = RequestMethod.PUT)
+    ResultVO<?> lateDetail(@PathVariable String rdID, @PathVariable String routertrainId , @RequestBody RouteDetails routeDetails) throws Exception {
+        int routerdetailId = Integer.parseInt(rdID);
+        if (!routeDetails.getRouterdetailId().equals(routerdetailId) || !routeDetails.getRoutertrainId().equals(routertrainId))
             throw new Exception();
         return new ResultVO<>(
-                service.updateById(routeDetails)?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
+                service.detailLaterSet(routeDetails.getLaterTime(), routerdetailId, routertrainId) > 0 ?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
+        );
+    }
+
+    @RequestMapping(value = "/details/", method = RequestMethod.PUT)
+    ResultVO<?> updDetail(@RequestBody RouteDetails routeDetails) throws Exception {
+        return new ResultVO<>(
+                service.updateOneDetail(routeDetails) > 0 ?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
 
     //删除经停信息
     //返回code为204
-    @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.DELETE)
-    ResultVO<?> delDetail(@PathVariable String routertrainId, @PathVariable String trainstationId) {
+    @RequestMapping(value = "/details/{rdID}/{routertrainId}", method = RequestMethod.DELETE)
+    ResultVO<?> delDetail(@PathVariable String rdID, @PathVariable String routertrainId) {
+        int routerdetailId = Integer.parseInt(rdID);
         return new ResultVO<>(
-                service.removeById(service.getOneByTIdAndSId(routertrainId, trainstationId)) ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
+                service.deleteOneDetail(routerdetailId, routertrainId) > 0 ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
 

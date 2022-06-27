@@ -1,13 +1,8 @@
 <template>
 	<div>
 		<div class="pageStyle">
+			<p class="titleCap">管理员管理</p>
 			<el-card id="box-card">
-				<el-header>
-					<el-breadcrumb separator="/">
-						<el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-						<el-breadcrumb-item>列车管理</el-breadcrumb-item>
-					</el-breadcrumb>
-				</el-header>
 				<el-row>
 					<el-col :span="10">
 						<el-input clearable v-model="input" suffix-icon="el-icon-trainlocation-outline" placeholder="请输入管理员账户">
@@ -15,6 +10,9 @@
 					</el-col>
 					<el-col :span="1">
 						<el-button @click="queryOne()" icon="el-icon-search" circle></el-button>
+					</el-col>
+					<el-col :span="1">
+						<el-button @click="queryAdmin()" icon="el-icon-refresh" circle></el-button>
 					</el-col>
 				</el-row>
 				<el-table :data="admin">
@@ -34,13 +32,12 @@
 							<el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle>
 							</el-button>
 							<el-popconfirm title="确认删除这行吗?" @confirm="deleteAdmin(scope.$index, scope.row)">
-								<el-button slot="reference" icon="el-icon-delete" circle>
+								<el-button slot="reference" icon="el-icon-delete" type="danger" circle>
 								</el-button>
 							</el-popconfirm>
 						</template>
 					</el-table-column>
 				</el-table>
-				<el-button @click="queryAdmin">刷新表格</el-button>
 				<el-dialog title="编辑列车" :visible.sync="dialogVisible">
 					<el-form :modle="editAdmin">
 						<el-form-item label="管理员账号">

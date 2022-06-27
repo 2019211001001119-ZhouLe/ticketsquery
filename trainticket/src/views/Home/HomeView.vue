@@ -75,7 +75,7 @@ export default {
     }
   },
   mounted() {
-    axios.get("http://127.0.0.1:8888/train_number/city").then((response) => {
+    axios.get("/train_number/city").then((response) => {
       this.trainNumber = response.data.data;
       this.trainNumberStats = this.trainNumber.length;
       for (var count = 0; count < this.trainNumberStats; count++) {
@@ -89,10 +89,10 @@ export default {
       this.maxSta = { ...this.maxSta }
 
     })
-    axios.get("http://127.0.0.1:8888/details").then((response) => {
+    axios.get("/details").then((response) => {
       this.detailsStats = response.data.data.length;
     })
-    axios.get("http://127.0.0.1:8888/train_number").then((response) => {
+    axios.get("/train_number").then((response) => {
       this.train = response.data.data
       this.trainStats = response.data.data.length;
       for (var count = 0; count < this.trainStats; count++) {
@@ -105,7 +105,7 @@ export default {
       this.trainType.data = this.addObj(this.trainType.data)
       this.trainType = { ...this.trainType }
     })
-    axios.get("http://127.0.0.1:8888/trainstationbypage?current=1&size=10000").then((response) => {
+    axios.get("/trainstationbypage?current=1&size=10000").then((response) => {
       this.trainStationStats = response.data.records.length;
     })
 

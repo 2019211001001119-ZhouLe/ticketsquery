@@ -41,7 +41,7 @@
             >
           </el-col>
         </el-row>
-        
+
         <!-- 数据表格 -->
         <el-table
           ref="multipleTable"
@@ -53,14 +53,38 @@
           :row-key="rowKey"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column :reserve-selection="true" type="selection" width="65"></el-table-column>
-          <el-table-column :reserve-selection="true" prop="trainstationName" label="车站名称" width="180">
+          <el-table-column
+            :reserve-selection="true"
+            type="selection"
+            width="65"
+          ></el-table-column>
+          <el-table-column
+            :reserve-selection="true"
+            prop="trainstationName"
+            label="车站名称"
+            width="180"
+          >
           </el-table-column>
-          <el-table-column :reserve-selection="true" prop="trainstationId" label="车站简称" width="180">
+          <el-table-column
+            :reserve-selection="true"
+            prop="trainstationId"
+            label="车站简称"
+            width="180"
+          >
           </el-table-column>
-          <el-table-column :reserve-selection="true" prop="provinceName" label="所属省" width="200">
+          <el-table-column
+            :reserve-selection="true"
+            prop="provinceName"
+            label="所属省"
+            width="200"
+          >
           </el-table-column>
-          <el-table-column :reserve-selection="true" prop="cityName" label="所属市" width="300">
+          <el-table-column
+            :reserve-selection="true"
+            prop="cityName"
+            label="所属市"
+            width="300"
+          >
           </el-table-column>
           <el-table-column :reserve-selection="true" label="操作">
             <template slot-scope="scope">
@@ -73,7 +97,12 @@
                 title="确认删除这行吗?"
                 @confirm="deletetrainstation(scope.$index, scope.row)"
               >
-                <el-button slot="reference" icon="el-icon-delete" circle>
+                <el-button
+                  slot="reference"
+                  icon="el-icon-delete"
+                  type="danger"
+                  circle
+                >
                 </el-button>
               </el-popconfirm>
             </template>
@@ -114,18 +143,30 @@
           </el-form>
         </el-dialog>
         <el-dialog title="添加车站" :visible.sync="addVisible">
-          <el-form :modle="newtrainstation">
-            <el-form-item label="车站编号">
+          <el-form
+            :model="newtrainstation"
+            :rules="rules"
+            ref="newtrainstation"
+          >
+            <el-form-item
+              label="车站编号"
+              label-width="80px"
+              prop="trainstationId"
+            >
               <el-input v-model="newtrainstation.trainstationId"></el-input>
             </el-form-item>
-            <el-form-item label="城市编号">
+            <el-form-item label="城市编号" label-width="80px" prop="cityId">
               <el-input v-model="newtrainstation.cityId"></el-input>
             </el-form-item>
-            <el-form-item label="车站名称">
+            <el-form-item
+              label="车站名称"
+              label-width="80px"
+              prop="trainstationName"
+            >
               <el-input v-model="newtrainstation.trainstationName"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button @click="handleAddSaveClick(newtrainstation)"
+              <el-button @click="handleAddSaveClick('newtrainstation')"
                 >保存</el-button
               >
             </el-form-item>
@@ -147,6 +188,17 @@ import axios from "axios";
 export default {
   data() {
     return {
+      rules: {
+        trainstationId: [
+          { required: true, message: "请输入车次", trigger: "change" },
+        ],
+        cityId: [
+          { required: true, message: "请输入火车名称", trigger: "change" },
+        ],
+        trainstationName: [
+          { required: true, message: "请输入火车类型", trigger: "change" },
+        ],
+      },
       // 批量删除是否可用
       noAnySelection: true,
       // 每页数据
@@ -157,8 +209,8 @@ export default {
       currentPage: 1,
       trainstations: [], // 存放所有车站信息
       trainstation: [], // 存放编辑车站信息
+      // 添加车站
       newtrainstation: {
-        // 添加车站
         trainstationId: "",
         cityId: "",
         trainstationName: "",
@@ -179,16 +231,17 @@ export default {
     querytrainstations() {
       axios
         .get(
-          "http://127.0.0.1:8888/trainstationbypage?current=" +
+          "/trainstationbypage?current=" +
             this.currentPage +
-            "&size="+this.pagesize
+            "&size=" +
+            this.pagesize
         )
         .then((response) => {
           this.trainstations = response.data.records;
           this.totalStation = response.data.total;
-          if(this.currentPage>Math.ceil(this.totalStation/this.pagesize)){
+          if (this.currentPage > Math.ceil(this.totalStation / this.pagesize)) {
             this.currentPage--;
-            this.querytrainstations()
+            this.querytrainstations();
           }
           console.log(response.data);
         });
@@ -197,11 +250,7 @@ export default {
     // 修改车站
     savetrainstation(trainstation) {
       axios
-        .put(
-          "http://127.0.0.1:8888/trainstation/" +
-            trainstation["trainstationId"],
-          trainstation
-        )
+        .put("/trainstation/" + trainstation["trainstationId"], trainstation)
         .then((response) => {
           console.log(response);
           if (response.data.code == "200") {
@@ -217,10 +266,10 @@ export default {
 
     // 删除车站
     deletetrainstation(index, row) {
-      let that=this
+      let that = this;
       console.log(index);
       axios
-        .delete("http://127.0.0.1:8888/trainstation/" + row["trainstationId"])
+        .delete("/trainstation/" + row["trainstationId"])
         .then((response) => {
           console.log(response);
           if (response.data.code == "204") {
@@ -231,10 +280,9 @@ export default {
               type: "success",
               duration: 1500,
             });
-            this.querytrainstations()
+            this.querytrainstations();
             that.$refs.multipleTable.clearSelection();
-          }
-          else{
+          } else {
             this.$notify({
               title: "失败",
               message: "删除失败",
@@ -246,33 +294,6 @@ export default {
         });
     },
 
-    // 增加车站
-    addtrainstation(trainstation) {
-      console.log(trainstation);
-      axios.post("http://127.0.0.1:8888/trainstation", trainstation)
-        .then((response) => {
-          console.log(response);
-          if (response.data.code == "201") {
-            this.$notify({
-              title: "成功",
-              message: "添加成功",
-              type: "success",
-              duration: 1500,
-            });
-          }
-          else{
-            this.$notify({
-              title: "失败",
-              message: "添加失败",
-              type: "error",
-              duration: 1500,
-            });
-          }
-          this.querytrainstations();
-        })
-        .catch
-    },
-
     // 通过车站名查询
     searchtrainstation($event) {
       let target = $event.target;
@@ -281,10 +302,10 @@ export default {
       }
       target.blur();
       let data = this.input;
-      axios.get("http://127.0.0.1:8888/trainstation/" + data).then((res) => {
+      axios.get("/trainstation/" + data).then((res) => {
         this.trainstations = res.data.data;
-        this.totalStation=1
-        this.currentPage=1
+        this.totalStation = 1;
+        this.currentPage = 1;
         console.log(res.data.data);
       });
     },
@@ -295,44 +316,72 @@ export default {
       this.input = "";
     },
 
-
+    // 点击编辑
     handleEditClick(index, row) {
       console.log(index);
       this.trainstation = row;
       this.dialogVisible = true;
     },
 
+    // 点击保存
     handleEditSaveClick(trainstation) {
       this.savetrainstation(trainstation);
       this.dialogVisible = false;
     },
-
+    
+    // 点击增加车站
     handleAddClick() {
       this.addVisible = true;
     },
 
-    
-    handleAddSaveClick(trainstation) {
-      this.addtrainstation(trainstation);
-      this.addVisible = false;
+    // 点击保存
+    handleAddSaveClick(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.addVisible = false;
+          axios.post("/trainstation", this.newtrainstation).then((response) => {
+            console.log(response);
+            if (response.data.code == "201") {
+              this.$notify({
+                title: "成功",
+                message: "添加成功",
+                type: "success",
+                duration: 1500,
+              });
+            } else {
+              this.$notify({
+                title: "失败",
+                message: "添加失败",
+                type: "error",
+                duration: 1500,
+              });
+            }
+            this.querytrainstations();
+            this.newtrainstation={}
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
 
     // 当选中项发生改变时
     handleSelectionChange(selection) {
       console.log(selection);
-      this.multipleSelection=selection
+      this.multipleSelection = selection;
       this.ids = selection.map((item) => item.trainstationId);
       this.hasAnySelection();
     },
 
     // 保留之前选中的数据
     rowKey(row) {
-        return row.trainstationId
+      return row.trainstationId;
     },
 
     // 批量删除车站
     batchDelete(rows) {
-      let that=this
+      let that = this;
       console.log(rows);
       if (rows.length !== 0) {
         that
@@ -343,33 +392,30 @@ export default {
           })
           .then(function () {
             let data = that.ids;
-            axios
-              .delete("http://127.0.0.1:8888/trainstations/" + data)
-              .then((res) => {
-                if (res.data.code == "204") {
-                  that.$message({
-                    message: "删除成功",
-                    type: "success",
-                    duration: 1500,
-                  });
-                  that.$refs.multipleTable.clearSelection();
-                  that.querytrainstations();
-                  that.ids=[]
-                }
-                else{
-                  that.$message({
-                    message: "删除失败",
-                    type: "error",
-                    duration: 1500,
-                  });
-                }
-              });
-          })
+            axios.delete("/trainstations/" + data).then((res) => {
+              if (res.data.code == "204") {
+                that.$message({
+                  message: "删除成功",
+                  type: "success",
+                  duration: 1500,
+                });
+                that.$refs.multipleTable.clearSelection();
+                that.querytrainstations();
+                that.ids = [];
+              } else {
+                that.$message({
+                  message: "删除失败",
+                  type: "error",
+                  duration: 1500,
+                });
+              }
+            });
+          });
       } else {
         that.$message("未选择数据！");
       }
     },
-    
+
     // 查看是否有选中的信息
     hasAnySelection() {
       if (this.multipleSelection.length !== 0) {
@@ -401,7 +447,7 @@ export default {
 };
 </script>
 <style>
-.tableButton button{
+.tableButton button {
   float: right;
   margin: 0 20px;
 }

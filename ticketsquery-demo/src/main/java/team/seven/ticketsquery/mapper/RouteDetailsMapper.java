@@ -2,12 +2,11 @@ package team.seven.ticketsquery.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import team.seven.ticketsquery.domain.RouteDetails;
 import team.seven.ticketsquery.vo.RouteDetailsVo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,7 +17,7 @@ import java.util.List;
  */
 @Mapper
 public interface RouteDetailsMapper extends BaseMapper<RouteDetails> {
-    @Select("SELECT r.routerdetail_id, r.routertrain_id, t.trainstation_name AS trainstation_id, r.arrival_time, departure_time \n" +
+    @Select("SELECT r.routerdetail_id, r.routertrain_id, t.trainstation_name AS trainstation_id, r.arrival_time, r.departure_time, r.later_time \n" +
             "FROM tb_routerdetail as r,tb_trainstation AS t \n" +
             "WHERE routertrain_id = #{routeID, jdbcType=VARCHAR}\n" +
             "AND r.trainstation_id = t.trainstation_id")
@@ -35,4 +34,26 @@ public interface RouteDetailsMapper extends BaseMapper<RouteDetails> {
             "tb_routerdetail r, tb_trainstation t,tb_administrator a " +
             "where r.trainstation_id = t.trainstation_id and a.admin_id = r.admin_id and routertrain_id = #{routertrain_id} ")
     Page<RouteDetailsVo> queryAllByRoutertrainId(Page page,@Param(value = "routertrain_id") String routertrainId);
+
+
+    @Update("update tb_routerdetail " +
+            "SET later_time = #{laterTime} " +
+            "WHERE routerdetail_id = #{routerdetailId} " +
+            "AND routertrain_id = #{routertrainId}")
+    int lateRouteDetail(@Param(value = "laterTime")Date laterTime, @Param(value = "routerdetailId") int routerdetailId, @Param(value = "routertrainId") String routertrainId);
+
+    @Update("update tb_routerdetail " +
+            "SET later_time = #{detail.laterTime}," +
+            "trainstation_id = #{detail.trainstationId}," +
+            "arrival_time = #{detail.arrivalTime}," +
+            "departure_time = #{detail.departureTime}," +
+            "routerdetail_status = #{detail.routerdetailStatus} " +
+            "WHERE routerdetail_id = #{detail.routerdetailId} " +
+            "AND routertrain_id = #{detail.routertrainId}")
+    int updateRouteDetail(@Param(value = "detail") RouteDetails routeDetails);
+
+    @Delete("delete from tb_routerdetail " +
+            "WHERE routerdetail_id = #{routerdetailId} " +
+            "AND routertrain_id = #{routertrainId}")
+    int deleteRouteDetail(@Param(value = "routerdetailId") int routerdetailId, @Param(value = "routertrainId") String routertrainId);
 }

@@ -45,7 +45,7 @@ const routes = [
       },
       {
         path:'newsissue',
-        component: () => import('../views/News/NewsIssue.vue')
+        component: () => import('../views/News/NewsDetail.vue')
       },
       {
         path:'manageradd',
