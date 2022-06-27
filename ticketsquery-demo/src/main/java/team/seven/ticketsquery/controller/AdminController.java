@@ -12,6 +12,7 @@ import team.seven.ticketsquery.enums.ResultStatusEnum;
 import team.seven.ticketsquery.service.AdminService;
 import team.seven.ticketsquery.utils.RandomAdminIdUtils;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public class AdminController {
 
     // 更新管理员信息
     @PostMapping("/update")
-    public ResultVO updateAdmin(@RequestBody Admin admin){
+    public ResultVO updateAdmin(@Valid @RequestBody Admin admin) throws Exception{
         String password = admin.getAdminPwd();
         BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
         String encode = encoder.encode(password);//加密返回密文密码
@@ -83,7 +84,7 @@ public class AdminController {
 
     //添加管理员信息
     @PostMapping("/add")
-    public ResultVO addAdmin(@RequestBody Admin admin){
+    public ResultVO addAdmin(@Valid @RequestBody Admin admin){
         String adminId = RandomAdminIdUtils.verifyUserName(4, 6);
         String password = admin.getAdminPwd();
         //加密存储密码
