@@ -11,6 +11,7 @@ import team.seven.ticketsquery.domain.ResultVO;
 import team.seven.ticketsquery.enums.ResultStatusEnum;
 import team.seven.ticketsquery.service.NewsService;
 
+import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -36,14 +37,14 @@ public class NewsController {
      * @return
      */
     @PostMapping("/add")
-    public ResultVO saveNews(@RequestBody News news){
+    public ResultVO saveNews(@Valid @RequestBody News news){
         boolean flag = newsService.save(news);
         return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.NEWS_ADD_FAILED);
     }
 
     //更新新闻
     @PostMapping("/update")
-    public ResultVO updateNews(@RequestBody News news){
+    public ResultVO updateNews(@Valid @RequestBody News news){
         boolean flag = newsService.updateById(news);
         return new ResultVO(flag?ResultStatusEnum.SUCCESS:ResultStatusEnum.NEWS_UPDATE_FAILED);
     }

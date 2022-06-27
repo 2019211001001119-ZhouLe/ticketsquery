@@ -3,9 +3,11 @@ package team.seven.ticketsquery.domain;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Data
@@ -13,8 +15,11 @@ import java.util.Collection;
 public class Admin implements UserDetails {
     @TableId
     private String adminId;
+    @Length(min = 6,max = 15,message = "密码长度应该在6-15之间")
+    @NotNull(message = "密码不可以为空")
     private String adminPwd;
     private String adminName;
+    @NotNull(message = "权限不可以为空")
     private Integer permission;
 
     /**
