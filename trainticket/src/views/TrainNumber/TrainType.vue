@@ -63,14 +63,13 @@
           <el-table-column :reserve-selection="true" label="操作" class="operateButton">
             <template slot-scope="scope">
               <el-button
-                size="mini"
                 @click="handleEdit(scope.$index, scope.row)"
                 v-if="scope.row.visible"
-                :disabled="!editShow"
-                >编辑</el-button
+                icon="el-icon-edit"
+                circle
+                ></el-button
               >
               <el-button
-                size="mini"
                 @click="handleFinish(scope.$index, scope.row)"
                 v-if="!scope.row.visible"
               >
@@ -90,8 +89,8 @@
                 @confirm="handleDelete(scope.row)"
                 v-if="scope.row.visible"
               >
-                <el-button slot="reference" size="mini" type="danger"
-                  >删除</el-button
+                <el-button slot="reference" icon="el-icon-delete" circle type="danger"
+                  ></el-button
                 >
               </el-popconfirm>
             </template>
@@ -260,8 +259,6 @@ export default {
     handleEdit(index, row) {
       console.log(row);
       row.visible = !row.visible;
-      // 设置其他行编辑按钮失效
-      this.editShow = false;
     },
     // 点击取消按钮，显示编辑按钮，隐藏完成按钮和输入框，重新渲染数据
     handleCancel(index, row) {
@@ -271,11 +268,9 @@ export default {
         type: "info",
         message: "取消修改!",
       });
-      this.editShow = true;
     },
     // 点击完成按钮，显示编辑按钮，隐藏完成按钮和输入框，发送网络请求
     handleFinish(index, row) {
-      this.editShow = true;
       row.visible = !row.visible;
       let data = {
         trainId: row.trainId,
@@ -421,8 +416,6 @@ export default {
       noAnySelection: true,
       // 增加表单是否出现
       dialog: false,
-      // 编辑是否可用
-      editShow: true,
       // 增加的弹出框表单数据
       typeForm: {
         trainId: "",

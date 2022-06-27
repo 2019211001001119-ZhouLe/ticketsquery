@@ -73,7 +73,7 @@
                 title="确认删除这行吗?"
                 @confirm="deletetrainstation(scope.$index, scope.row)"
               >
-                <el-button slot="reference" icon="el-icon-delete" circle>
+                <el-button slot="reference" icon="el-icon-delete" type="danger" circle>
                 </el-button>
               </el-popconfirm>
             </template>
