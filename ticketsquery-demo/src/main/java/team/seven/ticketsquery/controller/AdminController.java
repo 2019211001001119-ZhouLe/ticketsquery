@@ -1,6 +1,8 @@
 package team.seven.ticketsquery.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -101,4 +103,13 @@ public class AdminController {
         return new ResultVO<>(adminService.list());
     }
 
+
+    //分页
+    @GetMapping("/page")
+    public ResultVO<?> adminPage(@RequestParam(value = "current" ,required = false) Integer current,
+                                 @RequestParam(value = "size" ,required = false) Integer size ) {
+        Page<Admin> adminPage = new Page<>(current , size);
+        Page<Admin> page = new LambdaQueryChainWrapper<>(adminService.getBaseMapper()).page(adminPage);
+        return new ResultVO<>(page);
+    }
 }
