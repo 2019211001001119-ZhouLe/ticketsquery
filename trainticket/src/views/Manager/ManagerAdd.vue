@@ -16,6 +16,9 @@
 					<el-col :span="1">
 						<el-button @click="queryOne()" icon="el-icon-search" circle></el-button>
 					</el-col>
+					<el-col :span="1">
+						<el-button @click="queryAdmin()" icon="el-icon-refresh" circle></el-button>
+					</el-col>
 				</el-row>
 				<el-table :data="admin">
 					<el-table-column prop="adminId" label="管理员账号">
@@ -40,7 +43,6 @@
 						</template>
 					</el-table-column>
 				</el-table>
-				<el-button @click="queryAdmin">刷新表格</el-button>
 				<el-dialog title="编辑列车" :visible.sync="dialogVisible">
 					<el-form :modle="editAdmin">
 						<el-form-item label="管理员账号">
