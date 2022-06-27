@@ -53,23 +53,21 @@ public class RouteDetailsController {
     }
 
     //更新经停信息
-    @RequestMapping(value = "/details/{rdID}/{routertrainId}", method = RequestMethod.PUT)
-    ResultVO<?> updDetail(@PathVariable String rdID, @PathVariable String routertrainId , @RequestBody RouteDetails routeDetails) throws Exception {
-        int routerdetailId = Integer.parseInt(rdID);
-        if (!routeDetails.getRouterdetailId().equals(routerdetailId) || !routeDetails.getRoutertrainId().equals(routertrainId))
+    @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.PUT)
+    ResultVO<?> updDetail(@PathVariable String routertrainId, @PathVariable String trainstationId , @RequestBody RouteDetails routeDetails) throws Exception {
+        if (!routeDetails.getRoutertrainId().equals(routertrainId) || !routeDetails.getTrainstationId().equals(trainstationId))
             throw new Exception();
         return new ResultVO<>(
-                service.detailLaterSet(routeDetails.getLaterTime(), routerdetailId, routertrainId) > 0 ?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
+                service.updateById(routeDetails)?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
 
     //删除经停信息
     //返回code为204
-    @RequestMapping(value = "/details/{rdID}/{routertrainId}", method = RequestMethod.DELETE)
-    ResultVO<?> delDetail(@PathVariable String rdID, @PathVariable String routertrainId) {
-        int routerdetailId = Integer.parseInt(rdID);
+    @RequestMapping(value = "/details/{routertrainId}/{trainstationId}", method = RequestMethod.DELETE)
+    ResultVO<?> delDetail(@PathVariable String routertrainId, @PathVariable String trainstationId) {
         return new ResultVO<>(
-                service.deleteOneDetail(routerdetailId, routertrainId) > 0 ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
+                service.removeById(service.getOneByTIdAndSId(routertrainId, trainstationId)) ? ResultStatusEnum.DELETE_SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
 
