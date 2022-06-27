@@ -49,22 +49,48 @@
           :row-key="rowKey"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column :reserve-selection="true" type="selection" width="65"></el-table-column>
-          <el-table-column :reserve-selection="true" prop="routertrainId" label="车次" width="100">
+          <el-table-column
+            :reserve-selection="true"
+            type="selection"
+            width="65"
+          ></el-table-column>
+          <el-table-column
+            :reserve-selection="true"
+            prop="routertrainId"
+            label="车次"
+            width="100"
+          >
           </el-table-column>
-          <el-table-column :reserve-selection="true" prop="routertrainType" label="车次类型" width="140">
+          <el-table-column
+            :reserve-selection="true"
+            prop="trainId"
+            label="火车名称"
+            width="140"
+          >
           </el-table-column>
-          <el-table-column :reserve-selection="true" prop="departureStationId" label="起始站" width="140">
+          <el-table-column
+            :reserve-selection="true"
+            prop="departureStationId"
+            label="起始站"
+            width="140"
+          >
           </el-table-column>
-          <el-table-column :reserve-selection="true" prop="arrivalStationId" label="终点站" width="140">
+          <el-table-column
+            :reserve-selection="true"
+            prop="arrivalStationId"
+            label="终点站"
+            width="140"
+          >
           </el-table-column>
-          <el-table-column :reserve-selection="true"
+          <el-table-column
+            :reserve-selection="true"
             prop="departureTime"
             label="起始站出发时间"
             width="180"
           >
           </el-table-column>
-          <el-table-column :reserve-selection="true"
+          <el-table-column
+            :reserve-selection="true"
             prop="arrivalTime"
             label="终点站到站时间"
             width="180"
@@ -82,7 +108,12 @@
                 title="确认删除这行吗?"
                 @confirm="deleteTrainNumber(scope.row)"
               >
-                <el-button slot="reference" icon="el-icon-delete" circle>
+                <el-button
+                  slot="reference"
+                  icon="el-icon-delete"
+                  type="danger"
+                  circle
+                >
                 </el-button>
               </el-popconfirm>
               <el-button @click="checkDetails(scope.$index, scope.row)" circle
@@ -106,7 +137,7 @@
         </div>
       </el-main>
       <!-- 弹出窗编辑列车 -->
-      <el-dialog title="编辑列车" :visible.sync="dialogVisible">
+      <el-dialog title="编辑车次" :visible.sync="dialogVisible">
         <el-form :modle="trainNumbers">
           <el-form-item label="车次">
             <el-input
@@ -114,14 +145,20 @@
               :disabled="true"
             ></el-input>
           </el-form-item>
-          <el-form-item label="车次类型">
-            <el-input v-model="trainNumbers.routertrainType"></el-input>
+          <el-form-item label="火车名称">
+            <el-input v-model="trainNumbers.trainId" disabled></el-input>
           </el-form-item>
           <el-form-item label="起始站">
-            <el-input v-model="trainNumbers.departureStationId"></el-input>
+            <el-input
+              v-model="trainNumbers.departureStationId"
+              disabled
+            ></el-input>
           </el-form-item>
           <el-form-item label="终点站">
-            <el-input v-model="trainNumbers.arrivalStationId"></el-input>
+            <el-input
+              v-model="trainNumbers.arrivalStationId"
+              disabled
+            ></el-input>
           </el-form-item>
           <el-form-item label="起始站出发时间">
             <el-date-picker
@@ -149,17 +186,32 @@
       <!-- 弹出窗添加列车 -->
       <el-dialog title="添加列车" :visible.sync="addVisible">
         <el-form :modle="newTrainNumbers">
-          <el-form-item label="车次">
+          <el-form-item label="车次" label-width="80px" prop="routertrainId">
             <el-input v-model="newTrainNumbers.routertrainId"></el-input>
           </el-form-item>
-          <el-form-item label="车次类型">
-            <el-input v-model="newTrainNumbers.routertrainType"></el-input>
+          <el-form-item label="火车名称" label-width="80px" prop="trainId">
+            <el-autocomplete
+              class="inline-input"
+              v-model="newTrainNumbers.trainId"
+              :fetch-suggestions="querySearch"
+              placeholder="请输入内容"
+            ></el-autocomplete>
           </el-form-item>
-          <el-form-item label="起始站">
-            <el-input v-model="newTrainNumbers.departureStationId"></el-input>
+          <el-form-item label="起始站" label-width="80px" prop="departureStationId">
+            <el-autocomplete
+              class="inline-input"
+              v-model="newTrainNumbers.departureStationId"
+              :fetch-suggestions="querySearchSta"
+              placeholder="请输入内容"
+            ></el-autocomplete>
           </el-form-item>
-          <el-form-item label="终点站">
-            <el-input v-model="newTrainNumbers.arrivalStationId"></el-input>
+          <el-form-item label="终点站" label-width="80px" prop="arrivalStationId">
+            <el-autocomplete
+              class="inline-input"
+              v-model="newTrainNumbers.arrivalStationId"
+              :fetch-suggestions="querySearchSta"
+              placeholder="请输入内容"
+            ></el-autocomplete>
           </el-form-item>
           <el-form-item label="起始站出发时间">
             <el-date-picker
@@ -219,6 +271,11 @@ export default {
       ids: [],
       // 选中的数据
       multipleSelection: [],
+      // 来自车型表的数据
+      trains:[],
+      stations:[],
+      trainsArea: [],
+      stationsArea: [],
     };
   },
   methods: {
@@ -226,27 +283,87 @@ export default {
     queryAll() {
       axios
         .get(
-          "http://127.0.0.1:8888/train_number_page?current=" +
+          "/train_number_page?current=" +
             this.currentPage +
-            "&size="+this.pagesize
+            "&size=" +
+            this.pagesize
         )
         .then((response) => {
+          console.log(response);
           this.trainNumbers = response.data.data.records;
           this.totalStation = response.data.data.total;
-          if(this.currentPage>Math.ceil(this.totalStation/this.pagesize)){
+          if (this.currentPage > Math.ceil(this.totalStation / this.pagesize)) {
             this.currentPage--;
-            this.queryAll()
+            this.queryAll();
           }
         });
     },
 
+    querySearch(queryString, cb) {
+      var trainsArea = this.trainsArea;
+      var results = queryString
+        ? trainsArea.filter(this.createFilter(queryString))
+        : trainsArea;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    querySearchSta(queryString, cb) {
+      var stationsArea = this.stationsArea;
+      var results = queryString
+        ? stationsArea.filter(this.createFilter(queryString))
+        : stationsArea;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        );
+      };
+    },
+    loadAllName() {
+      return this.trains
+    },
+    
+    loadAllStation() {
+      return this.stations
+    },
+    // 获取火车类型数据
+    getTrainName() {
+      axios
+        .get(
+          "/train"
+        )
+        .then((response) => {
+          response.data.data.forEach(element => {
+            let data={
+              value: element.trainId
+            }
+            this.trains.push(data)
+          });
+        });
+    },
+    // 获取车站数据
+    getTrainStation(){
+      axios
+        .get(
+          "/trainstationbypage?current=1&size=10000"
+        )
+        .then((response) => {
+          response.data.records.forEach(element => {
+            let data={
+              value: element.trainstationId
+            }
+            this.stations.push(data)
+          });
+        });
+    },
     // 更改车次信息
     saveTrain(trainNumbers) {
       axios
-        .put(
-          "http://127.0.0.1:8888/train_number/" + trainNumbers["routertrainId"],
-          trainNumbers
-        )
+        .put("/train_number/" + trainNumbers["routertrainId"], trainNumbers)
         .then((response) => {
           console.log(response);
           this.queryAll();
@@ -256,66 +373,63 @@ export default {
     // 单个删除某个车次
     deleteTrainNumber(row) {
       console.log(row);
-      axios
-        .delete("http://127.0.0.1:8888/train_number/" + row["routertrainId"])
-        .then((response) => {
-          console.log(response);
-          if (response.data.code == 204) {
-            this.$message({
-              type: "success",
-              message: row.routertrainId + "车次删除成功!",
-            });
-            this.queryAll();
-            this.$refs.multipleTable.clearSelection();
-          } else {
-            this.$message({
-              type: "error",
-              message: row.routertrainId + "车次删除失败!",
-            });
-          }
-        });
+      axios.delete("/train_number/" + row["routertrainId"]).then((response) => {
+        console.log(response);
+        if (response.data.code == 204) {
+          this.$message({
+            type: "success",
+            message: row.routertrainId + "车次删除成功!",
+          });
+          this.queryAll();
+          this.$refs.multipleTable.clearSelection();
+        } else {
+          this.$message({
+            type: "error",
+            message: row.routertrainId + "车次删除失败!",
+          });
+        }
+      });
     },
 
     // 增加车次信息
     addTrain() {
       this.addVisible = false;
-      this.newTrainNumbers.departureTime=this.setTimeToSec(this.newTrainNumbers.departureTime)
-      this.newTrainNumbers.arrivalTime=this.setTimeToSec(this.newTrainNumbers.arrivalTime)
+      this.newTrainNumbers.departureTime = this.setTimeToSec(
+        this.newTrainNumbers.departureTime
+      );
+      this.newTrainNumbers.arrivalTime = this.setTimeToSec(
+        this.newTrainNumbers.arrivalTime
+      );
       console.log(this.newTrainNumbers);
-      axios
-        .post("http://127.0.0.1:8888/train_number", this.newTrainNumbers)
-        .then((response) => {
-          console.log(response);
-          if (response.data.code == 201) {
-            this.$message({
-              type: "success",
-              message: "添加成功",
-            });
-            this.newTrainNumbers = {};
-            this.queryAll();
-          } else {
-            this.$message({
-              type: "error",
-              message: "添加失败",
-            });
-          }
-        });
+      axios.post("/train_number", this.newTrainNumbers).then((response) => {
+        console.log(response);
+        if (response.data.code == 201) {
+          this.$message({
+            type: "success",
+            message: "添加成功",
+          });
+          this.newTrainNumbers = {};
+          this.queryAll();
+        } else {
+          this.$message({
+            type: "error",
+            message: "添加失败",
+          });
+        }
+      });
     },
 
     // 搜索栏搜索车次信息
     handleBtnClick(keyword) {
       console.log(keyword);
       console.log(this.trainNumbers);
-      axios
-        .get("http://127.0.0.1:8888/train_number/" + keyword)
-        .then((response) => {
-          console.log(response.data.data);
-          this.trainNumbers = [];
-          if (response.data.data) 
-            this.trainNumbers.push(response.data.data);
-          this.totalStation = 1;
-          console.log(this.trainNumbers);
-        });
+      axios.get("/train_number/" + keyword).then((response) => {
+        console.log(response.data.data);
+        this.trainNumbers = [];
+        if (response.data.data) this.trainNumbers.push(response.data.data);
+        this.totalStation = 1;
+        console.log(this.trainNumbers);
+      });
     },
 
     handleEditClick(index, row) {
@@ -330,14 +444,27 @@ export default {
     },
 
     // 时间转换器
-    setTimeToSec(date){
-      var year = date.getFullYear(); 
-      var month = date.getMonth() + 1; 
-      var day = date.getDate(); 
-      var hour = date.getHours(); 
-      var minute = date.getMinutes(); 
-      var second = date.getSeconds(); 
-      return year + "-" + month + "-" + day+ " " +hour+ ":" +minute+ ":" +second;
+    setTimeToSec(thatdate) {
+      let date = new Date(thatdate);
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      var hour = date.getHours();
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day +
+        " " +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        second
+      );
     },
 
     // 点击添加车次按钮，显示出添加框
@@ -348,9 +475,10 @@ export default {
     checkDetails(index, row) {
       console.log(index);
       Bus.$emit("tn", row.routertrainId);
+      console.log(row);
       this.$router.push({
         path: "/manage/detailsquery",
-        params: {
+        query: {
           routertrainId: row.routertrainId,
         },
       });
@@ -415,7 +543,7 @@ export default {
     },
     // 保留之前选中的数据
     rowKey(row) {
-        return row.routertrainId
+      return row.routertrainId;
     },
     // 查看是否有选中的信息
     hasAnySelection() {
@@ -446,7 +574,11 @@ export default {
     },
   },
   mounted() {
+    this.getTrainStation()
+    this.getTrainName()
     this.queryAll();
+    this.trainsArea = this.loadAllName();
+    this.stationsArea = this.loadAllStation();
   },
 };
 </script>

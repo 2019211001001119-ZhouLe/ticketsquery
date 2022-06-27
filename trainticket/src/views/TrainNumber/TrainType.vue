@@ -38,13 +38,13 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column :reserve-selection="true" type="selection" width="55"></el-table-column>
-          <el-table-column :reserve-selection="true" prop="trainName" label="列车简称" width="300">
+          <el-table-column :reserve-selection="true" prop="trainName" label="列车名称" width="300">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{ scope.row.trainId }}</span>
               <el-input v-else v-model="scope.row.trainId" disabled></el-input>
             </template>
           </el-table-column>
-          <el-table-column :reserve-selection="true" prop="trainName" label="列车全称" width="300">
+          <el-table-column :reserve-selection="true" prop="trainName" label="列车类型" width="300">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{ scope.row.trainName }}</span>
               <el-input v-else v-model="scope.row.trainName"></el-input>
@@ -63,11 +63,11 @@
           <el-table-column :reserve-selection="true" label="操作" class="operateButton">
             <template slot-scope="scope">
               <el-button
-                size="mini"
                 @click="handleEdit(scope.$index, scope.row)"
                 v-if="scope.row.visible"
-                :disabled="!editShow"
-                >编辑</el-button
+                icon="el-icon-edit"
+                circle
+                ></el-button
               >
               <el-button
                 size="mini"
@@ -90,8 +90,8 @@
                 @confirm="handleDelete(scope.row)"
                 v-if="scope.row.visible"
               >
-                <el-button slot="reference" size="mini" type="danger"
-                  >删除</el-button
+                <el-button slot="reference" icon="el-icon-delete" circle type="danger"
+                  ></el-button
                 >
               </el-popconfirm>
             </template>
@@ -121,14 +121,14 @@
         >
           <div class="demo-drawer__content formStyle">
             <el-form :model="typeForm" :rules="rules" ref="typeForm">
-              <el-form-item label="列车简称" label-width="80px" prop="trainId">
+              <el-form-item label="列车名称" label-width="80px" prop="trainId">
                 <el-input
                   v-model="typeForm.trainId"
                   autocomplete="off"
                 ></el-input>
               </el-form-item>
               <el-form-item
-                label="列车全称"
+                label="列车类型"
                 label-width="80px"
                 prop="trainName"
               >
@@ -172,7 +172,7 @@ export default {
     querytrains() {
       axios
         .get(
-          "http://127.0.0.1:8888/trainpage?current=" +
+          "/trainpage?current=" +
             this.currentPage +
             "&size="+this.pagesize
         )
@@ -260,8 +260,6 @@ export default {
     handleEdit(index, row) {
       console.log(row);
       row.visible = !row.visible;
-      // 设置其他行编辑按钮失效
-      this.editShow = false;
     },
     // 点击取消按钮，显示编辑按钮，隐藏完成按钮和输入框，重新渲染数据
     handleCancel(index, row) {
@@ -271,11 +269,9 @@ export default {
         type: "info",
         message: "取消修改!",
       });
-      this.editShow = true;
     },
     // 点击完成按钮，显示编辑按钮，隐藏完成按钮和输入框，发送网络请求
     handleFinish(index, row) {
-      this.editShow = true;
       row.visible = !row.visible;
       let data = {
         trainId: row.trainId,
@@ -284,7 +280,7 @@ export default {
       };
       console.log(data);
       axios
-        .put("http://127.0.0.1:8888/train/" + row.trainId, data)
+        .put("/train/" + row.trainId, data)
         .then((response) => {
           if (response.data.code == 200) {
             this.$notify({
@@ -307,7 +303,7 @@ export default {
     // 点击删除按钮，删除一条信息
     handleDelete(row) {
       axios
-        .delete("http://127.0.0.1:8888/train/" + row["trainId"])
+        .delete("/train/" + row["trainId"])
         .then((response) => {
           console.log(response);
           if (response.data.code == "204") {
@@ -374,7 +370,7 @@ export default {
               console.log(this.typeForm);
               // 发送网络请求
               axios
-                .post("http://127.0.0.1:8888/train", this.typeForm)
+                .post("/train", this.typeForm)
                 .then((response) => {
                   console.log(response);
                   if (response.data.code == 201) {
@@ -421,8 +417,6 @@ export default {
       noAnySelection: true,
       // 增加表单是否出现
       dialog: false,
-      // 编辑是否可用
-      editShow: true,
       // 增加的弹出框表单数据
       typeForm: {
         trainId: "",

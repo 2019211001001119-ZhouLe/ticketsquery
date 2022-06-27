@@ -8,7 +8,11 @@
       <div class="tl1_sh">
         <div class="tl1_sh_list">
           <ul>
-            <li><a href="" class="tl1_sh_a">管理员登录  <i class="el-icon-user-solid"></i></a></li>
+            <li>
+              <a href="" class="tl1_sh_a"
+                >管理员登录 <i class="el-icon-user-solid"></i
+              ></a>
+            </li>
           </ul>
         </div>
       </div>
@@ -33,19 +37,14 @@
             :rules="rules"
             class="demo-form-inline"
           >
-            <el-form-item label="始发站">
+            <el-form-item label="始发站" prop="star">
               <el-input
                 v-model="formInline.star"
                 placeholder="成都"
-                prop="star"
               ></el-input> </el-form-item
             ><br />
-            <el-form-item label="终点站">
-              <el-input
-                v-model="formInline.end"
-                placeholder="深圳"
-                prop="end"
-              ></el-input>
+            <el-form-item label="终点站" prop="end">
+              <el-input v-model="formInline.end" placeholder="深圳"></el-input>
             </el-form-item>
             <br />
             <el-form-item>
@@ -113,16 +112,29 @@ export default {
     return {
       newsData: [],
       formInline: {
-        name:"",
+        name: "",
         star: "",
         end: "",
       },
       // 表单校验
       rules: {
         star: [
-          { required: true, message: "字段名称不能为空", trigger: "blur" },
+          { required: true, message: "起始站不能为空", trigger: "blur" },
+          {
+            pattern: /^[a-zA-Z\u4e00-\u9fa5]+$/,
+            required: true,
+            message: "车站名为中文",
+            trigger: "blur",
+          },
         ],
-        end: [{ required: true, message: "字段类型不能为空", trigger: "blur" }],
+        end: [{ required: true, message: "终点站不能为空", trigger: "blur" },
+        {
+            pattern: /^[a-zA-Z\u4e00-\u9fa5]+$/,
+            required: true,
+            message: "车站名为中文",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
@@ -141,6 +153,7 @@ export default {
       // 把vue对象先保存到第三方变量中
       let _this = this;
       this.myAxios.get("/news/all").then(function (res) {
+        console.log(res);
         _this.newsData = res.data.data;
       });
     },

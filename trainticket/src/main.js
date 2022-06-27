@@ -5,7 +5,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import dataV from '@jiaminghi/data-view'
 import axios from 'axios'
-axios.defaults.baseURL = 'http://localhost:8888'
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.baseURL = '/api'
 
 Vue.use(dataV)
 Vue.use(ElementUI);

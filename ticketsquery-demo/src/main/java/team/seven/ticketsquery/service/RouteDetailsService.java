@@ -10,6 +10,7 @@ import team.seven.ticketsquery.domain.RouteDetails;
 import team.seven.ticketsquery.mapper.RouteDetailsMapper;
 import team.seven.ticketsquery.vo.RouteDetailsVo;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -34,6 +35,17 @@ public class RouteDetailsService extends ServiceImpl<RouteDetailsMapper, RouteDe
                 .eq("routertrain_id", routertrainId)
                 .eq("trainstation_id", trainstationId);
         return getOne(routeDetailsQueryWrapper);
+    }
+    public int deleteOneDetail(int routerdetailId, String routertrainId) {
+        return mapper.deleteRouteDetail(routerdetailId, routertrainId);
+    }
+
+    public int detailLaterSet(Date laterTime, int routerdetailId, String routertrainId) {
+        return mapper.lateRouteDetail(laterTime, routerdetailId, routertrainId);
+    }
+
+    public int updateOneDetail(RouteDetails routeDetails) {
+        return mapper.updateRouteDetail(routeDetails);
     }
 
 
