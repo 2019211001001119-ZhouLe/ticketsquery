@@ -17,13 +17,6 @@
             ></el-breadcrumb-item
           >
         </el-breadcrumb>
-        <!-- 头部信息以及操作 -->
-        <div class="tableTitle">
-          <span>全部经过站</span>
-          <el-button type="primary"
-            ><span class="el-icon-plus"></span> 添加经过站</el-button
-          >
-        </div>
         <!-- 表格内容 -->
         <el-table
           ref="multipleTable"
@@ -39,6 +32,16 @@
             width="180"
             type="index"
           >
+          <template slot-scope="scope">
+              <span v-if="scope.row.visible">{{
+                scope.row.routerdetailId
+              }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.routerdetailId"
+                disabled
+              ></el-input>
+            </template>
           </el-table-column>
           <el-table-column prop="trainstationId" label="经过站" width="180">
             <template slot-scope="scope">
@@ -64,7 +67,7 @@
               ></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="arrivalTime" label="到站时间" width="180">
+          <el-table-column prop="arrivalTime" label="到站时间" width="200">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{ scope.row.arrivalTime }}</span>
               <el-date-picker
@@ -77,7 +80,7 @@
               </el-date-picker>
             </template>
           </el-table-column>
-          <el-table-column prop="departureTime" label="出发时间" width="180">
+          <el-table-column prop="departureTime" label="出发时间" width="200">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{
                 scope.row.departureTime
@@ -114,23 +117,10 @@
               >
                 取消</el-button
               >
-              <el-popconfirm
-                title="确定删除这条数据吗？"
-                icon="el-icon-info"
-                icon-color="red"
-                @confirm="handleDelete(scope.row)"
-                v-if="scope.row.visible"
-              >
-                <el-button
-                  slot="reference"
-                  icon="el-icon-delete"
-                  circle
-                  type="danger"
-                ></el-button>
-              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
+        
       </el-card>
     </div>
   </div>
@@ -151,6 +141,15 @@ export default {
       tableData: [],
       // 车次号码
       trainID: "",
+      // 添加弹窗
+      addVisible: false,
+      // 添加表
+      newTrainNumbers:{
+        trainstationId: '',
+        routertrainId: '',
+        arrivalTime: '',
+        departureTime: '',
+      }
     };
   },
   methods: {
@@ -163,7 +162,7 @@ export default {
     // 根据车次信息获取数据
     getDataByID() {
       console.log(this.trainID);
-      axios.get("/details").then((response) => {
+      axios.get("/details/" + this.trainID).then((response) => {
         console.log(response);
         this.tableData = [];
         response.data.data.forEach((element) => {
@@ -172,8 +171,7 @@ export default {
         });
       });
     },
-    // 点击删除按钮，删除一条信息
-    handleDelete(row) {},
+
     // 点击取消按钮，显示编辑按钮，隐藏完成按钮和输入框，重新渲染数据
     handleCancel(index, row) {
       row.visible = !row.visible;
