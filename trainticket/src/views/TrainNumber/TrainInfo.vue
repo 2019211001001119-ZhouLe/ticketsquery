@@ -124,7 +124,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
                 type="info"
               ></el-button>
               <el-button
-                @click="lateShow=true"
+                @click="lateClick(scope.row)"
                 circle
                 icon="el-icon-time"
                 type="warning"
@@ -266,74 +266,29 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
         </el-form>
       </el-dialog>
       <!-- 弹出窗晚点 -->
-      <el-dialog title="添加晚点" :visible.sync="addVisible">
-        <el-form :model="newTrainNumbers" :rules="rules" ref="newTrainNumbers">
-          <el-form-item label="车次" label-width="80px" prop="routertrainId">
-            <el-input v-model="newTrainNumbers.routertrainId" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="火车名称" label-width="80px" prop="trainId">
+      <el-dialog title="添加晚点" :visible.sync="lateShow">
+        <el-form :model="lateTable" :rules="laterules" ref="lateTable">
+          <el-form-item label="车站名称" label-width="80px" prop="latestation">
             <el-autocomplete
               class="inline-input"
-              v-model="newTrainNumbers.trainId"
-              :fetch-suggestions="querySearch"
+              v-model="lateTable.latestation"
+              :fetch-suggestions="queryLateSta"
               placeholder="请输入内容"
-              @select="handleSelect"
+              @select="handleLateSelect"
             ></el-autocomplete>
           </el-form-item>
-          <el-form-item
-            label="火车类型"
-            label-width="80px"
-            prop="routertrainType"
-          >
-            <el-input
-              v-model="newTrainNumbers.routertrainType"
-              disabled
-            ></el-input>
-          </el-form-item>
-          <el-form-item
-            label="起始站"
-            label-width="80px"
-            prop="departureStationId"
-          >
-            <el-autocomplete
-              class="inline-input"
-              v-model="newTrainNumbers.departureStationId"
-              :fetch-suggestions="querySearchSta"
-              placeholder="请输入内容"
-            ></el-autocomplete>
-          </el-form-item>
-          <el-form-item
-            label="终点站"
-            label-width="80px"
-            prop="arrivalStationId"
-          >
-            <el-autocomplete
-              class="inline-input"
-              v-model="newTrainNumbers.arrivalStationId"
-              :fetch-suggestions="querySearchSta"
-              placeholder="请输入内容"
-            ></el-autocomplete>
-          </el-form-item>
-          <el-form-item label="起始站出发时间" prop="departureTime">
-            <el-date-picker
-              v-model="newTrainNumbers.departureTime"
-              type="datetime"
-              placeholder="选择日期时间"
-              align="right"
+          <el-form-item label="晚点时间" label-width="80px" prop="latetime">
+            <el-time-picker
+              v-model="lateTable.latetime"
+              :picker-options="{
+                selectableRange: '00:00:00 - 23:59:59',
+              }"
+              placeholder="选择晚点时间"
             >
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="终点站到站时间" prop="arrivalTime">
-            <el-date-picker
-              v-model="newTrainNumbers.arrivalTime"
-              type="datetime"
-              placeholder="选择日期时间"
-              align="right"
-            >
-            </el-date-picker>
+            </el-time-picker>
           </el-form-item>
           <el-form-item>
-            <el-button @click="submitForm('newTrainNumbers')">保存</el-button>
+            <el-button @click="submitLate('lateTable')">保存</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -373,6 +328,19 @@ export default {
           { required: true, message: "请输入终点站到站时间", trigger: "blur" },
         ],
       },
+      laterules: {
+        latestation: [
+          { required: true, message: "请输入站点", trigger: "change" },
+        ],
+        latetime: [
+          { required: true, message: "请输入晚点时间", trigger: "change" },
+        ],
+      },
+      // 晚点数据
+      lateTable: {
+        latestation: "",
+        latetime: "",
+      },
       // 晚点框
       lateShow: false,
       // 查询框车次号
@@ -403,11 +371,16 @@ export default {
       ids: [],
       // 选中的数据
       multipleSelection: [],
+      // 存储修改车次的信息
+      lateRouter: {},
+      lateStation: {},
       // 来自车型表的数据
       trains: [],
       stations: [],
+      latestations: [],
       trainsArea: [],
       stationsArea: [],
+      latestationsArea: [],
     };
   },
   methods: {
@@ -447,6 +420,14 @@ export default {
       // 调用 callback 返回建议列表的数据
       cb(results);
     },
+    queryLateSta(queryString, cb) {
+      var latestationsArea = this.latestationsArea;
+      var results = queryString
+        ? latestationsArea.filter(this.createFilter(queryString))
+        : latestationsArea;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
     createFilter(queryString) {
       return (restaurant) => {
         return (
@@ -462,10 +443,27 @@ export default {
     loadAllStation() {
       return this.stations;
     },
+
+    loadLateStation() {
+      return this.latestations;
+    },
     // 点击添加上列车类型
     handleSelect(item) {
       console.log(item);
       this.newTrainNumbers.routertrainType = item.type;
+    },
+    // 点击获取当前车次车站信息
+    handleLateSelect(item) {
+      console.log(item);
+      this.getRouterStation(this.lateRouter.routertrainId, item.value);
+    },
+    // 点击晚点按钮
+    lateClick(row) {
+      console.log(row);
+      this.lateRouter = row;
+      this.lateShow = true;
+      this.getLateStation(row.routertrainId);
+      this.latestationsArea = this.loadLateStation();
     },
     // 获取火车类型数据
     getTrainName() {
@@ -488,6 +486,18 @@ export default {
             value: element.trainstationId,
           };
           this.stations.push(data);
+        });
+      });
+    },
+    // 获取晚点车站数据
+    getLateStation(trainID) {
+      axios.get("/details/" + trainID).then((response) => {
+        console.log(response);
+        response.data.data.forEach((element) => {
+          let data = {
+            value: element.trainstationId,
+          };
+          this.latestations.push(data);
         });
       });
     },
@@ -558,6 +568,54 @@ export default {
       });
     },
 
+    // 修改车次信息
+    submitLate(formName) {
+      console.log(this.$refs[formName].validate);
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // this.lateRouter
+          // lateTable
+          let data = this.lateStation;
+          console.log(data);
+          data.laterTime = this.setTimeToHour(this.lateTable.latetime);
+          data.routerdetailStatus = 1;
+          axios.put("/details/", data).then((response) => {
+            console.log(response);
+            if (response.data.code == 200) {
+              this.$notify({
+                title: "成功",
+                message: "修改成功",
+                type: "success",
+                duration: 1500,
+              });
+              this.latestations=[]
+              this.lateTable={}
+              this.lateShow=false
+            } else {
+              this.$notify({
+                title: "失败",
+                message: "修改失败",
+                type: "error",
+                duration: 1500,
+              });
+            }
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+
+    //根据车次id和车站id查询某条经停信息
+    getRouterStation(routertrainId, trainstationId) {
+      axios
+        .get("/details/" + routertrainId + "/" + trainstationId)
+        .then((response) => {
+          console.log(response.data.data);
+          this.lateStation = response.data.data;
+        });
+    },
     // 搜索栏搜索车次信息
     handleBtnClick(keyword) {
       if (keyword == "") {
@@ -587,6 +645,15 @@ export default {
     handleEditSaveClick(trainNumber) {
       this.saveTrainNumber(trainNumber);
       this.dialogVisible = false;
+    },
+
+    // 时间转换器
+    setTimeToHour(thatdate) {
+      let date = new Date(thatdate);
+      var hour = date.getHours();
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      return hour + ":" + minute + ":" + second;
     },
 
     // 时间转换器
