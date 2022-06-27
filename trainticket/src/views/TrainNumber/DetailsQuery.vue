@@ -163,7 +163,7 @@ export default {
     // 根据车次信息获取数据
     getDataByID() {
       console.log(this.trainID);
-      axios.get("/details/query/" + this.trainID).then((response) => {
+      axios.get("/details").then((response) => {
         console.log(response);
         this.tableData = [];
         response.data.data.forEach((element) => {
@@ -190,8 +190,17 @@ export default {
       row.arrivalTime=this.setTimeToSec(row.arrivalTime)
       row.departureTime=this.setTimeToSec(row.departureTime)
       console.log(row);
+
+      let data={
+        trainstationId: row.trainstationId,
+        arrivalTime: row.arrivalTime,
+        departureTime: row.departureTime,
+        routerdetailStatus: row.routerdetailStatus,
+        routerdetailId: row.routerdetailId,
+        routertrainId: row.routertrainId,
+      }
       axios
-        .put("/details/" + row.routerdetailId + "/" + row.routertrainId, row)
+        .put("/details/", data)
         .then((response) => {
           console.log(response);
           if (response.data.code == 200) {
