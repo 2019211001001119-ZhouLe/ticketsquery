@@ -224,10 +224,10 @@ export default {
               path: "/manage/manageradd",
               label: "管理员增加",
             },
-            {
-              path: "/manage/managerinfo",
-              label: "信息管理",
-            },
+            // {
+            //   path: "/manage/managerinfo",
+            //   label: "信息管理",
+            // },
           ],
         },
       ],
