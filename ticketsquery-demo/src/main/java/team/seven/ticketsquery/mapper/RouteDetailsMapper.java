@@ -40,7 +40,17 @@ public interface RouteDetailsMapper extends BaseMapper<RouteDetails> {
             "SET later_time = #{laterTime} " +
             "WHERE routerdetail_id = #{routerdetailId} " +
             "AND routertrain_id = #{routertrainId}")
-    int updateRouteDetail(@Param(value = "laterTime")Date laterTime, @Param(value = "routerdetailId") int routerdetailId, @Param(value = "routertrainId") String routertrainId);
+    int lateRouteDetail(@Param(value = "laterTime")Date laterTime, @Param(value = "routerdetailId") int routerdetailId, @Param(value = "routertrainId") String routertrainId);
+
+    @Update("update tb_routerdetail " +
+            "SET later_time = #{detail.laterTime}," +
+            "trainstation_id = #{detail.trainstationId}," +
+            "arrival_time = #{detail.arrivalTime}," +
+            "departure_time = #{detail.departureTime}," +
+            "routerdetail_status = #{detail.routerdetailStatus} " +
+            "WHERE routerdetail_id = #{detail.routerdetailId} " +
+            "AND routertrain_id = #{detail.routertrainId}")
+    int updateRouteDetail(@Param(value = "detail") RouteDetails routeDetails);
 
     @Delete("delete from tb_routerdetail " +
             "WHERE routerdetail_id = #{routerdetailId} " +
