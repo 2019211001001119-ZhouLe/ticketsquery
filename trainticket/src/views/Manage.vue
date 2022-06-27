@@ -265,17 +265,25 @@ export default {
                 axios.post("/admin/update", admindata)
                 .then((response) => {
                   console.log(response.data.code);
-                  
-                  this.$alert("请重新登陆!", "修改成功！", {
-                    type: "success",
-                    confirmButtonText: "确定",
-                    showClose: false,
-                    center: true,
-                    callback: (action) => {
-                      delToken();
-                      this.$router.push("/");
-                    },
-                  });
+                  if(response.data.code=200){
+                    this.$alert("请重新登陆!", "修改成功！", {
+                      type: "success",
+                      confirmButtonText: "确定",
+                      showClose: false,
+                      center: true,
+                      callback: (action) => {
+                        delToken();
+                        this.$router.push("/");
+                      },
+                    });
+                  }
+                  else{
+                    this.$message({
+                      message: "系统错误，修改失败",
+                      type: "error",
+                    });
+                  }
+                    
                 });
               } else {
                 // 验证失败 提示一些修改失败相关的信息

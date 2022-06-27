@@ -34,7 +34,7 @@
 							<el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle>
 							</el-button>
 							<el-popconfirm title="确认删除这行吗?" @confirm="deleteAdmin(scope.$index, scope.row)">
-								<el-button slot="reference" icon="el-icon-delete" circle>
+								<el-button slot="reference" icon="el-icon-delete" type="danger" circle>
 								</el-button>
 							</el-popconfirm>
 						</template>

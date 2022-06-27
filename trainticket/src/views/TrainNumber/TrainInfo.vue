@@ -82,7 +82,7 @@
                 title="确认删除这行吗?"
                 @confirm="deleteTrainNumber(scope.row)"
               >
-                <el-button slot="reference" icon="el-icon-delete" circle>
+                <el-button slot="reference" icon="el-icon-delete" type="danger" circle>
                 </el-button>
               </el-popconfirm>
               <el-button @click="checkDetails(scope.$index, scope.row)" circle
@@ -330,7 +330,8 @@ export default {
     },
 
     // 时间转换器
-    setTimeToSec(date){
+    setTimeToSec(thatdate){
+      let date=new Date(thatdate)
       var year = date.getFullYear(); 
       var month = date.getMonth() + 1; 
       var day = date.getDate(); 
@@ -348,9 +349,10 @@ export default {
     checkDetails(index, row) {
       console.log(index);
       Bus.$emit("tn", row.routertrainId);
+      console.log(row);
       this.$router.push({
         path: "/manage/detailsquery",
-        params: {
+        query: {
           routertrainId: row.routertrainId,
         },
       });
