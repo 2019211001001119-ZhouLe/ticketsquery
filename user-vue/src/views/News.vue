@@ -14,11 +14,11 @@
         :header-cell-style="tableHeaderColor"
         style="width: 100%; overflow-y: auto"
       >
-        <el-table-column fixed prop="newsId" label="新闻编号" width="450">
+        <el-table-column fixed prop="newsId" label="新闻编号">
         </el-table-column>
-        <el-table-column prop="newsTitle" label="新闻标题" width="450">
+        <el-table-column prop="newsTitle" label="新闻标题">
         </el-table-column>
-        <el-table-column prop="newsPublishTime" label="发布时间" width="450">
+        <el-table-column prop="newsPublishTime" label="发布时间">
         </el-table-column>
       </el-table>
     </div>
