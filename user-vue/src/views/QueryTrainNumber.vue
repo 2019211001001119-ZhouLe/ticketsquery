@@ -36,6 +36,7 @@
             :model="formInline"
             :rules="rules"
             class="demo-form-inline"
+            ref="formInline"
           >
             <el-form-item label="车次" prop="trainNunber">
               <el-input
@@ -44,7 +45,9 @@
               ></el-input> </el-form-item
             ><br />
             <el-form-item>
-              <el-button type="primary" @click="toTrainNumberListPage"
+              <el-button
+                type="primary"
+                @click="toTrainNumberListPage('formInline')"
                 >查询</el-button
               >
             </el-form-item>
@@ -115,7 +118,7 @@ export default {
       rules: {
         trainNunber: [
           { required: true, message: "车次号不能为空", trigger: "blur" },
-           {
+          {
             pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{4,20}$/,
             required: true,
             message: "车次号由数字字母组成",
@@ -150,16 +153,23 @@ export default {
         path: "/",
       });
     },
-    toTrainNumberListPage() {
-      // 跳转到车次查询页面
-      this.$router.push({
-        // 页面的路径
-        path: "/trainNumberList",
-        // 把查询的车次号传到trainNumberList页面
-        query: {
-          // 车次
-          trainNumber: this.formInline.trainNunber,
-        },
+    toTrainNumberListPage(formInline) {
+      this.$refs[formInline].validate((valid) => {
+        if (valid) {
+          // 跳转到车次查询页面
+          this.$router.push({
+            // 页面的路径
+            path: "/trainNumberList",
+            // 把查询的车次号传到trainNumberList页面
+            query: {
+              // 车次
+              trainNumber: this.formInline.trainNunber,
+            },
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
     },
     toNewsPage() {
