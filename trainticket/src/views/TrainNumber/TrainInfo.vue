@@ -117,9 +117,18 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
                 >
                 </el-button>
               </el-popconfirm>
-              <el-button @click="checkDetails(scope.$index, scope.row)" circle
-                >详情</el-button
-              >
+              <el-button
+                @click="checkDetails(scope.$index, scope.row)"
+                circle
+                icon="el-icon-more"
+                type="info"
+              ></el-button>
+              <el-button
+                @click="lateShow=true"
+                circle
+                icon="el-icon-time"
+                type="warning"
+              ></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -256,6 +265,78 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           </el-form-item>
         </el-form>
       </el-dialog>
+      <!-- 弹出窗晚点 -->
+      <el-dialog title="添加晚点" :visible.sync="addVisible">
+        <el-form :model="newTrainNumbers" :rules="rules" ref="newTrainNumbers">
+          <el-form-item label="车次" label-width="80px" prop="routertrainId">
+            <el-input v-model="newTrainNumbers.routertrainId" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="火车名称" label-width="80px" prop="trainId">
+            <el-autocomplete
+              class="inline-input"
+              v-model="newTrainNumbers.trainId"
+              :fetch-suggestions="querySearch"
+              placeholder="请输入内容"
+              @select="handleSelect"
+            ></el-autocomplete>
+          </el-form-item>
+          <el-form-item
+            label="火车类型"
+            label-width="80px"
+            prop="routertrainType"
+          >
+            <el-input
+              v-model="newTrainNumbers.routertrainType"
+              disabled
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="起始站"
+            label-width="80px"
+            prop="departureStationId"
+          >
+            <el-autocomplete
+              class="inline-input"
+              v-model="newTrainNumbers.departureStationId"
+              :fetch-suggestions="querySearchSta"
+              placeholder="请输入内容"
+            ></el-autocomplete>
+          </el-form-item>
+          <el-form-item
+            label="终点站"
+            label-width="80px"
+            prop="arrivalStationId"
+          >
+            <el-autocomplete
+              class="inline-input"
+              v-model="newTrainNumbers.arrivalStationId"
+              :fetch-suggestions="querySearchSta"
+              placeholder="请输入内容"
+            ></el-autocomplete>
+          </el-form-item>
+          <el-form-item label="起始站出发时间" prop="departureTime">
+            <el-date-picker
+              v-model="newTrainNumbers.departureTime"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="终点站到站时间" prop="arrivalTime">
+            <el-date-picker
+              v-model="newTrainNumbers.arrivalTime"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="submitForm('newTrainNumbers')">保存</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -282,12 +363,18 @@ export default {
           { required: true, message: "请输入终点站", trigger: "change" },
         ],
         departureTime: [
-          { required: true, message: "请输入起始站发车时间", trigger: "change" },
+          {
+            required: true,
+            message: "请输入起始站发车时间",
+            trigger: "change",
+          },
         ],
         arrivalTime: [
           { required: true, message: "请输入终点站到站时间", trigger: "blur" },
         ],
       },
+      // 晚点框
+      lateShow: false,
       // 查询框车次号
       keyword: "",
       // 要编辑的车次信息
@@ -473,15 +560,22 @@ export default {
 
     // 搜索栏搜索车次信息
     handleBtnClick(keyword) {
-      console.log(keyword);
-      console.log(this.trainNumbers);
-      axios.get("/train_number/" + keyword).then((response) => {
-        console.log(response.data.data);
-        this.trainNumbers = [];
-        if (response.data.data) this.trainNumbers.push(response.data.data);
-        this.totalStation = 1;
+      if (keyword == "") {
+        this.$message({
+          type: "info",
+          message: "请输入查询内容",
+        });
+      } else {
+        console.log(keyword);
         console.log(this.trainNumbers);
-      });
+        axios.get("/train_number/" + keyword).then((response) => {
+          console.log(response.data.data);
+          this.trainNumbers = [];
+          if (response.data.data) this.trainNumbers.push(response.data.data);
+          this.totalStation = 1;
+          console.log(this.trainNumbers);
+        });
+      }
     },
 
     handleEditClick(index, row) {
