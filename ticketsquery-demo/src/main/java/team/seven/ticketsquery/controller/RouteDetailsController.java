@@ -1,5 +1,6 @@
 package team.seven.ticketsquery.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
@@ -31,6 +32,14 @@ public class RouteDetailsController {
     @RequestMapping(value = "/details", method = RequestMethod.GET)
     ResultVO<?> getDetailsList() {
         return new ResultVO<>(service.list());
+    }
+
+    //根据车次号查询经停信息
+    @RequestMapping(value = "/details/{routertrainId}", method = RequestMethod.GET)
+    ResultVO<?> getDetailsList(@PathVariable String routertrainId) {
+        QueryWrapper<RouteDetails> wrapper = new QueryWrapper<>();
+        wrapper.eq("routertrain_id", routertrainId);
+        return new ResultVO<>(service.list(wrapper));
     }
 
     //根据车次号查询经停信息
