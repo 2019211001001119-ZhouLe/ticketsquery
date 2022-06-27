@@ -41,7 +41,11 @@ public class RouteDetailsService extends ServiceImpl<RouteDetailsMapper, RouteDe
     }
 
     public int detailLaterSet(Date laterTime, int routerdetailId, String routertrainId) {
-        return mapper.updateRouteDetail(laterTime, routerdetailId, routertrainId);
+        return mapper.lateRouteDetail(laterTime, routerdetailId, routertrainId);
+    }
+
+    public int updateOneDetail(RouteDetails routeDetails) {
+        return mapper.updateRouteDetail(routeDetails);
     }
 
 

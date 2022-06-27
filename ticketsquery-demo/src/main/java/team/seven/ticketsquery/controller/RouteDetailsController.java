@@ -54,12 +54,19 @@ public class RouteDetailsController {
 
     //更新经停信息
     @RequestMapping(value = "/details/{rdID}/{routertrainId}", method = RequestMethod.PUT)
-    ResultVO<?> updDetail(@PathVariable String rdID, @PathVariable String routertrainId , @RequestBody RouteDetails routeDetails) throws Exception {
+    ResultVO<?> lateDetail(@PathVariable String rdID, @PathVariable String routertrainId , @RequestBody RouteDetails routeDetails) throws Exception {
         int routerdetailId = Integer.parseInt(rdID);
         if (!routeDetails.getRouterdetailId().equals(routerdetailId) || !routeDetails.getRoutertrainId().equals(routertrainId))
             throw new Exception();
         return new ResultVO<>(
                 service.detailLaterSet(routeDetails.getLaterTime(), routerdetailId, routertrainId) > 0 ?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
+        );
+    }
+
+    @RequestMapping(value = "/details/", method = RequestMethod.PUT)
+    ResultVO<?> updDetail(@RequestBody RouteDetails routeDetails) throws Exception {
+        return new ResultVO<>(
+                service.updateOneDetail(routeDetails) > 0 ?  ResultStatusEnum.SUCCESS : ResultStatusEnum.NOT_FOUND
         );
     }
 
