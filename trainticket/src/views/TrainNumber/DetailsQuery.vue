@@ -69,7 +69,6 @@
               <span v-if="scope.row.visible">{{ scope.row.arrivalTime }}</span>
               <el-date-picker
                 v-else
-                size="mini"
                 v-model="scope.row.arrivalTime"
                 type="datetime"
                 placeholder="选择日期时间"
@@ -85,7 +84,6 @@
               }}</span>
               <el-date-picker
                 v-else
-                size="mini"
                 v-model="scope.row.departureTime"
                 type="datetime"
                 placeholder="选择日期时间"
@@ -193,7 +191,7 @@ export default {
       row.departureTime=this.setTimeToSec(row.departureTime)
       console.log(row);
       axios
-        .put("/details/" + row.routertrainId + "/" + row.trainstationId, row)
+        .put("/details/" + row.routerdetailId + "/" + row.routertrainId, row)
         .then((response) => {
           console.log(response);
           if (response.data.code == 200) {

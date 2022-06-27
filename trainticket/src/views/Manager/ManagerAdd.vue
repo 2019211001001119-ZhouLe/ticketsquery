@@ -1,13 +1,8 @@
 <template>
 	<div>
 		<div class="pageStyle">
+			<p class="titleCap">管理员管理</p>
 			<el-card id="box-card">
-				<el-header>
-					<el-breadcrumb separator="/">
-						<el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-						<el-breadcrumb-item>列车管理</el-breadcrumb-item>
-					</el-breadcrumb>
-				</el-header>
 				<el-row>
 					<el-col :span="10">
 						<el-input clearable v-model="input" suffix-icon="el-icon-trainlocation-outline" placeholder="请输入管理员账户">

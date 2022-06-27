@@ -2,16 +2,10 @@
     <div>
         <div class="pageStyle">
             <el-card id="box-card">
-                <el-header>
-                    <el-breadcrumb separator="/">
-                        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                        <el-breadcrumb-item>新闻管理</el-breadcrumb-item>
-                    </el-breadcrumb>
-                </el-header>
                 <el-row>
                     <el-col :span="10">
                         <el-input clearable v-model="input" suffix-icon="el-icon-trainlocation-outline"
-                            placeholder="请输入管理员账户">
+                            placeholder="请输入新闻ID">
                         </el-input>
                     </el-col>
                     <el-col :span="1">
@@ -34,7 +28,7 @@
                     </el-table-column>
                     <el-table-column>
                         <template slot="header">
-                            <el-button type="primary" @click="handleAddClick()"><span class="el-icon-plus"></span> 添加管理员
+                            <el-button type="primary" @click="handleAddClick()"><span class="el-icon-plus"></span> 添加新闻
                             </el-button>
                         </template>
                         <template slot-scope="scope">
@@ -75,7 +69,7 @@
                         </el-form-item>
                     </el-form>
                 </el-dialog>
-                <el-dialog title="添加列车" :visible.sync="addVisible">
+                <el-dialog title="添加新闻" :visible.sync="addVisible">
                     <el-form :modle="newNews">
                         <el-form-item label="新闻ID">
                             <el-input v-model="newNews.newsId"></el-input>
