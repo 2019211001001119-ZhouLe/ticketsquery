@@ -198,7 +198,19 @@ export default {
                 if (valid) {   // 如果校验通过，请求接口，允许提交表单
                     this.updateNews(this.editNews)
                     this.dialogVisible = false
+                    this.$message({
+                        title: "成功",
+                        message: "修改成功",
+                        type: "success",
+                        duration: 1500,
+                    });
                 } else {   //校验不通过
+                    this.$message({
+                        title: "失败",
+                        message: "校验未通过",
+                        type: "error",
+                        duration: 1500,
+                    });
                     return false;
                 }
             });
@@ -213,7 +225,19 @@ export default {
                 if (valid) {   // 如果校验通过，请求接口，允许提交表单
                     this.addNews(this.newNews)
                     this.addVisible = false
+                    this.$message({
+                        title: "成功",
+                        message: "修改成功",
+                        type: "success",
+                        duration: 1500,
+                    });
                 } else {   //校验不通过
+                    this.$message({
+                        title: "失败",
+                        message: "校验未通过",
+                        type: "error",
+                        duration: 1500,
+                    });
                     return false;
                 }
             });

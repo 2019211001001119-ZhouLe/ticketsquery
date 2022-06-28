@@ -6,103 +6,39 @@
         <el-header></el-header>
         <el-row>
           <el-col :span="10">
-            <el-input
-              clearable
-              v-model="input"
-              suffix-icon="el-icon-trainlocation-outline"
-              placeholder="请输入火车站名称"
-            ></el-input>
+            <el-input clearable v-model="input" suffix-icon="el-icon-trainlocation-outline" placeholder="请输入火车站名称">
+            </el-input>
           </el-col>
           <el-col :span="1">
-            <el-button
-              @click="searchtrainstation($event)"
-              icon="el-icon-search"
-              circle
-            ></el-button>
+            <el-button @click="searchtrainstation($event)" icon="el-icon-search" circle></el-button>
           </el-col>
           <el-col :span="1">
-            <el-button
-              @click="flush()"
-              style="margin-left: 0px"
-              icon="el-icon-refresh"
-              circle
-            ></el-button>
+            <el-button @click="flush()" style="margin-left: 0px" icon="el-icon-refresh" circle></el-button>
           </el-col>
           <el-col :span="12" class="tableButton">
-            <el-button
-              type="danger"
-              plain
-              :disabled="noAnySelection"
-              @click="batchDelete(ids)"
-              ><span class="el-icon-close"></span> 批量删除</el-button
-            >
-            <el-button type="primary" @click="handleAddClick()"
-              ><span class="el-icon-plus"></span> 添加车站</el-button
-            >
+            <el-button type="danger" plain :disabled="noAnySelection" @click="batchDelete(ids)"><span
+                class="el-icon-close"></span> 批量删除</el-button>
+            <el-button type="primary" @click="handleAddClick()"><span class="el-icon-plus"></span> 添加车站</el-button>
           </el-col>
         </el-row>
 
         <!-- 数据表格 -->
-        <el-table
-          ref="multipleTable"
-          :data="trainstations"
-          tooltip-effect="dark"
-          style="width: 100%"
-          stripe
-          :row-class-name="tableRowClassName"
-          :row-key="rowKey"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column
-            :reserve-selection="true"
-            type="selection"
-            width="65"
-          ></el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="trainstationName"
-            label="车站名称"
-            width="180"
-          >
+        <el-table ref="multipleTable" :data="trainstations" tooltip-effect="dark" style="width: 100%" stripe
+          :row-class-name="tableRowClassName" :row-key="rowKey" @selection-change="handleSelectionChange">
+          <el-table-column :reserve-selection="true" type="selection" width="65"></el-table-column>
+          <el-table-column :reserve-selection="true" prop="trainstationName" label="车站名称" width="180">
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="trainstationId"
-            label="车站简称"
-            width="180"
-          >
+          <el-table-column :reserve-selection="true" prop="trainstationId" label="车站简称" width="180">
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="provinceName"
-            label="所属省"
-            width="200"
-          >
+          <el-table-column :reserve-selection="true" prop="provinceName" label="所属省" width="200">
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="cityName"
-            label="所属市"
-            width="300"
-          >
+          <el-table-column :reserve-selection="true" prop="cityName" label="所属市" width="300">
           </el-table-column>
           <el-table-column :reserve-selection="true" label="操作">
             <template slot-scope="scope">
-              <el-button
-                @click="handleEditClick(scope.$index, scope.row)"
-                icon="el-icon-edit"
-                circle
-              ></el-button>
-              <el-popconfirm
-                title="确认删除这行吗?"
-                @confirm="deletetrainstation(scope.$index, scope.row)"
-              >
-                <el-button
-                  slot="reference"
-                  icon="el-icon-delete"
-                  type="danger"
-                  circle
-                >
+              <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle></el-button>
+              <el-popconfirm title="确认删除这行吗?" @confirm="deletetrainstation(scope.$index, scope.row)">
+                <el-button slot="reference" icon="el-icon-delete" type="danger" circle>
                 </el-button>
               </el-popconfirm>
             </template>
@@ -110,75 +46,56 @@
         </el-table>
         <!-- 分页栏 -->
         <div class="block">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="currentPage"
-            :page-size="pagesize"
-            layout="prev, pager, next, jumper"
-            :total="totalStation"
-            class="departPaging"
-          >
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :current-page.sync="currentPage" :page-size="pagesize" layout="prev, pager, next, jumper"
+            :total="totalStation" class="departPaging">
           </el-pagination>
         </div>
         <el-dialog title="编辑车站" :visible.sync="dialogVisible">
           <el-form :modle="trainstation">
             <el-form-item label="车站编号">
-              <el-input
-                v-model="trainstation.trainstationId"
-                :disabled="true"
-              ></el-input>
+              <el-input v-model="trainstation.trainstationId" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="城市编号">
               <el-input v-model="trainstation.cityId"></el-input>
             </el-form-item>
             <el-form-item label="车站名称">
-              <el-input v-model="trainstation.trainstationName"></el-input>
+              <el-select v-model="trainstation.trainstationName">
+                <el-option v-for="item in citys" :key="item.cityId" :label="item.cityName" :value="item.cityId">
+                  <span style="float: left">{{ item.cityName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.cityId }}</span>
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button @click="handleEditSaveClick(trainstation)"
-                >保存</el-button
-              >
+              <el-button @click="handleEditSaveClick(trainstation)">保存</el-button>
             </el-form-item>
           </el-form>
         </el-dialog>
         <!-- 添加车站 -->
         <el-dialog title="添加车站" :visible.sync="addVisible">
-          <el-form
-            :model="newtrainstation"
-            :rules="rules"
-            ref="newtrainstation"
-          >
-            <el-form-item
-              label="车站编号"
-              label-width="80px"
-              prop="trainstationId"
-            >
+          <el-form :model="newtrainstation" :rules="rules" ref="newtrainstation">
+            <el-form-item label="车站编号" label-width="80px" prop="trainstationId">
               <el-input v-model="newtrainstation.trainstationId"></el-input>
             </el-form-item>
             <el-form-item label="城市编号" label-width="80px" prop="cityId">
               <el-input v-model="newtrainstation.cityId"></el-input>
             </el-form-item>
-            <el-form-item
-              label="车站名称"
-              label-width="80px"
-              prop="trainstationName"
-            >
-              <el-input v-model="newtrainstation.trainstationName"></el-input>
+            <el-form-item label="车站名称" label-width="80px" prop="trainstationName">
+              <el-select v-model="newtrainstation.trainstationName">
+                <el-option v-for="item in citys" :key="item.cityId" :label="item.cityName" :value="item.cityId">
+                  <span style="float: left">{{ item.cityName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.cityId }}</span>
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button @click="handleAddSaveClick('newtrainstation')"
-                >保存</el-button
-              >
+              <el-button @click="handleAddSaveClick('newtrainstation')">保存</el-button>
             </el-form-item>
           </el-form>
         </el-dialog>
         <el-dialog title="删除" :visible.sync="deleteVisible">
-          <el-button
-            @click="handleDeleteConfirmClick(trainstation)"
-            type="danger"
-            >确认删除</el-button
-          >
+          <el-button @click="handleDeleteConfirmClick(trainstation)" type="danger">确认删除</el-button>
         </el-dialog>
       </el-card>
     </div>
@@ -222,10 +139,15 @@ export default {
       dialogVisible: false, // 编辑车站信息弹框的状态
       deleteVisible: false, // 删除提示弹框的状态
       addVisible: false, // 增加车站提示弹框的状态
+      citys: [], //存放city
     };
   },
   mounted() {
     this.querytrainstations();
+    axios.get("/city").then(res => {
+      this.citys = res.data.data
+    })
+
   },
   methods: {
     // 查询所有车站
@@ -233,9 +155,9 @@ export default {
       axios
         .get(
           "/trainstationbypage?current=" +
-            this.currentPage +
-            "&size=" +
-            this.pagesize
+          this.currentPage +
+          "&size=" +
+          this.pagesize
         )
         .then((response) => {
           this.trainstations = response.data.records;
@@ -329,7 +251,7 @@ export default {
       this.savetrainstation(trainstation);
       this.dialogVisible = false;
     },
-    
+
     // 点击增加车站
     handleAddClick() {
       this.addVisible = true;
@@ -358,7 +280,7 @@ export default {
               });
             }
             this.querytrainstations();
-            this.newtrainstation={}
+            this.newtrainstation = {}
           });
         } else {
           console.log("error submit!!");
@@ -452,6 +374,7 @@ export default {
   float: right;
   margin: 0 20px;
 }
+
 .departPaging {
   margin: 20px 0;
   text-align: center;
