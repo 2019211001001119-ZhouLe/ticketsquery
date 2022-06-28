@@ -133,7 +133,12 @@
               <el-input v-model="trainstation.cityId"></el-input>
             </el-form-item>
             <el-form-item label="车站名称">
-              <el-input v-model="trainstation.trainstationName"></el-input>
+              <el-select v-model="trainstation.trainstationName">
+                <el-option v-for="item in citys" :key="item.cityId" :label="item.cityName" :value="item.cityId">
+                  <span style="float: left">{{ item.cityName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.cityId }}</span>
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button @click="handleEditSaveClick(trainstation)"
@@ -164,7 +169,12 @@
               label-width="80px"
               prop="trainstationName"
             >
-              <el-input v-model="newtrainstation.trainstationName"></el-input>
+              <el-select v-model="newtrainstation.trainstationName">
+                <el-option v-for="item in citys" :key="item.cityId" :label="item.cityName" :value="item.cityId">
+                  <span style="float: left">{{ item.cityName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.cityId }}</span>
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button @click="handleAddSaveClick('newtrainstation')"
@@ -222,10 +232,15 @@ export default {
       dialogVisible: false, // 编辑车站信息弹框的状态
       deleteVisible: false, // 删除提示弹框的状态
       addVisible: false, // 增加车站提示弹框的状态
+      citys: [], //存放city
     };
   },
   mounted() {
     this.querytrainstations();
+    axios.get("/city").then(res => {
+      this.citys = res.data.data
+    })
+
   },
   methods: {
     // 查询所有车站
@@ -358,7 +373,7 @@ export default {
               });
             }
             this.querytrainstations();
-            this.newtrainstation={}
+            this.newtrainstation = {}
           });
         } else {
           console.log("error submit!!");
@@ -452,6 +467,7 @@ export default {
   float: right;
   margin: 0 20px;
 }
+
 .departPaging {
   margin: 20px 0;
   text-align: center;
