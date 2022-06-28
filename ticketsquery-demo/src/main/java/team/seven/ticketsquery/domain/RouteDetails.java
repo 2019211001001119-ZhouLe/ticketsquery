@@ -30,4 +30,5 @@ public class RouteDetails {
     @JsonFormat(pattern = "hh:mm:ss", timezone = "UTC+8")
     @DateTimeFormat(pattern = "hh:mm:ss")
     private Date laterTime;
+    private String adminId;
 }

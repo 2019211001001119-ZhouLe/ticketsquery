@@ -2,11 +2,15 @@
 # 数据库连接配置
 spring:
 
+
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://120.76.219.165:3306/TrainTicket?useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: liuenwen
     password: lew123456
+    hikari.max-lifetime: 30000
+
   jackson:
     #指定输出日期数据格式
     date-format: yyyy-MM-dd hh:mm:ss
