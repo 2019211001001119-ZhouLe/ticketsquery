@@ -7,6 +7,7 @@
 
       <div class="tl1_sh">
         <div class="tl1_sh_list">
+         
         </div>
       </div>
     </div>
@@ -82,7 +83,7 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <el-table :data="newsData" height="350" ref="table" style="width: 100%">
+        <el-table :data="newsData" height="350" ref="table" style="width: 100%"  @cell-click="txidUrl">
           <el-table-column prop="newsId" label="热搜排行" width="180">
           </el-table-column>
           <el-table-column prop="newsTitle" label="标题" width="780">
@@ -143,6 +144,11 @@ export default {
     this.init();
   },
   methods: {
+     //新闻详情点击跳转
+    txidUrl(row) {
+      let url = row.newsUrl;
+      window.location.href = url;
+    },
     // 获取新闻列表
     gteNews() {
       // 把vue对象先保存到第三方变量中
