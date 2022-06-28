@@ -255,8 +255,6 @@ export default {
         routertrainType: "",
         departureStationId: "",
         arrivalStationId: "",
-        departureStationName: "",
-        arrivalStationName: "",
         departureTime: "",
         arrivalTime: "",
       },
@@ -276,7 +274,6 @@ export default {
       multipleSelection: [],
       // 存储修改车次的信息
       lateRouter: {},
-      // 储存修改经停信息的信息
       lateStation: {},
       // 来自车型表的数据
       trains: [],
@@ -351,18 +348,6 @@ export default {
     loadLateStation() {
       return this.latestations;
     },
-    // 点击给予当前出发站的ID
-    handleDepartureSelect(item) {
-      console.log(item);
-      this.newTrainNumbers.departureStationId = item.id;
-      console.log(this.newTrainNumbers);
-    },
-    // 点击给予当前出发站的ID
-    handleArrivalSelect(item) {
-      console.log(item);
-      this.newTrainNumbers.arrivalStationId = item.id;
-      console.log(this.newTrainNumbers);
-    },
     // 点击添加上列车类型
     handleSelect(item) {
       console.log(item);
@@ -370,14 +355,13 @@ export default {
     },
     // 点击获取当前车次车站信息
     handleLateSelect(item) {
-      console.log(item.id);
       console.log(item);
-      this.getRouterStation(this.lateRouter.routertrainId, item.id);
+      this.getRouterStation(this.lateRouter.routertrainId, item.value);
     },
     // 点击晚点按钮
     lateClick(row) {
-      this.latestations = [];
-      this.latestationsArea = [];
+      this.latestations = []
+      this.latestationsArea = []
       console.log(row);
       this.lateRouter = row;
       this.lateShow = true;
@@ -400,11 +384,10 @@ export default {
     // 获取车站数据
     getTrainStation() {
       axios.get("/trainstationbypage?current=1&size=10000").then((response) => {
-        console.log(response);
         response.data.records.forEach((element) => {
           let data = {
             value: element.trainstationId,
-            id: element.trainstationName
+            label: element.trainstationName,
           };
           this.stations.push(data);
         });
@@ -415,12 +398,8 @@ export default {
       axios.get("/details/" + trainID).then((response) => {
         console.log(response);
         response.data.data.forEach((element) => {
-          let a = this.stations.filter(data=>
-            data.id===element.trainstationId
-          )
           let data = {
-            value: a[0].value,
-            id: element.trainstationId
+            value: element.trainstationId,
           };
           this.latestations.push(data);
         });
@@ -436,18 +415,7 @@ export default {
         .put("/train_number/" + trainNumbers["routertrainId"], trainNumbers)
         .then((response) => {
           console.log(response);
-          if (response.data.code) {
-            this.$message({
-              type: "success",
-              message: "修改成功",
-            });
-            this.queryAll();
-          } else {
-            this.$message({
-              type: "error",
-              message: "修改失败",
-            });
-          }
+          this.queryAll();
         });
     },
 
@@ -508,7 +476,7 @@ export default {
       });
     },
 
-    // 修改晚点信息
+    // 修改车次信息
     submitLate(formName) {
       console.log(this.$refs[formName].validate);
       this.$refs[formName].validate((valid) => {
