@@ -6,30 +6,25 @@
       <img class="tl1_img" src="../../public/imgs/logo.jpg" />
 
       <div class="tl1_sh">
-        <div class="tl1_sh_list">
-
-        </div>
+        <div class="tl1_sh_list"></div>
       </div>
     </div>
     <!--顶部的导航实现-->
-    <el-menu mode="horizontal" router="true" background-color="#3b99fc" text-color="#ffffff">
-      <el-row style="text-align:center">
+    <el-menu
+      mode="horizontal"
+      router="true"
+      background-color="#3b99fc"
+      text-color="#ffffff"
+    >
+      <el-row style="text-align: center">
         <el-col :span="3" :offset="3">
-          <el-menu-item index="/" >首页</el-menu-item>
+          <el-menu-item index="/">首页</el-menu-item>
         </el-col>
         <el-col :span="3">
-        <el-menu-item index="/QueryTrainNumber">车次查询</el-menu-item>
+          <el-menu-item index="/QueryTrainNumber">车次查询</el-menu-item>
         </el-col>
       </el-row>
     </el-menu>
-    <!-- <div class="tl2">
-      <div class="tl2_cen">
-        <ul>
-          <li><a @click="toHome">首页</a></li>
-          <li class="tl2_cen_first"><a>车次查询</a></li>
-        </ul>
-      </div>
-    </div> -->
     <!--轮播图的实现-->
     <div class="tl3">
       <div class="tl3_select">
@@ -91,7 +86,13 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <el-table :data="newsData" height="350" ref="table" style="width: 100%" @cell-click="txidUrl">
+        <el-table
+          :data="newsData"
+          height="350"
+          ref="table"
+          style="width: 100%"
+          @cell-click="txidUrl"
+        >
           <el-table-column prop="newsId" label="热搜排行" width="180">
           </el-table-column>
           <el-table-column prop="newsTitle" label="标题" width="780">
