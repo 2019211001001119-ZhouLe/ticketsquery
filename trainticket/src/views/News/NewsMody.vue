@@ -106,7 +106,7 @@
 <script>
 
 import axios from 'axios'
-
+import { delToken, getToken } from "../../utils/tokenUtils";
 export default {
 
     data() {
@@ -148,6 +148,10 @@ export default {
         this.queryNews()
         axios.get("/admin/all").then(res => {
             this.adminOptions = res['data']['data']
+        })
+        axios.get("/admin/getById/"+getToken()).then(res => {
+            console.log("res:")
+            console.log(res['data']['data'])
         })
     },
     methods: {
