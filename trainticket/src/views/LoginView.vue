@@ -5,7 +5,7 @@
         <el-col :span="6" :offset="9">
           <el-container>
             <el-header class="proHearder">
-              <h1>后台管理系统</h1>
+              <h1>全国火车车次查询后台管理系统</h1>
             </el-header>
             <el-main class="proMain">
               <div class="grid-content titleH">

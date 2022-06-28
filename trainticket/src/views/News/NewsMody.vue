@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="pageStyle">
+            <p class="titleCap">最新发布</p>
             <el-card id="box-card">
                 <el-row>
                     <el-col :span="10">
@@ -35,7 +36,7 @@
                             <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle>
                             </el-button>
                             <el-popconfirm title="确认删除这行吗?" @confirm="deleteNews(scope.$index, scope.row)">
-                                <el-button slot="reference" icon="el-icon-delete" circle>
+                                <el-button slot="reference" type="danger" icon="el-icon-delete" circle>
                                 </el-button>
                             </el-popconfirm>
                         </template>
