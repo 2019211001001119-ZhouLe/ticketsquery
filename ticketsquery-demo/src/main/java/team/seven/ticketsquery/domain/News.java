@@ -1,5 +1,6 @@
 package team.seven.ticketsquery.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -20,7 +21,7 @@ import java.util.Date;
 @TableName("tb_news")
 public class News {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer newsId;
     @NotNull(message = "必须添加发布者")
     private String adminId;

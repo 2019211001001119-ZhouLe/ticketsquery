@@ -325,11 +325,11 @@ export default {
       } else {
         // 发送网络请求
         axios.get("/admin/getById/" + userName).then((response) => {
-          console.log(response);
+          // console.log(response);
           // 判断用户登录是否成功
           if (response.data.code == 200) {
             this.userObj = response.data.data;
-            console.log(this.userObj);
+            // console.log(this.userObj);
             if(this.userObj.permission == '2')
               this.asideMenu.pop()
 
@@ -346,7 +346,7 @@ export default {
           }
         });
       }
-      console.log(userName);
+      // console.log(userName);
     },
     // 登出
     logOut() {

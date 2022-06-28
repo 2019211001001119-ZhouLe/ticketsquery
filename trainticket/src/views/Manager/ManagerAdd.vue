@@ -56,7 +56,11 @@
 							<el-input v-model="editAdmin.adminName"></el-input>
 						</el-form-item>
 						<el-form-item label="管理员权限" prop="permission">
-							<el-input v-model="editAdmin.permission"></el-input>
+							<el-select v-model="editAdmin.permission" placeholder="请选择">
+								<el-option v-for="item in options" :key="item.value" :label="item.label"
+									:value="item.value">
+								</el-option>
+							</el-select>
 						</el-form-item>
 						<el-form-item>
 							<el-button @click="handleEditSaveClick(editAdmin)">保存</el-button>
@@ -72,7 +76,11 @@
 							<el-input v-model="newAdmin.adminName"></el-input>
 						</el-form-item>
 						<el-form-item label="管理员权限" prop="permission">
-							<el-input v-model="newAdmin.permission"></el-input>
+							<el-select v-model="newAdmin.permission" placeholder="请选择">
+								<el-option v-for="item in options" :key="item.value" :label="item.label"
+									:value="item.value">
+								</el-option>
+							</el-select>
 						</el-form-item>
 						<el-form-item>
 							<el-button @click="handleAddSaveClick(newAdmin)">保存</el-button>
@@ -123,13 +131,19 @@ export default {
 				permission: [
 					{ required: true, message: "请输入权限", trigger: "blur" },
 					{
-						type: 'enum',
-						enum: ['1', '2'],
+						pattern: /^[12]$/,
 						message: "请输入1或2",
 						trigger: "blur"
 					}
 				]
 			},
+			options: [{
+				value: '1',
+				label: '1'
+			}, {
+				value: '2',
+				label: '2'
+			},]
 		}
 	},
 	mounted() {
@@ -145,7 +159,7 @@ export default {
 			this.queryAdmin();
 		},
 		queryAdmin() {
-			axios.get('/admin/page?current='+this.currentPage+'&size='+this.pagesize).then((response) => {
+			axios.get('/admin/page?current=' + this.currentPage + '&size=' + this.pagesize).then((response) => {
 				this.admin = response.data.data.records
 				this.total = response.data.data.total;
 				console.log(this.total)

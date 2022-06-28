@@ -1,6 +1,7 @@
 package team.seven.ticketsquery.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,15 @@ public class NewsController {
     public ResultVO getById(@PathVariable Integer newsId){
         News news = newsService.getById(newsId);
         return new ResultVO(ResultStatusEnum.SUCCESS,news);
+    }
+
+    //分页查询
+    @GetMapping("page")
+    public ResultVO<?> newsPage(@RequestParam(value = "current" ,required = false) Integer current,
+                                 @RequestParam(value = "size" ,required = false) Integer size ) {
+        Page<News> newsPage = new Page<>(current, size);
+        Page<News> page = new LambdaQueryChainWrapper<>(newsService.getBaseMapper()).page(newsPage);
+        return new ResultVO<>(page);
     }
 
     //条件分页查询
