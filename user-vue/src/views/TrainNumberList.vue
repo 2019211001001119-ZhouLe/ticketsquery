@@ -19,15 +19,15 @@
         :header-cell-style="tableHeaderColor"
         style="width: 100%; overflow-y: auto"
         >
-        <el-table-column fixed prop="routerdetailId" label="车次">
+        <el-table-column fixed prop="routerdetailId" label="站序">
         </el-table-column>
         <el-table-column prop="routertrainId" label="车次">
         </el-table-column>
         <el-table-column prop="trainstationId" label="经过站">
         </el-table-column>
-        <el-table-column prop="departureTime" label="该站始发时间">
+        <el-table-column prop="departureTime" label="到站时间">
         </el-table-column>
-        <el-table-column prop="arrivalTime" label="到达下一站时间">
+        <el-table-column prop="arrivalTime" label="出发时间">
         </el-table-column>
         <el-table-column prop="laterTime" label="晚点时间">
         </el-table-column>
