@@ -15,11 +15,14 @@
         style="width: 100%; overflow-y: auto"
         @cell-click="txidUrl"
       >
-        <el-table-column fixed prop="newsId" label="新闻编号">
+        <el-table-column
+          prop="newsPublishTime"
+          label="发布时间"
+          sortable
+        >
         </el-table-column>
         <el-table-column prop="newsTitle" label="新闻标题"> </el-table-column>
-        <el-table-column prop="newsPublishTime" label="发布时间">
-        </el-table-column>
+        <el-table-column prop="adminId" label="发布人"> </el-table-column>
         <el-table-column prop="newsPublishTime" label="新闻详情">
           <template slot- scope="scope">
             <a :href="scope.row.file" target=" blank">详情</a>
@@ -57,7 +60,7 @@ export default {
       // 把vue对象先保存到第三方变量中
       let _this = this;
       this.myAxios.get("/news/all").then(function (res) {
-        // console.log(res.data.data);
+        console.log(res.data.data);
         _this.newsData = res.data.data;
       });
     },
@@ -69,7 +72,6 @@ export default {
     tableHeaderColor() {
       return "font-wight:200;font-size:15px; background-color:cadetblue;color:black;text-align:center";
     },
-
     goBack() {
       this.$router.go(-1);
     },
