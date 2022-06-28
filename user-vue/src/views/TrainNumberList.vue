@@ -13,12 +13,15 @@
     <!-- 数据部分 -->
     <div>
       <el-table
+        :default-sort = "{prop: 'routerdetailId', order: 'ascending'}"
         :data="tableData"
         :cell-style="tableRowStyle"
         :header-cell-style="tableHeaderColor"
         style="width: 100%; overflow-y: auto"
         >
-        <el-table-column fixed prop="routertrainId" label="车次">
+        <el-table-column fixed prop="routerdetailId" label="车次">
+        </el-table-column>
+        <el-table-column prop="routertrainId" label="车次">
         </el-table-column>
         <el-table-column prop="trainstationId" label="经过站">
         </el-table-column>
