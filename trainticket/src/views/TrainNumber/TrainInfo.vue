@@ -266,7 +266,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
         </el-form>
       </el-dialog>
       <!-- 弹出窗晚点 -->
-      <el-dialog title="添加晚点" :visible.sync="lateShow">
+      <el-dialog title="添加晚点" :visible.sync="lateShow" @close="closeLate()">
         <el-form :model="lateTable" :rules="laterules" ref="lateTable">
           <el-form-item label="车站名称" label-width="80px" prop="latestation">
             <el-autocomplete
@@ -459,6 +459,8 @@ export default {
     },
     // 点击晚点按钮
     lateClick(row) {
+      this.latestations = []
+      this.latestationsArea = []
       console.log(row);
       this.lateRouter = row;
       this.lateShow = true;
@@ -573,8 +575,6 @@ export default {
       console.log(this.$refs[formName].validate);
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // this.lateRouter
-          // lateTable
           let data = this.lateStation;
           console.log(data);
           data.laterTime = this.setTimeToHour(this.lateTable.latetime);
@@ -584,7 +584,7 @@ export default {
             if (response.data.code == 200) {
               this.$notify({
                 title: "成功",
-                message: "修改成功",
+                message: "晚点成功",
                 type: "success",
                 duration: 1500,
               });
@@ -594,7 +594,7 @@ export default {
             } else {
               this.$notify({
                 title: "失败",
-                message: "修改失败",
+                message: "晚点失败",
                 type: "error",
                 duration: 1500,
               });
@@ -634,6 +634,13 @@ export default {
           console.log(this.trainNumbers);
         });
       }
+    },
+
+    // 关闭晚点弹出窗
+    closeLate(){
+      this.latestations = []
+      this.latestationsArea = []
+      this.lateTable={}
     },
 
     handleEditClick(index, row) {

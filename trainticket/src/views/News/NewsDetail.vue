@@ -1,13 +1,13 @@
 <template>
   <div class="pageStyle">
-    <p class="titleCap">车次管理</p>
+    <p class="titleCap">晚点新闻</p>
     <el-card class="box-card">
       <el-row>
-        <el-col :span="20">
+        <el-col :span="10">
           <el-input
             placeholder="请输入站点名进行搜索，可以直接回车搜索..."
             @clear="queryAllDetails"
-            style="width: 350px; margin-left: 10px"
+            style="width: 95%; margin-left: 10px"
             clearable
             :clear="queryAllDetails"
             v-model="keywords"
@@ -21,13 +21,22 @@
             ></i>
           </el-input>
         </el-col>
-        <el-button
-          @click="batchDelete(ids, $event)"
-          type="danger"
-          size="medium"
-          :disabled="isDisable"
-          >X批量删除</el-button
-        >
+        <el-col :span="1">
+          <el-button
+            @click="queryAllDetails()"
+            icon="el-icon-refresh"
+            circle
+          ></el-button>
+        </el-col>
+        <el-col :span="12" class="tableButton">
+          <el-button
+            @click="batchDelete(ids, $event)"
+            type="danger"
+            size="medium"
+            :disabled="isDisable"
+            ><span class="el-icon-close"></span> 批量删除</el-button
+          >
+        </el-col>
       </el-row>
       <!--表格开始-->
       <el-table
@@ -87,7 +96,6 @@
         <el-table-column :reserve-selection="true" label="操作" align="center">
           <template slot-scope="scope">
             <el-button
-              size="small"
               @click="updateDetail(scope.row)"
               icon="el-icon-edit"
               circle
@@ -98,9 +106,9 @@
             >
               <el-button
                 slot="reference"
-                size="small"
                 icon="el-icon-delete"
                 circle
+                type="danger"
               ></el-button>
             </el-popconfirm>
           </template>
@@ -361,4 +369,8 @@ export default {
 };
 </script>
 <style>
+.tableButton button {
+  float: right;
+  margin: 0 20px;
+}
 </style>
