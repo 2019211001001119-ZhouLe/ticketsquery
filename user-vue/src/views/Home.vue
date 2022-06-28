@@ -7,45 +7,44 @@
 
       <div class="tl1_sh">
         <div class="tl1_sh_list">
-         
+
         </div>
       </div>
     </div>
     <!--顶部的导航实现-->
-    <div class="tl2">
+    <el-menu mode="horizontal" router="true" background-color="#3b99fc" text-color="#ffffff">
+      <el-row style="text-align:center">
+        <el-col :span="3" :offset="3">
+          <el-menu-item index="/" >首页</el-menu-item>
+        </el-col>
+        <el-col :span="3">
+        <el-menu-item index="/QueryTrainNumber">车次查询</el-menu-item>
+        </el-col>
+      </el-row>
+    </el-menu>
+    <!-- <div class="tl2">
       <div class="tl2_cen">
         <ul>
           <li class="tl2_cen_first"><a>首页</a></li>
           <li><a @click="toTrainNumberPage">车次查询</a></li>
         </ul>
       </div>
-    </div>
+    </div> -->
     <!--轮播图的实现-->
     <div class="tl3">
       <div class="tl3_select">
         <div class="tl3_select1">
           <span>路线查询</span>
-          <el-form
-            :inline="true"
-            :model="formInline"
-            :rules="rules"
-            class="demo-form-inline"
-            ref="formInline"
-          >
+          <el-form :inline="true" :model="formInline" :rules="rules" class="demo-form-inline" ref="formInline">
             <el-form-item label="始发站" prop="star">
-              <el-input
-                v-model="formInline.star"
-                placeholder="成都"
-              ></el-input> </el-form-item
-            ><br />
+              <el-input v-model="formInline.star" placeholder="成都"></el-input>
+            </el-form-item><br />
             <el-form-item label="终点站" prop="end">
               <el-input v-model="formInline.end" placeholder="深圳"></el-input>
             </el-form-item>
             <br />
             <el-form-item>
-              <el-button type="primary" @click="toRoutePage('formInline')"
-                >查询</el-button
-              >
+              <el-button type="primary" @click="toRoutePage('formInline')">查询</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -54,9 +53,7 @@
     <!--会员服务-->
     <div class="tl5">
       <div>
-        <a href="https://cx.12306.cn/tlcx/index.html"
-          ><img src="../../public\imgs\abanner01.jpg" width="100%"
-        /></a>
+        <a href="https://cx.12306.cn/tlcx/index.html"><img src="../../public\imgs\abanner01.jpg" width="100%" /></a>
       </div>
       <div class="tl5_fw">
         <a href="https://exservice.12306.cn/excater/index.html">
@@ -83,7 +80,7 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <el-table :data="newsData" height="350" ref="table" style="width: 100%"  @cell-click="txidUrl">
+        <el-table :data="newsData" height="350" ref="table" style="width: 100%" @cell-click="txidUrl">
           <el-table-column prop="newsId" label="热搜排行" width="180">
           </el-table-column>
           <el-table-column prop="newsTitle" label="标题" width="780">
@@ -144,7 +141,7 @@ export default {
     this.init();
   },
   methods: {
-     //新闻详情点击跳转
+    //新闻详情点击跳转
     txidUrl(row) {
       let url = row.newsUrl;
       window.location.href = url;

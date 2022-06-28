@@ -12,14 +12,24 @@
       </div>
     </div>
     <!--顶部的导航实现-->
-    <div class="tl2">
+    <el-menu mode="horizontal" router="true" background-color="#3b99fc" text-color="#ffffff">
+      <el-row style="text-align:center">
+        <el-col :span="3" :offset="3">
+          <el-menu-item index="/" >首页</el-menu-item>
+        </el-col>
+        <el-col :span="3">
+        <el-menu-item index="/QueryTrainNumber">车次查询</el-menu-item>
+        </el-col>
+      </el-row>
+    </el-menu>
+    <!-- <div class="tl2">
       <div class="tl2_cen">
         <ul>
           <li><a @click="toHome">首页</a></li>
           <li class="tl2_cen_first"><a>车次查询</a></li>
         </ul>
       </div>
-    </div>
+    </div> -->
     <!--轮播图的实现-->
     <div class="tl3">
       <div class="tl3_select">
