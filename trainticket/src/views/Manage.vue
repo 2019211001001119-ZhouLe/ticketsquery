@@ -9,7 +9,7 @@
               src="http://yanjiojio.fun/HeadIcon/火车.png"
               alt=""
             />
-            <h1 @click="reFreshHome">火车票后台管理系统</h1>
+            <h1 @click="reFreshHome">全国火车车次查询后台管理系统</h1>
             <el-dropdown class="userName" @command="handleCommand">
               <span class="el-dropdown-link">
                 {{ userObj.adminName

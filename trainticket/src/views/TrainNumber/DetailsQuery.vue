@@ -25,6 +25,7 @@
           style="width: 100%"
           stripe
           :row-class-name="tableRowClassName"
+          :default-sort = "{prop: 'routerdetailStatus', order: 'ascending'}"
         >
           <el-table-column
             prop="routerdetailStatus"

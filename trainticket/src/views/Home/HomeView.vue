@@ -156,7 +156,7 @@ export default {
   width: 100%;
   height: 300px;
   fill: '#000' !important;
-  margin: 20px;
+  margin: 10px;
   border: 1px solid #e4e4e4;
   border-radius: 5px;
   box-sizing: border-box;
