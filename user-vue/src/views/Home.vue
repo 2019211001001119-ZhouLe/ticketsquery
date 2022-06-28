@@ -4,10 +4,8 @@
     <!--顶部布局的实现-->
     <div class="tl1">
       <img class="tl1_img" src="../../public/imgs/logo.jpg" />
-
       <div class="tl1_sh">
         <div class="tl1_sh_list">
-
         </div>
       </div>
     </div>
@@ -22,14 +20,6 @@
         </el-col>
       </el-row>
     </el-menu>
-    <!-- <div class="tl2">
-      <div class="tl2_cen">
-        <ul>
-          <li class="tl2_cen_first"><a>首页</a></li>
-          <li><a @click="toTrainNumberPage">车次查询</a></li>
-        </ul>
-      </div>
-    </div> -->
     <!--轮播图的实现-->
     <div class="tl3">
       <div class="tl3_select">

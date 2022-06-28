@@ -28,7 +28,7 @@
         </el-table-column>
         <el-table-column prop="arrivalTime" label="到达终点站时间">
         </el-table-column>
-        <el-table-column :reserve-selection="true" label="操作">
+        <el-table-column :reserve-selection="true" label="车次详情">
           <template slot-scope="scope">
             <el-button @click="checkDetails(scope.$index, scope.row)" type="info" icon="el-icon-more-outline" circle>
             </el-button>

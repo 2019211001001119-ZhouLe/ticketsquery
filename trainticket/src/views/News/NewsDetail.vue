@@ -1,6 +1,6 @@
 <template>
 	<div class="pageStyle">
-		<p class="titleCap">车次管理</p>
+		<p class="titleCap">晚点新闻</p>
 		<el-card class="box-card">
 			<el-row>
 				<el-col :span="8">
