@@ -7,13 +7,6 @@
 
       <div class="tl1_sh">
         <div class="tl1_sh_list">
-          <ul>
-            <li>
-              <a href="" class="tl1_sh_a"
-                >管理员登录 <i class="el-icon-user-solid"></i
-              ></a>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
