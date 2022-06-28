@@ -27,7 +27,7 @@
         </el-table-column>
         <el-table-column prop="departureTime" label="到站时间">
         </el-table-column>
-        <el-table-column prop="arrivalTime" label="出站时间">
+        <el-table-column prop="arrivalTime" label="出发时间">
         </el-table-column>
         <el-table-column prop="laterTime" label="晚点时间">
         </el-table-column>
