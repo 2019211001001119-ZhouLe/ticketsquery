@@ -3,19 +3,27 @@
   <div>
     <!-- 顶部导航 -->
     <div>
-      <el-page-header @back="goBack" :content="
-        '由' +
-        this.$route.query.departureStation +
-        '开往' +
-        this.$route.query.arrivalStation +
-        '所有车次信息'
-      " style="color: #4490f1">
+      <el-page-header
+        @back="goBack"
+        :content="
+          '由' +
+          this.$route.query.departureStation +
+          '开往' +
+          this.$route.query.arrivalStation +
+          '所有车次信息'
+        "
+        style="color: #4490f1"
+      >
       </el-page-header>
     </div>
     <!-- 数据部分 -->
     <div>
-      <el-table :data="trainNumbers" :cell-style="tableRowStyle" :header-cell-style="tableHeaderColor"
-        style="width: 100%; overflow-y: auto">
+      <el-table
+        :data="trainNumbers"
+        :cell-style="tableRowStyle"
+        :header-cell-style="tableHeaderColor"
+        style="width: 100%; overflow-y: auto"
+      >
         <el-table-column fixed prop="routertrainId" label="车次">
         </el-table-column>
         <el-table-column prop="routertrainType" label="列车类型">
@@ -27,13 +35,6 @@
         <el-table-column prop="departureTime" label="始发站时间">
         </el-table-column>
         <el-table-column prop="arrivalTime" label="到达终点站时间">
-        </el-table-column>
-        <el-table-column :reserve-selection="true" label="操作">
-          <template slot-scope="scope">
-            <el-button @click="checkDetails(scope.$index, scope.row)" type="info">
-              详情
-            </el-button>
-          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -85,16 +86,6 @@ export default {
     // 返回函数
     goBack() {
       this.$router.go(-1);
-    },
-    checkDetails(index, row) {
-      console.log(index);
-      console.log(row);
-      this.$router.push({
-        path: "/trainNumberList",
-        query: {
-          trainNumber: row.routertrainId,
-        },
-      });
     },
   },
 };
