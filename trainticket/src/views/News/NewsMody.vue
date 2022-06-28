@@ -194,7 +194,7 @@ export default {
         },
 
         handleEditSaveClick() {
-            this.$refs.newNews.validate((valid) => {  //开启校验
+            this.$refs.editNews.validate((valid) => {  //开启校验
                 if (valid) {   // 如果校验通过，请求接口，允许提交表单
                     this.updateNews(this.editNews)
                     this.dialogVisible = false

@@ -148,31 +148,31 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
       </el-main>
       <!-- 弹出窗编辑列车 -->
       <el-dialog title="编辑车次" :visible.sync="dialogVisible">
-        <el-form :model="trainNumbers">
+        <el-form :model="editTrainNumbers">
           <el-form-item label="车次">
             <el-input
-              v-model="trainNumbers.routertrainId"
+              v-model="editTrainNumbers.routertrainId"
               :disabled="true"
             ></el-input>
           </el-form-item>
           <el-form-item label="火车名称">
-            <el-input v-model="trainNumbers.trainId" disabled></el-input>
+            <el-input v-model="editTrainNumbers.trainId" disabled></el-input>
           </el-form-item>
           <el-form-item label="起始站">
             <el-input
-              v-model="trainNumbers.departureStationId"
+              v-model="editTrainNumbers.departureStationId"
               disabled
             ></el-input>
           </el-form-item>
           <el-form-item label="终点站">
             <el-input
-              v-model="trainNumbers.arrivalStationId"
+              v-model="editTrainNumbers.arrivalStationId"
               disabled
             ></el-input>
           </el-form-item>
           <el-form-item label="起始站出发时间">
             <el-date-picker
-              v-model="trainNumbers.departureTime"
+              v-model="editTrainNumbers.departureTime"
               type="datetime"
               placeholder="选择日期时间"
               align="right"
@@ -181,7 +181,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           </el-form-item>
           <el-form-item label="终点站到站时间">
             <el-date-picker
-              v-model="trainNumbers.arrivalTime"
+              v-model="editTrainNumbers.arrivalTime"
               type="datetime"
               placeholder="选择日期时间"
               align="right"
@@ -189,7 +189,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="handleEditSaveClick(trainNumbers)">保存</el-button>
+            <el-button type="primary" @click="handleEditSaveClick(editTrainNumbers)">保存</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -348,6 +348,7 @@ export default {
       // 要编辑的车次信息
       trainNumbers: [],
       // 要添加的车次信息
+      editTrainNumbers: [],
       newTrainNumbers: {
         routertrainId: "",
         trainId: "",
@@ -651,7 +652,7 @@ export default {
     // 点击编辑按钮
     handleEditClick(index, row) {
       console.log(index);
-      this.trainNumbers = row;
+      this.editTrainNumbers = row;
       this.dialogVisible = true;
     },
 

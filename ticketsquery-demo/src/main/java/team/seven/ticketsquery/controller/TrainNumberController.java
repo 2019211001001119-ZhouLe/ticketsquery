@@ -60,7 +60,7 @@ public class TrainNumberController {
     //更新车次信息
     @RequestMapping(value = "/train_number/{trainNumberId}", method = RequestMethod.PUT)
     ResultVO<?> updTrainNumber(@RequestBody TrainNumber trainNumber, @PathVariable String trainNumberId) throws Exception {
-        if(!trainNumber.getTrainId().equals(trainNumberId))
+        if(!trainNumber.getRoutertrainId().equals(trainNumberId))
             throw new Exception();
         return new ResultVO<>(service.updateById(trainNumber) ? ResultStatusEnum.SUCCESS : ResultStatusEnum.BAD_REQUEST);
     }
