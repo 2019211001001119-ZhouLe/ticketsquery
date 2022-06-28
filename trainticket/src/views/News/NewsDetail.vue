@@ -1,13 +1,13 @@
 <template>
   <div class="pageStyle">
-    <p class="titleCap">车次管理</p>
+    <p class="titleCap">晚点新闻</p>
     <el-card class="box-card">
       <el-row>
-        <el-col :span="20">
+        <el-col :span="10">
           <el-input
             placeholder="请输入站点名进行搜索，可以直接回车搜索..."
             @clear="queryAllDetails"
-            style="width: 350px; margin-left: 10px"
+            style="width: 95%; margin-left: 10px"
             clearable
             :clear="queryAllDetails"
             v-model="keywords"
@@ -21,13 +21,22 @@
             ></i>
           </el-input>
         </el-col>
-        <el-button
-          @click="batchDelete(ids, $event)"
-          type="danger"
-          size="medium"
-          :disabled="isDisable"
-          >X批量删除</el-button
-        >
+        <el-col :span="1">
+          <el-button
+            @click="queryAllDetails()"
+            icon="el-icon-refresh"
+            circle
+          ></el-button>
+        </el-col>
+        <el-col :span="12" class="tableButton">
+          <el-button
+            @click="batchDelete(ids, $event)"
+            type="danger"
+            size="medium"
+            :disabled="isDisable"
+            ><span class="el-icon-close"></span> 批量删除</el-button
+          >
+        </el-col>
       </el-row>
       <!--表格开始-->
       <el-table
@@ -41,12 +50,12 @@
         ref="multipleTable"
       >
         <el-table-column
-            :reserve-selection="true"
-            type="selection"
-            width="65"
+          :reserve-selection="true"
+          type="selection"
+          width="65"
         ></el-table-column>
         <el-table-column
-        :reserve-selection="true"
+          :reserve-selection="true"
           prop="routertrainId"
           label="车次号"
           width="120"
@@ -54,7 +63,7 @@
         >
         </el-table-column>
         <el-table-column
-        :reserve-selection="true"
+          :reserve-selection="true"
           prop="routerdetailId"
           label="站序"
           width="120"
@@ -62,7 +71,7 @@
         >
         </el-table-column>
         <el-table-column
-        :reserve-selection="true"
+          :reserve-selection="true"
           prop="trainstationName"
           label="火车站名称"
           width="120"
@@ -70,19 +79,23 @@
         >
         </el-table-column>
         <el-table-column
-        :reserve-selection="true"
+          :reserve-selection="true"
           prop="laterTime"
           label="晚点时间"
           width="120"
           align="center"
         >
         </el-table-column>
-        <el-table-column :reserve-selection="true" prop="adminName" label="发布人" align="center">
+        <el-table-column
+          :reserve-selection="true"
+          prop="adminName"
+          label="发布人"
+          align="center"
+        >
         </el-table-column>
         <el-table-column :reserve-selection="true" label="操作" align="center">
           <template slot-scope="scope">
             <el-button
-              size="small"
               @click="updateDetail(scope.row)"
               icon="el-icon-edit"
               circle
@@ -93,9 +106,9 @@
             >
               <el-button
                 slot="reference"
-                size="small"
                 icon="el-icon-delete"
                 circle
+                type="danger"
               ></el-button>
             </el-popconfirm>
           </template>
@@ -207,33 +220,27 @@ export default {
       console.log(this.detail);
       // 修改
       // 调用put请求
-      axios
-        .put(
-          "/details/" +
-            this.detail.routertrainId +
-            "/" +
-            this.detail.trainstationId,
-          this.detail
-        )
-        .then((res) => {
-          console.log(res);
-          this.dialogVisible = false;
-          // 修改成功刷新数据
-          if (res.data.code == "200") {
-            this.$notify({
-              title: "success",
-              message: "修改成功",
-              type: "success",
-              duration: 1500,
-            });
-            this.queryAllDetails();
-          }
-        });
+      axios.put("/details/", this.detail).then((res) => {
+        console.log(res);
+        this.dialogVisible = false;
+        // 修改成功刷新数据
+        if (res.data.code == "200") {
+          this.$notify({
+            title: "success",
+            message: "修改成功",
+            type: "success",
+            duration: 1500,
+          });
+          this.queryAllDetails();
+        }
+      });
     },
     deleteDetail(data) {
+      console.log(data);
       axios
         .delete("/details/" + data.routertrainId + "/" + data.trainstationId)
         .then((res) => {
+          console.log(res);
           if (res.data.code == "204") {
             console.log(res);
             this.$message({
@@ -243,8 +250,7 @@ export default {
               duration: 1500,
             });
             this.queryAllDetails();
-          }
-          else{
+          } else {
             this.$message({
               message: "删除失败",
               type: "error",
@@ -363,4 +369,8 @@ export default {
 };
 </script>
 <style>
+.tableButton button {
+  float: right;
+  margin: 0 20px;
+}
 </style>

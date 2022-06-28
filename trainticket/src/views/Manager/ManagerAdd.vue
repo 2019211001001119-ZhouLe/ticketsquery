@@ -5,7 +5,8 @@
 			<el-card id="box-card">
 				<el-row>
 					<el-col :span="10">
-						<el-input clearable v-model="input" suffix-icon="el-icon-trainlocation-outline" placeholder="请输入管理员账户">
+						<el-input clearable v-model="input" suffix-icon="el-icon-trainlocation-outline"
+							placeholder="请输入管理员账户">
 						</el-input>
 					</el-col>
 					<el-col :span="1">
@@ -18,15 +19,14 @@
 				<el-table :data="admin">
 					<el-table-column prop="adminId" label="管理员账号">
 					</el-table-column>
-					<el-table-column prop="adminPwd" label="管理员密码">
-					</el-table-column>
 					<el-table-column prop="adminName" label="管理员昵称">
 					</el-table-column>
 					<el-table-column prop="permission" label="管理员权限">
 					</el-table-column>
 					<el-table-column>
 						<template slot="header">
-							<el-button type="primary" @click="handleAddClick()"><span class="el-icon-plus"></span> 添加管理员</el-button>
+							<el-button type="primary" @click="handleAddClick()"><span class="el-icon-plus"></span> 添加管理员
+							</el-button>
 						</template>
 						<template slot-scope="scope">
 							<el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle>
@@ -38,41 +38,52 @@
 						</template>
 					</el-table-column>
 				</el-table>
-				<el-dialog title="编辑列车" :visible.sync="dialogVisible">
-					<el-form :modle="editAdmin">
-						<el-form-item label="管理员账号">
+				<div class="block">
+					<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+						:current-page.sync="currentPage" :page-size="pagesize" layout="prev, pager, next, jumper"
+						:total="total" class="departPaging">
+					</el-pagination>
+				</div>
+				<el-dialog title="编辑管理员" :visible.sync="dialogVisible">
+					<el-form :model="editAdmin" :rules="rule" ref="editAdmin">
+						<el-form-item label="管理员账号" prop="adminId">
 							<el-input v-model="editAdmin.adminId" :disabled="true"></el-input>
 						</el-form-item>
-						<el-form-item label="管理员密码">
+						<el-form-item label="管理员密码" prop="adminPwd">
 							<el-input v-model="editAdmin.adminPwd"></el-input>
 						</el-form-item>
-						<el-form-item label="管理员昵称">
+						<el-form-item label="管理员昵称" prop="adminName">
 							<el-input v-model="editAdmin.adminName"></el-input>
 						</el-form-item>
-						<el-form-item label="管理员权限">
-							<el-input v-model="editAdmin.permission"></el-input>
+						<el-form-item label="管理员权限" prop="permission">
+							<el-select v-model="editAdmin.permission" placeholder="请选择">
+								<el-option v-for="item in options" :key="item.value" :label="item.label"
+									:value="item.value">
+								</el-option>
+							</el-select>
 						</el-form-item>
 						<el-form-item>
-							<el-button @click="handleEditSaveClick()">保存</el-button>
+							<el-button @click="handleEditSaveClick(editAdmin)">保存</el-button>
 						</el-form-item>
 					</el-form>
 				</el-dialog>
-				<el-dialog title="添加列车" :visible.sync="addVisible">
-					<el-form :modle="newAdmin">
-						<el-form-item label="管理员账号">
-							<el-input v-model="newAdmin.adminId"></el-input>
+				<el-dialog title="添加管理员" :visible.sync="addVisible">
+					<el-form :model="newAdmin" :rules="rule" ref="newAdmin">
+						<el-form-item label="管理员密码" prop="adminPwd">
+							<el-input type="password" v-model="newAdmin.adminPwd"></el-input>
 						</el-form-item>
-						<el-form-item label="管理员密码">
-							<el-input v-model="newAdmin.adminPwd"></el-input>
-						</el-form-item>
-						<el-form-item label="管理员昵称">
+						<el-form-item label="管理员昵称" prop="adminName">
 							<el-input v-model="newAdmin.adminName"></el-input>
 						</el-form-item>
-						<el-form-item label="管理员权限">
-							<el-input v-model="newAdmin.permission"></el-input>
+						<el-form-item label="管理员权限" prop="permission">
+							<el-select v-model="newAdmin.permission" placeholder="请选择">
+								<el-option v-for="item in options" :key="item.value" :label="item.label"
+									:value="item.value">
+								</el-option>
+							</el-select>
 						</el-form-item>
 						<el-form-item>
-							<el-button @click="handleAddSaveClick()">保存</el-button>
+							<el-button @click="handleAddSaveClick(newAdmin)">保存</el-button>
 						</el-form-item>
 					</el-form>
 				</el-dialog>
@@ -88,6 +99,13 @@ export default {
 
 	data() {
 		return {
+			pagesize: 4,
+			// 总数据条数
+			total: 0,
+			// 分页栏中当前页
+			currentPage: 1,
+			trainstations: [], // 存放所有车站信息
+			trainstation: [], // 存放编辑车站信息
 			input: '',
 			admin: [],
 			editAdmin: [],
@@ -100,17 +118,51 @@ export default {
 			dialogVisible: false,
 			deleteVisible: false,
 			addVisible: false,
-			keyword: ''
+			keyword: '',
+			rule: {
+				adminPwd: [
+					{ required: true, message: "请输入密码", trigger: "blur" },
+					{ min: 6, message: "密码不小于6位", trigger: "blur" }
+				],
+
+				adminName: [
+					{ required: true, message: "请输入昵称", trigger: "blur" }
+				],
+				permission: [
+					{ required: true, message: "请输入权限", trigger: "blur" },
+					{
+						pattern: /^[12]$/,
+						message: "请输入1或2",
+						trigger: "blur"
+					}
+				]
+			},
+			options: [{
+				value: '1',
+				label: '1'
+			}, {
+				value: '2',
+				label: '2'
+			},]
 		}
 	},
 	mounted() {
 		this.queryAdmin()
 	},
 	methods: {
+		handleSizeChange(val) {
+			console.log(`每页 ${val} 条`);
+		},
+		// 当当前页发生改变时
+		handleCurrentChange(val) {
+			console.log(`当前页: ${val}`);
+			this.queryAdmin();
+		},
 		queryAdmin() {
-			axios.get('/admin/all').then((response) => {
-				this.admin = response['data']['data']
-				console.log(response)
+			axios.get('/admin/page?current=' + this.currentPage + '&size=' + this.pagesize).then((response) => {
+				this.admin = response.data.data.records
+				this.total = response.data.data.total;
+				console.log(this.total)
 			})
 		},
 
@@ -144,22 +196,36 @@ export default {
 
 		handleEditClick(index, row) {
 			console.log(index)
+			row.adminPwd = ''
 			this.editAdmin = row
 			this.dialogVisible = true
 		},
 
-		handleEditSaveClick() {
-			this.updateAdmin(this.editAdmin)
-			this.dialogVisible = false
+		handleEditSaveClick(editAdmin) {
+			this.$refs.editAdmin.validate((valid) => {  //开启校验
+				if (valid) {   // 如果校验通过，请求接口，允许提交表单
+					this.updateAdmin(editAdmin)
+					this.dialogVisible = false
+				} else {   //校验不通过
+					return false;
+				}
+			});
 		},
 
 		handleAddClick() {
 			this.addVisible = true
 		},
 
-		handleAddSaveClick() {
-			this.addAdmin(this.newAdmin)
-			this.addVisible = false
+		handleAddSaveClick(newAdmin) {
+			this.$refs.newAdmin.validate((valid) => {  //开启校验
+				if (valid) {   // 如果校验通过，请求接口，允许提交表单
+					this.addAdmin(newAdmin)
+					this.addVisible = false
+				} else {   //校验不通过
+					return false;
+				}
+			});
+
 		}
 	}
 }

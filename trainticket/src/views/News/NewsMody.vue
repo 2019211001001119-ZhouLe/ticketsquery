@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="pageStyle">
+            <p class="titleCap">最新发布</p>
             <el-card id="box-card">
                 <el-row>
                     <el-col :span="10">
@@ -35,28 +36,32 @@
                             <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle>
                             </el-button>
                             <el-popconfirm title="确认删除这行吗?" @confirm="deleteNews(scope.$index, scope.row)">
-                                <el-button slot="reference" icon="el-icon-delete" circle>
+                                <el-button slot="reference" type="danger" icon="el-icon-delete" circle>
                                 </el-button>
                             </el-popconfirm>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-dialog title="编辑列车" :visible.sync="dialogVisible">
-                    <el-form :modle="editNews">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page.sync="current" :page-size="size" layout="prev, pager, next, jumper" :total="total"
+                    class="departPaging">
+                </el-pagination>
+                <el-dialog title="编辑新闻" :visible.sync="dialogVisible">
+                    <el-form :model="editNews" ref="editNews" :rules="rule">
                         <el-form-item label="新闻ID">
                             <el-input v-model="editNews.newsId" :disabled="true"></el-input>
                         </el-form-item>
-                        <el-form-item label="管理员ID">
+                        <el-form-item label="管理员ID" prop="adminId">
                             <el-select v-model="editNews.adminId" placeholder="请选择">
                                 <el-option v-for="item in adminOptions" :key="item.adminId" :label="item.adminName"
                                     :value="item.adminId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="新闻标题">
+                        <el-form-item label="新闻标题" prop="newsTitle">
                             <el-input v-model="editNews.newsTitle"></el-input>
                         </el-form-item>
-                        <el-form-item label="新闻发布时间">
+                        <el-form-item label="新闻发布时间" prop="newsPublishTime">
                             <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="editNews.newsPublishTime"
                                 type="datetime" placeholder="选择日期时间">
                             </el-date-picker>
@@ -70,17 +75,18 @@
                     </el-form>
                 </el-dialog>
                 <el-dialog title="添加新闻" :visible.sync="addVisible">
-                    <el-form :modle="newNews">
-                        <el-form-item label="新闻ID">
-                            <el-input v-model="newNews.newsId"></el-input>
+                    <el-form :model="newNews" ref="newNews" :rules="rule">
+                        <el-form-item label="管理员ID" prop="adminId">
+                            <el-select v-model="newNews.adminId" placeholder="请选择">
+                                <el-option v-for="item in adminOptions" :key="item.adminId" :label="item.adminName"
+                                    :value="item.adminId">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
-                        <el-form-item label="管理员ID">
-                            <el-input v-model="newNews.adminId"></el-input>
-                        </el-form-item>
-                        <el-form-item label="新闻标题">
+                        <el-form-item label="新闻标题" prop="newsTitle">
                             <el-input v-model="newNews.newsTitle"></el-input>
                         </el-form-item>
-                        <el-form-item label="新闻发布时间">
+                        <el-form-item label="新闻发布时间" prop="newsPublishTime">
                             <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="newNews.newsPublishTime"
                                 type="datetime" placeholder="选择日期时间">
                             </el-date-picker>
@@ -119,20 +125,37 @@ export default {
             dialogVisible: false,
             deleteVisible: false,
             addVisible: false,
-            keyword: ''
+            keyword: '',
+            current: 1,
+            size: 4,
+            total: 0,
+            rule: {
+                adminId: [
+                    { required: true, message: "未填写管理者ID", trigger: "blur" },
+
+                ],
+                newsTitle: [
+                    { required: true, message: "未填写新闻标题", trigger: "blur" },
+                    { min: 3, max: 25, message: "新闻标题长度必须在3-25之间" }
+                ],
+                newsPublishTime: [
+                    { required: true, message: "未填写新闻发布时间", trigger: "blur" }
+                ]
+            }
         }
     },
     mounted() {
         this.queryNews()
-        axios.get("/admin/all").then(res=>{
+        axios.get("/admin/all").then(res => {
             this.adminOptions = res['data']['data']
         })
     },
     methods: {
         queryNews() {
-            axios.get('/news/all').then((response) => {
-                this.news = response['data']['data']
-                console.log(response)
+            axios.get('/news/page?current=' + this.current + '&size=' + this.size).then((response) => {
+                this.news = response['data']['data']['records']
+                this.total = response['data']['data']['total']
+                console.log(response['data']['data'])
             })
         },
 
@@ -171,8 +194,14 @@ export default {
         },
 
         handleEditSaveClick() {
-            this.updateNews(this.editNews)
-            this.dialogVisible = false
+            this.$refs.newNews.validate((valid) => {  //开启校验
+                if (valid) {   // 如果校验通过，请求接口，允许提交表单
+                    this.updateNews(this.editNews)
+                    this.dialogVisible = false
+                } else {   //校验不通过
+                    return false;
+                }
+            });
         },
 
         handleAddClick() {
@@ -180,9 +209,22 @@ export default {
         },
 
         handleAddSaveClick() {
-            this.addNews(this.newNews)
-            this.addVisible = false
-        }
+            this.$refs.newNews.validate((valid) => {  //开启校验
+                if (valid) {   // 如果校验通过，请求接口，允许提交表单
+                    this.addNews(this.newNews)
+                    this.addVisible = false
+                } else {   //校验不通过
+                    return false;
+                }
+            });
+        },
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);
+        },
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+            this.queryNews();
+        },
     }
 }
 </script>

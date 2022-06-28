@@ -144,6 +144,7 @@ export default {
       }
     };
     return {
+      v : true,
       numberValidateForm: {
         oldpassword: "",
         newpassword: "",
@@ -223,10 +224,10 @@ export default {
               path: "/manage/manageradd",
               label: "管理员增加",
             },
-            {
-              path: "/manage/managerinfo",
-              label: "信息管理",
-            },
+            // {
+            //   path: "/manage/managerinfo",
+            //   label: "信息管理",
+            // },
           ],
         },
       ],
@@ -324,11 +325,14 @@ export default {
       } else {
         // 发送网络请求
         axios.get("/admin/getById/" + userName).then((response) => {
-          console.log(response);
+          // console.log(response);
           // 判断用户登录是否成功
           if (response.data.code == 200) {
             this.userObj = response.data.data;
-            console.log(this.userObj);
+            // console.log(this.userObj);
+            if(this.userObj.permission == '2')
+              this.asideMenu.pop()
+
             this.$message({
               message: "欢迎回来，管理员" + this.userObj.adminName,
               type: "success",
@@ -342,7 +346,7 @@ export default {
           }
         });
       }
-      console.log(userName);
+      // console.log(userName);
     },
     // 登出
     logOut() {

@@ -26,13 +26,13 @@ public interface RouteDetailsMapper extends BaseMapper<RouteDetails> {
     //联表查询车次信息
     @Select("SELECT r.*,t.trainstation_name,t.trainstation_id,a.admin_id,a.admin_name from " +
             "tb_routerdetail r, tb_trainstation t,tb_administrator a " +
-            "where r.trainstation_id = t.trainstation_id and a.admin_id = r.admin_id")
+            "where r.trainstation_id = t.trainstation_id and a.admin_id = r.admin_id and r.routerdetail_status = 1 ")
     Page<RouteDetailsVo> queryRouteDetailsList(Page page);
 
     //联表条件查询
     @Select("SELECT r.*,t.trainstation_name,t.trainstation_id,a.admin_id,a.admin_name from " +
             "tb_routerdetail r, tb_trainstation t,tb_administrator a " +
-            "where r.trainstation_id = t.trainstation_id and a.admin_id = r.admin_id and routertrain_id = #{routertrain_id} ")
+            "where r.trainstation_id = t.trainstation_id and a.admin_id = r.admin_id and r.routerdetail_status = 1  and routertrain_id = #{routertrain_id} ")
     Page<RouteDetailsVo> queryAllByRoutertrainId(Page page,@Param(value = "routertrain_id") String routertrainId);
 
 
@@ -47,7 +47,8 @@ public interface RouteDetailsMapper extends BaseMapper<RouteDetails> {
             "trainstation_id = #{detail.trainstationId}," +
             "arrival_time = #{detail.arrivalTime}," +
             "departure_time = #{detail.departureTime}," +
-            "routerdetail_status = #{detail.routerdetailStatus} " +
+            "routerdetail_status = #{detail.routerdetailStatus}," +
+            "admin_id = #{detail.adminId} " +
             "WHERE routerdetail_id = #{detail.routerdetailId} " +
             "AND routertrain_id = #{detail.routertrainId}")
     int updateRouteDetail(@Param(value = "detail") RouteDetails routeDetails);

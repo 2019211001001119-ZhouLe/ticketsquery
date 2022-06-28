@@ -22,7 +22,8 @@ import java.util.Date;
  */
 @CrossOrigin
 @RestController
-public class RouteDetailsController {
+public class
+RouteDetailsController {
     private final RouteDetailsService service;
     RouteDetailsController(RouteDetailsService service) {
         this.service = service;
