@@ -6,26 +6,25 @@
       <img class="tl1_img" src="../../public/imgs/logo.jpg" />
 
       <div class="tl1_sh">
-        <div class="tl1_sh_list">
-          <ul>
-            <li>
-              <a href="" class="tl1_sh_a"
-                >管理员登录 <i class="el-icon-user-solid"></i
-              ></a>
-            </li>
-          </ul>
-        </div>
+        <div class="tl1_sh_list"></div>
       </div>
     </div>
     <!--顶部的导航实现-->
-    <div class="tl2">
-      <div class="tl2_cen">
-        <ul>
-          <li><a @click="toHome">首页</a></li>
-          <li class="tl2_cen_first"><a>车次查询</a></li>
-        </ul>
-      </div>
-    </div>
+    <el-menu
+      mode="horizontal"
+      router="true"
+      background-color="#3b99fc"
+      text-color="#ffffff"
+    >
+      <el-row style="text-align: center">
+        <el-col :span="3" :offset="3">
+          <el-menu-item index="/">首页</el-menu-item>
+        </el-col>
+        <el-col :span="3">
+          <el-menu-item index="/QueryTrainNumber">车次查询</el-menu-item>
+        </el-col>
+      </el-row>
+    </el-menu>
     <!--轮播图的实现-->
     <div class="tl3">
       <div class="tl3_select">
@@ -87,7 +86,13 @@
     <!-- 轮播信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <el-table :data="newsData" height="350" ref="table" style="width: 100%">
+        <el-table
+          :data="newsData"
+          height="350"
+          ref="table"
+          style="width: 100%"
+          @cell-click="txidUrl"
+        >
           <el-table-column prop="newsId" label="热搜排行" width="180">
           </el-table-column>
           <el-table-column prop="newsTitle" label="标题" width="780">
@@ -138,6 +143,11 @@ export default {
     this.init();
   },
   methods: {
+    //新闻详情点击跳转
+    txidUrl(row) {
+      let url = row.newsUrl;
+      window.location.href = url;
+    },
     // 获取新闻列表
     gteNews() {
       // 把vue对象先保存到第三方变量中

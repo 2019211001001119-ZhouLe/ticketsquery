@@ -25,14 +25,15 @@
           style="width: 100%"
           stripe
           :row-class-name="tableRowClassName"
+          :default-sort="{ prop: 'routerdetailId', order: 'ascending' }"
         >
           <el-table-column
-            prop="routerdetailStatus"
+            prop="routerdetailId"
             label="站序"
             width="180"
             type="index"
           >
-          <template slot-scope="scope">
+            <template slot-scope="scope">
               <span v-if="scope.row.visible">{{
                 scope.row.routerdetailId
               }}</span>
@@ -120,7 +121,6 @@
             </template>
           </el-table-column>
         </el-table>
-        
       </el-card>
     </div>
   </div>
@@ -144,12 +144,12 @@ export default {
       // 添加弹窗
       addVisible: false,
       // 添加表
-      newTrainNumbers:{
-        trainstationId: '',
-        routertrainId: '',
-        arrivalTime: '',
-        departureTime: '',
-      }
+      newTrainNumbers: {
+        trainstationId: "",
+        routertrainId: "",
+        arrivalTime: "",
+        departureTime: "",
+      },
     };
   },
   methods: {
@@ -185,39 +185,37 @@ export default {
     // 点击完成按钮，显示编辑按钮，隐藏完成按钮和输入框，发送网络请求
     handleFinish(index, row) {
       row.visible = !row.visible;
-      row.arrivalTime=this.setTimeToSec(row.arrivalTime)
-      row.departureTime=this.setTimeToSec(row.departureTime)
+      row.arrivalTime = this.setTimeToSec(row.arrivalTime);
+      row.departureTime = this.setTimeToSec(row.departureTime);
       console.log(row);
 
-      let data={
+      let data = {
         trainstationId: row.trainstationId,
         arrivalTime: row.arrivalTime,
         departureTime: row.departureTime,
         routerdetailStatus: row.routerdetailStatus,
         routerdetailId: row.routerdetailId,
         routertrainId: row.routertrainId,
-      }
-      axios
-        .put("/details/", data)
-        .then((response) => {
-          console.log(response);
-          if (response.data.code == 200) {
-            this.$notify({
-              title: "成功",
-              message: "修改成功",
-              type: "success",
-              duration: 1500,
-            });
-          } else {
-            this.$notify({
-              title: "失败",
-              message: "修改失败",
-              type: "error",
-              duration: 1500,
-            });
-          }
-          this.getDataByID();
-        });
+      };
+      axios.put("/details/", data).then((response) => {
+        console.log(response);
+        if (response.data.code == 200) {
+          this.$notify({
+            title: "成功",
+            message: "修改成功",
+            type: "success",
+            duration: 1500,
+          });
+        } else {
+          this.$notify({
+            title: "失败",
+            message: "修改失败",
+            type: "error",
+            duration: 1500,
+          });
+        }
+        this.getDataByID();
+      });
     },
     // 点击编辑按钮，隐藏编辑按钮，显示完成按钮和输入框
     handleEdit(index, row) {
@@ -225,15 +223,27 @@ export default {
       row.visible = !row.visible;
     },
     // 时间转换器
-    setTimeToSec(thatdate){
-      let date=new Date(thatdate)
-      var year = date.getFullYear(); 
-      var month = date.getMonth() + 1; 
-      var day = date.getDate(); 
-      var hour = date.getHours(); 
-      var minute = date.getMinutes(); 
-      var second = date.getSeconds(); 
-      return year + "-" + month + "-" + day+ " " +hour+ ":" +minute+ ":" +second;
+    setTimeToSec(thatdate) {
+      let date = new Date(thatdate);
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      var hour = date.getHours();
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day +
+        " " +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        second
+      );
     },
     // 设置表格内每一行的样式，呈斑马条纹样式
     tableRowClassName({ row, rowIndex }) {

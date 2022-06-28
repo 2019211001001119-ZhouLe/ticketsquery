@@ -7,20 +7,20 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <div class="littleCard">
-              <p>今日车次数量</p>
+              <p>车次数量</p>
               <h1>{{ trainNumberStats }}</h1>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="littleCard">
-              <p>今日车次运行</p>
+              <p>经停数量</p>
               <h1>{{ detailsStats }}</h1>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="littleCard">
               <p>列车种类</p>
-              <h1>{{ trainStats }}</h1>
+              <h1>{{ trainTypeStats }}</h1>
             </div>
           </el-col>
           <el-col :span="6">
@@ -55,6 +55,7 @@ export default {
       trainNumberStats: 0,
       detailsStats: 0,
       trainStats: 0,
+      trainTypeStats: 0,
       trainStationStats: 0,
       trainNumber: [],
       train: [],
@@ -65,7 +66,9 @@ export default {
         ],
         colors: ['#e062ae', '#fb7293', '#e690d1', '#32c5e9', '#96bfff'],
         unit: '单位',
-        showValue: true
+        showValue: true,
+        index: true,
+        rowNum: 3
       },
       trainType: {
         data: [
@@ -75,17 +78,21 @@ export default {
     }
   },
   mounted() {
+    axios.get("/train").then((response) => {
+      this.trainTypeStats = response.data.data.length
+    })
     axios.get("/train_number/city").then((response) => {
       this.trainNumber = response.data.data;
       this.trainNumberStats = this.trainNumber.length;
       for (var count = 0; count < this.trainNumberStats; count++) {
         var data = {
           name: this.trainNumber[count].city_name,
-          value: 100
+          value: 1
         }
         this.maxSta.data.push(data)
       }
       this.maxSta.data = this.addObj(this.maxSta.data)
+      this.maxSta.data.sort(this.sortObj("value"))
       this.maxSta = { ...this.maxSta }
 
     })
@@ -127,6 +134,18 @@ export default {
         });
       }
       return s
+    },
+    sortObj(prop) {
+      return function (obj1, obj2) {
+        var val1 = obj1[prop];
+        var val2 = obj2[prop]; if (val1 > val2) {
+          return -1;
+        } else if (val1 < val2) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
     }
   }
 }
@@ -137,7 +156,7 @@ export default {
   width: 100%;
   height: 300px;
   fill: '#000' !important;
-  margin: 20px;
+  margin: 10px;
   border: 1px solid #e4e4e4;
   border-radius: 5px;
   box-sizing: border-box;

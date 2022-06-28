@@ -9,7 +9,7 @@
             </el-header>
             <el-main class="proMain">
               <div class="grid-content titleH">
-                <h1>用户登陆</h1>
+                <h1>用户登录</h1>
                 <el-form :model="numberValidateForm" ref="numberValidateForm" class="demo-ruleForm" :rules="rules">
                   <el-form-item prop="username">
                     <el-input type="username" placeholder="用户名" prefix-icon="el-icon-s-custom"
@@ -22,7 +22,7 @@
                     </el-input>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary" @click="submitForm('numberValidateForm')">登陆<i class="el-icon-right"></i>
+                    <el-button type="primary" @click="submitForm('numberValidateForm')">登录<i class="el-icon-right"></i>
                     </el-button>
                   </el-form-item>
                 </el-form>
