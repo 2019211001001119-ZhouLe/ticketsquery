@@ -75,6 +75,14 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             label="起始站"
             width="140"
           >
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="top">
+                <p style="text-align:center">{{ scope.row.departureStationId }}</p>
+                <div slot="reference" class="name-wrapper">
+                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.departureStationId).label }}</el-tag>
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             :reserve-selection="true"
@@ -82,6 +90,14 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             label="终点站"
             width="140"
           >
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="top">
+                <p style="text-align:center">{{ scope.row.arrivalStationId }}</p>
+                <div slot="reference" class="name-wrapper">
+                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.arrivalStationId).label }}</el-tag>
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             :reserve-selection="true"
@@ -169,16 +185,28 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             <el-input v-model="editTrainNumbers.trainId" disabled></el-input>
           </el-form-item>
           <el-form-item label="起始站">
-            <el-input
-              v-model="editTrainNumbers.departureStationId"
-              disabled
-            ></el-input>
+<!--            <el-input-->
+<!--              v-model="editTrainNumbers.departureStationId"-->
+<!--              disabled-->
+<!--            ></el-input>-->
+            <el-select v-model="editTrainNumbers.departureStationId" disabled>
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="终点站">
-            <el-input
+            <!-- <el-input
               v-model="editTrainNumbers.arrivalStationId"
               disabled
-            ></el-input>
+            ></el-input> -->
+            <el-select v-model="editTrainNumbers.arrivalStationId" disabled>
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="起始站出发时间">
             <el-date-picker
@@ -237,26 +265,36 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             label-width="80px"
             prop="departureStationId"
           >
-            <el-autocomplete
+            <!-- <el-autocomplete
               class="inline-input"
-              v-model="newTrainNumbers.departureStationName"
+              v-model="newTrainNumbers.departureStationId"
               :fetch-suggestions="querySearchSta"
               placeholder="请输入内容"
-              @select="handleDepartureSelect"
-            ></el-autocomplete>
+            ></el-autocomplete> -->
+            <el-select v-model="newTrainNumbers.departureStationId">
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item
             label="终点站"
             label-width="80px"
             prop="arrivalStationId"
           >
-            <el-autocomplete
+            <!-- <el-autocomplete
               class="inline-input"
-              v-model="newTrainNumbers.arrivalStationName"
+              v-model="newTrainNumbers.arrivalStationId"
               :fetch-suggestions="querySearchSta"
               placeholder="请输入内容"
-              @select="handleArrivalSelect"
-            ></el-autocomplete>
+            ></el-autocomplete> -->
+            <el-select v-model="newTrainNumbers.arrivalStationId">
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="起始站出发时间" prop="departureTime">
             <el-date-picker
@@ -519,8 +557,8 @@ export default {
         console.log(response);
         response.data.records.forEach((element) => {
           let data = {
-            value: element.trainstationName,
-            id: element.trainstationId
+            value: element.trainstationId,
+            id: element.trainstationName
           };
           this.stations.push(data);
         });
