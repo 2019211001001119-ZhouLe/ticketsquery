@@ -142,6 +142,7 @@
             </el-form-item>
           </el-form>
         </el-dialog>
+        <!-- 添加车站 -->
         <el-dialog title="添加车站" :visible.sync="addVisible">
           <el-form
             :model="newtrainstation"

@@ -189,7 +189,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button @click="handleEditSaveClick(train)">保存</el-button>
+            <el-button type="primary" @click="handleEditSaveClick(trainNumbers)">保存</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -505,6 +505,10 @@ export default {
     },
     // 更改车次信息
     saveTrain(trainNumbers) {
+      console.log(trainNumbers);
+      trainNumbers.departureTime=this.setTimeToSec(trainNumbers.departureTime)
+      trainNumbers.arrivalTime=this.setTimeToSec(trainNumbers.arrivalTime)
+      console.log(trainNumbers["routertrainId"]);
       axios
         .put("/train_number/" + trainNumbers["routertrainId"], trainNumbers)
         .then((response) => {
@@ -643,6 +647,8 @@ export default {
       this.lateTable={}
     },
 
+
+    // 点击编辑按钮
     handleEditClick(index, row) {
       console.log(index);
       this.trainNumbers = row;
@@ -650,7 +656,8 @@ export default {
     },
 
     handleEditSaveClick(trainNumber) {
-      this.saveTrainNumber(trainNumber);
+      console.log(trainNumber);
+      this.saveTrain(trainNumber);
       this.dialogVisible = false;
     },
 
