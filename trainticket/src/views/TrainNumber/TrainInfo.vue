@@ -99,36 +99,46 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           </el-table-column>
           <el-table-column :reserve-selection="true" label="操作">
             <template slot-scope="scope">
-              <el-button
-                @click="handleEditClick(scope.$index, scope.row)"
-                icon="el-icon-edit"
-                circle
-              >
-              </el-button>
-              <el-popconfirm
-                title="确认删除这行吗?"
-                @confirm="deleteTrainNumber(scope.row)"
-              >
-                <el-button
-                  slot="reference"
-                  icon="el-icon-delete"
-                  type="danger"
-                  circle
-                >
-                </el-button>
-              </el-popconfirm>
-              <el-button
-                @click="checkDetails(scope.$index, scope.row)"
-                circle
-                icon="el-icon-more"
-                type="info"
-              ></el-button>
-              <el-button
-                @click="lateClick(scope.row)"
-                circle
-                icon="el-icon-time"
-                type="warning"
-              ></el-button>
+              <el-row>
+                <el-col :span="6">
+                  <el-button
+                    @click="handleEditClick(scope.$index, scope.row)"
+                    icon="el-icon-edit"
+                    circle
+                  >
+                  </el-button>
+                </el-col>
+                <el-col :span="6">
+                  <el-popconfirm
+                    title="确认删除这行吗?"
+                    @confirm="deleteTrainNumber(scope.row)"
+                  >
+                    <el-button
+                      slot="reference"
+                      icon="el-icon-delete"
+                      type="danger"
+                      circle
+                    >
+                    </el-button>
+                  </el-popconfirm>
+                </el-col>
+                <el-col :span="6">
+                  <el-button
+                    @click="checkDetails(scope.$index, scope.row)"
+                    circle
+                    icon="el-icon-more"
+                    type="info"
+                  ></el-button>
+                </el-col>
+                <el-col :span="6">
+                  <el-button
+                    @click="lateClick(scope.row)"
+                    circle
+                    icon="el-icon-time"
+                    type="warning"
+                  ></el-button>
+                </el-col>
+              </el-row>
             </template>
           </el-table-column>
         </el-table>
@@ -189,7 +199,11 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="handleEditSaveClick(editTrainNumbers)">保存</el-button>
+            <el-button
+              type="primary"
+              @click="handleEditSaveClick(editTrainNumbers)"
+              >保存</el-button
+            >
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -225,9 +239,10 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           >
             <el-autocomplete
               class="inline-input"
-              v-model="newTrainNumbers.departureStationId"
+              v-model="newTrainNumbers.departureStationName"
               :fetch-suggestions="querySearchSta"
               placeholder="请输入内容"
+              @select="handleDepartureSelect"
             ></el-autocomplete>
           </el-form-item>
           <el-form-item
@@ -237,9 +252,10 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           >
             <el-autocomplete
               class="inline-input"
-              v-model="newTrainNumbers.arrivalStationId"
+              v-model="newTrainNumbers.arrivalStationName"
               :fetch-suggestions="querySearchSta"
               placeholder="请输入内容"
+              @select="handleArrivalSelect"
             ></el-autocomplete>
           </el-form-item>
           <el-form-item label="起始站出发时间" prop="departureTime">
@@ -355,6 +371,8 @@ export default {
         routertrainType: "",
         departureStationId: "",
         arrivalStationId: "",
+        departureStationName: "",
+        arrivalStationName: "",
         departureTime: "",
         arrivalTime: "",
       },
@@ -374,6 +392,7 @@ export default {
       multipleSelection: [],
       // 存储修改车次的信息
       lateRouter: {},
+      // 储存修改经停信息的信息
       lateStation: {},
       // 来自车型表的数据
       trains: [],
@@ -448,6 +467,18 @@ export default {
     loadLateStation() {
       return this.latestations;
     },
+    // 点击给予当前出发站的ID
+    handleDepartureSelect(item) {
+      console.log(item);
+      this.newTrainNumbers.departureStationId = item.id;
+      console.log(this.newTrainNumbers);
+    },
+    // 点击给予当前出发站的ID
+    handleArrivalSelect(item) {
+      console.log(item);
+      this.newTrainNumbers.arrivalStationId = item.id;
+      console.log(this.newTrainNumbers);
+    },
     // 点击添加上列车类型
     handleSelect(item) {
       console.log(item);
@@ -455,13 +486,14 @@ export default {
     },
     // 点击获取当前车次车站信息
     handleLateSelect(item) {
+      console.log(item.id);
       console.log(item);
-      this.getRouterStation(this.lateRouter.routertrainId, item.value);
+      this.getRouterStation(this.lateRouter.routertrainId, item.id);
     },
     // 点击晚点按钮
     lateClick(row) {
-      this.latestations = []
-      this.latestationsArea = []
+      this.latestations = [];
+      this.latestationsArea = [];
       console.log(row);
       this.lateRouter = row;
       this.lateShow = true;
@@ -484,37 +516,58 @@ export default {
     // 获取车站数据
     getTrainStation() {
       axios.get("/trainstationbypage?current=1&size=10000").then((response) => {
+        console.log(response);
         response.data.records.forEach((element) => {
           let data = {
-            value: element.trainstationId,
+            value: element.trainstationName,
+            id: element.trainstationId
           };
           this.stations.push(data);
         });
       });
     },
+
     // 获取晚点车站数据
     getLateStation(trainID) {
       axios.get("/details/" + trainID).then((response) => {
         console.log(response);
         response.data.data.forEach((element) => {
+          let a = this.stations.filter(data=>
+            data.id===element.trainstationId
+          )
           let data = {
-            value: element.trainstationId,
+            value: a[0].value,
+            id: element.trainstationId
           };
           this.latestations.push(data);
         });
       });
     },
+
     // 更改车次信息
     saveTrain(trainNumbers) {
       console.log(trainNumbers);
-      trainNumbers.departureTime=this.setTimeToSec(trainNumbers.departureTime)
-      trainNumbers.arrivalTime=this.setTimeToSec(trainNumbers.arrivalTime)
+      trainNumbers.departureTime = this.setTimeToSec(
+        trainNumbers.departureTime
+      );
+      trainNumbers.arrivalTime = this.setTimeToSec(trainNumbers.arrivalTime);
       console.log(trainNumbers["routertrainId"]);
       axios
         .put("/train_number/" + trainNumbers["routertrainId"], trainNumbers)
         .then((response) => {
           console.log(response);
-          this.queryAll();
+          if (response.data.code) {
+            this.$message({
+              type: "success",
+              message: "修改成功",
+            });
+            this.queryAll();
+          } else {
+            this.$message({
+              type: "error",
+              message: "修改失败",
+            });
+          }
         });
     },
 
@@ -575,7 +628,7 @@ export default {
       });
     },
 
-    // 修改车次信息
+    // 修改晚点信息
     submitLate(formName) {
       console.log(this.$refs[formName].validate);
       this.$refs[formName].validate((valid) => {
@@ -593,9 +646,9 @@ export default {
                 type: "success",
                 duration: 1500,
               });
-              this.latestations=[]
-              this.lateTable={}
-              this.lateShow=false
+              this.latestations = [];
+              this.lateTable = {};
+              this.lateShow = false;
             } else {
               this.$notify({
                 title: "失败",
@@ -642,12 +695,11 @@ export default {
     },
 
     // 关闭晚点弹出窗
-    closeLate(){
-      this.latestations = []
-      this.latestationsArea = []
-      this.lateTable={}
+    closeLate() {
+      this.latestations = [];
+      this.latestationsArea = [];
+      this.lateTable = {};
     },
-
 
     // 点击编辑按钮
     handleEditClick(index, row) {
