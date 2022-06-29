@@ -87,10 +87,6 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             <el-input v-model="editTrainNumbers.trainId" disabled></el-input>
           </el-form-item>
           <el-form-item label="起始站">
-            <!-- <el-input
-              v-model="editTrainNumbers.departureStationId"
-              disabled
-            ></el-input> -->
             <el-select v-model="editTrainNumbers.departureStationId" disabled>
               <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
@@ -99,10 +95,6 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             </el-select>
           </el-form-item>
           <el-form-item label="终点站">
-            <!-- <el-input
-              v-model="editTrainNumbers.arrivalStationId"
-              disabled
-            ></el-input> -->
             <el-select v-model="editTrainNumbers.arrivalStationId" disabled>
               <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
@@ -142,12 +134,6 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             <el-input v-model="newTrainNumbers.routertrainType" disabled></el-input>
           </el-form-item>
           <el-form-item label="起始站" label-width="80px" prop="departureStationId">
-            <!-- <el-autocomplete
-              class="inline-input"
-              v-model="newTrainNumbers.departureStationId"
-              :fetch-suggestions="querySearchSta"
-              placeholder="请输入内容"
-            ></el-autocomplete> -->
             <el-select v-model="newTrainNumbers.departureStationId">
               <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
@@ -156,12 +142,6 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             </el-select>
           </el-form-item>
           <el-form-item label="终点站" label-width="80px" prop="arrivalStationId">
-            <!-- <el-autocomplete
-              class="inline-input"
-              v-model="newTrainNumbers.arrivalStationId"
-              :fetch-suggestions="querySearchSta"
-              placeholder="请输入内容"
-            ></el-autocomplete> -->
             <el-select v-model="newTrainNumbers.arrivalStationId">
               <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
@@ -180,7 +160,6 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           <el-row>
             <el-col :span="2">
               <el-form-item>
-                <!-- <el-button @click="submitForm('newTrainNumbers')">保存</el-button> -->
               </el-form-item>
             </el-col>
             <el-col :span="2" :offset="19">
@@ -206,13 +185,11 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             <el-input v-model="detail.routertrainId" :disabled="true"></el-input>
           </el-form-item>
           <el-form-item label="到站时间" prop="arrivalTime">
-            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="detail.arrivalTime" type="datetime"
-              placeholder="选择日期时间">
+            <el-date-picker v-model="detail.arrivalTime" type="datetime" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="离站时间" prop="departureTime">
-            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="detail.departureTime" type="datetime"
-              placeholder="选择日期时间">
+            <el-date-picker v-model="detail.departureTime" type="datetime" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
           <el-row>
@@ -238,17 +215,8 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
               <template slot-scope="{ item }">
                 <div>{{ stations.find(i => i.value == item.value).label }}</div>
                 <span>{{ item.value }}</span>
-
-                <!-- <span>{{ stations.find(i => i.value == item.trainstationId).label }}</span> -->
               </template>
             </el-autocomplete>
-
-            <!-- <el-select v-model="lateTable.latestation" @select="handleLateSelect">
-              <el-option v-for="item in lateTable" :key="item.value" :label="item.label" :value="item.value">
-                <span style="float: left">{{ item.label }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
-              </el-option>
-            </el-select> -->
           </el-form-item>
           <el-form-item label="晚点时间" label-width="80px" prop="latetime">
             <el-time-picker v-model="lateTable.latetime" :picker-options="{
@@ -269,6 +237,78 @@ import axios from "axios";
 import Bus from "../../utils/bus.js";
 export default {
   data() {
+    var validStation = (rule, value, callback) => {
+      if (value == this.newTrainNumbers.arrivalStationId) {
+        callback(new Error('起始站不能与终点站相同'));
+      }
+      callback();
+    }
+    var validStation1 = (rule, value, callback) => {
+      if (value == this.newTrainNumbers.departureStationId) {
+        callback(new Error('起始站不能与终点站相同'));
+      }
+      callback();
+    }
+    var validStation2 = (rule, value, callback) => {
+      if (this.details.find(item => item.trainstationId == value) != undefined) {
+        callback(new Error('该站已填写过'));
+      }
+      callback();
+    }
+    var validDate = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入起始站出发时间'));
+      } else {
+        if (value - this.newTrainNumbers.arrivalTime > 0) {
+          callback(new Error('起始站出发时间不得大于终点站到站时间'));
+        } else if (value - this.newTrainNumbers.arrivalTime == 0) {
+          callback(new Error('起始站出发时间和终点站到站时间不能相等'));
+        }
+        callback();
+      }
+    }
+    var validDate1 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入终点站到站时间'));
+      } else {
+        if (value - this.newTrainNumbers.departureTime < 0) {
+          callback(new Error('终点站到站时间不得小于起始站出发时间'));
+        } else if (value - this.newTrainNumbers.departureTime == 0) {
+          callback(new Error('起始站出发时间和终点站到站时间不能相等'));
+        } else {
+          this.$refs.newTrainNumbers.validateField('departureTime');
+        }
+        callback();
+      }
+    }
+    var validDetailDate = (rule, value, callback) => {
+      console.log("datailvalidate:")
+      console.log(value)
+      if (value == '' || value == null) {
+        callback(new Error('请输入到站时间'));
+      } else {
+        if (value - this.detail.departureTime > 0) {
+          callback(new Error('到站时间不得大于离站时间'));
+        } else if (value - this.detail.departureTime == 0) {
+          callback(new Error('到站时间和离站时间不能相等'));
+        }
+        callback();
+      }
+    }
+    var validDetailDate1 = (rule, value, callback) => {
+      console.log("datailvalidate1:")
+      console.log(value - this.detail.arrivalTime)
+      if (value == '' || value == null) {
+        callback(new Error('请输入离站时间'));
+      } else {
+        if (value - this.detail.arrivalTime < 0) {
+          callback(new Error('离站时间不得小于到站时间'));
+        } else if (value - this.detail.arrivalTime == 0) {
+          callback(new Error('离站时间和到站时间不能相等'));
+        }
+        callback();
+      }
+    }
     return {
       rules: {
         routertrainId: [
@@ -282,15 +322,19 @@ export default {
         ],
         departureStationId: [
           { required: true, message: "请输入起始站", trigger: "change" },
+          { validator: validStation, trigger: "change" }
         ],
         arrivalStationId: [
           { required: true, message: "请输入终点站", trigger: "change" },
+          { validator: validStation1, trigger: "change" }
         ],
         departureTime: [
           { required: true, message: "请输入起始站发车时间", trigger: "change", },
+          { validator: validDate, trigger: "change" }
         ],
         arrivalTime: [
           { required: true, message: "请输入终点站到站时间", trigger: "change" },
+          { validator: validDate1, trigger: "change" }
         ],
       },
       laterules: {
@@ -304,12 +348,15 @@ export default {
       detailRules: {
         trainstationId: [
           { required: true, message: "请输入站点", trigger: "change" },
+          { validator: validStation2, trigger: "change" }
         ],
         arrivalTime: [
           { required: true, message: "请输入到站时间", trigger: "change" },
+          { validator: validDetailDate, trigger: "change" }
         ],
         departureTime: [
           { required: true, message: "请输入离站时间", trigger: "change" },
+          { validator: validDetailDate1, trigger: "change" }
         ],
       },
       // 晚点数据
@@ -440,7 +487,6 @@ export default {
     },
     // 点击添加上列车类型
     handleSelect(item) {
-      console.log(item);
       this.newTrainNumbers.routertrainType = item.type;
     },
     // 点击获取当前车次车站信息
@@ -527,45 +573,6 @@ export default {
             type: "error",
             message: row.routertrainId + "车次删除失败!",
           });
-        }
-      });
-    },
-
-    // 增加车次信息
-    submitForm(formName) {
-      console.log(this.$refs[formName].validate);
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          // this.active = 3
-          // this.addVisible = false;
-          this.newTrainNumbers.departureTime = this.setTimeToSec(
-            this.newTrainNumbers.departureTime
-          );
-          this.newTrainNumbers.arrivalTime = this.setTimeToSec(
-            this.newTrainNumbers.arrivalTime
-          );
-          console.log(this.newTrainNumbers);
-          axios.post("/train_number", this.newTrainNumbers).then((response) => {
-            console.log(response);
-            if (response.data.code == 201) {
-              this.$message({
-                type: "success",
-                message: "添加成功",
-              });
-              this.newTrainNumbers = {};
-              this.queryAll();
-              return true
-            } else {
-              this.$message({
-                type: "error",
-                message: "添加失败",
-              });
-              return false
-            }
-          });
-        } else {
-          console.log("error submit!!");
-          return false
         }
       });
     },
@@ -796,17 +803,14 @@ export default {
       return "";
     },
     next() {
-      this.$refs['newTrainNumbers'].validate((valid) => {
+      this.$refs.newTrainNumbers.validate((valid) => {
+        console.log("????")
         if (valid) {
+          console.log("???")
           // this.active = 3
           // this.addVisible = false;
-          this.newTrainNumbers.departureTime = this.setTimeToSec(
-            this.newTrainNumbers.departureTime
-          );
-          this.newTrainNumbers.arrivalTime = this.setTimeToSec(
-            this.newTrainNumbers.arrivalTime
-          );
-          console.log(this.newTrainNumbers);
+          this.newTrainNumbers.departureTime = this.setTimeToSec(this.newTrainNumbers.departureTime);
+          this.newTrainNumbers.arrivalTime = this.setTimeToSec(this.newTrainNumbers.arrivalTime);
           axios.post("/train_number", this.newTrainNumbers).then((response) => {
             console.log(response);
             if (response.data.code == 201) {
@@ -820,8 +824,8 @@ export default {
               return true
             } else {
               this.$message({
-                type: "error",
-                message: "添加失败",
+                type: "warning",
+                message: "该车次已存在",
               });
               return false
             }
@@ -840,8 +844,8 @@ export default {
       let newDetail = JSON.parse(JSON.stringify(detail))
       this.$refs.detail.validate((valid) => {
         if (valid) {
-          console.log("detail.routerdetailId:")
-          console.log(newDetail.routerdetailId)
+          newDetail.departureTime = this.setTimeToSec(newDetail.departureTime);
+          newDetail.arrivalTime = this.setTimeToSec(newDetail.arrivalTime);
           this.details.push(newDetail)
           this.detail.routerdetailId++
           this.$message({
