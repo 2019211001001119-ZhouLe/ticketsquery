@@ -5,18 +5,22 @@
     <div class="tl1">
       <img class="tl1_img" src="../../public/imgs/logo.jpg" />
       <div class="tl1_sh">
-        <div class="tl1_sh_list">
-        </div>
+        <div class="tl1_sh_list"></div>
       </div>
     </div>
     <!--顶部的导航实现-->
-    <el-menu mode="horizontal" router="true" background-color="#3b99fc" text-color="#ffffff">
-      <el-row style="text-align:center">
+    <el-menu
+      mode="horizontal"
+      router="true"
+      background-color="#3b99fc"
+      text-color="#ffffff"
+    >
+      <el-row style="text-align: center">
         <el-col :span="3" :offset="3">
-          <el-menu-item index="/" >首页</el-menu-item>
+          <el-menu-item index="/">首页</el-menu-item>
         </el-col>
         <el-col :span="3">
-        <el-menu-item index="/QueryTrainNumber">车次查询</el-menu-item>
+          <el-menu-item index="/QueryTrainNumber">车次查询</el-menu-item>
         </el-col>
       </el-row>
     </el-menu>
@@ -25,16 +29,48 @@
       <div class="tl3_select">
         <div class="tl3_select1">
           <span>路线查询</span>
-          <el-form :inline="true" :model="formInline" :rules="rules" class="demo-form-inline" ref="formInline">
+          <el-form
+            :inline="true"
+            :model="formInline"
+            :rules="rules"
+            class="demo-form-inline"
+            ref="formInline"
+          >
             <el-form-item label="始发站" prop="star">
-              <el-input v-model="formInline.star" placeholder="成都"></el-input>
-            </el-form-item><br />
+              <el-input
+                v-model="formInline.star"
+                placeholder="成都"
+              ></el-input> </el-form-item
+            ><i class="el-icon-sort" @click="rollBack" style="
+                    position: absolute;
+                    left: 460px;
+                    top: 313px;
+              
+                  "></i>
             <el-form-item label="终点站" prop="end">
               <el-input v-model="formInline.end" placeholder="深圳"></el-input>
             </el-form-item>
             <br />
             <el-form-item>
-              <el-button type="primary" @click="toRoutePage('formInline')">查询</el-button>
+              <el-col :span="11">
+                <el-date-picker
+                  type="date"
+                  placeholder="出发日期"
+                  v-model="formInline.departureTime"
+                  style="
+                    position: absolute;
+                    left: -70px;
+                    top: 0px;
+                    width: 207px;
+                  "
+                ></el-date-picker>
+              </el-col>
+            </el-form-item>
+            <br /><br />
+            <el-form-item>
+              <el-button type="primary" @click="toRoutePage('formInline')"
+                >查询</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
@@ -43,7 +79,9 @@
     <!--会员服务-->
     <div class="tl5">
       <div>
-        <a href="https://cx.12306.cn/tlcx/index.html"><img src="../../public\imgs\abanner01.jpg" width="100%" /></a>
+        <a href="https://cx.12306.cn/tlcx/index.html"
+          ><img src="../../public\imgs\abanner01.jpg" width="100%"
+        /></a>
       </div>
       <div class="tl5_fw">
         <a href="https://exservice.12306.cn/excater/index.html">
@@ -67,10 +105,16 @@
       <div class="tl8_div"></div>
       <div class="tl8_div1" @click="toNewsPage">更多详情</div>
     </div>
-    <!-- 轮播信息 -->
+    <!-- 轮播新闻信息 -->
     <div class="tl9">
       <div class="tl9_msg1">
-        <el-table :data="newsData" height="350" ref="table" style="width: 100%" @cell-click="txidUrl">
+        <el-table
+          :data="newsData"
+          height="350"
+          ref="table"
+          style="width: 100%"
+          @cell-click="txidUrl"
+        >
           <el-table-column prop="newsId" label="热搜排行" width="180">
           </el-table-column>
           <el-table-column prop="newsTitle" label="标题" width="780">
@@ -83,7 +127,7 @@
     <div class="tl10"></div>
     <!-- 底部标识 -->
     <div class="tl11">
-      <p>版权所有，侵权必究</p>
+      <p>版权所有©2022 火车车次查询系统</p>
     </div>
   </div>
 </template>
@@ -94,9 +138,11 @@ export default {
     return {
       newsData: [],
       formInline: {
-        name: "",
+        departureTime: "",
         star: "",
         end: "",
+        // 中间值
+        median:""
       },
       // 表单校验
       rules: {
@@ -171,6 +217,8 @@ export default {
               departureStation: this.formInline.star,
               // 终点站
               arrivalStation: this.formInline.end,
+              // 出发时间
+              departureTime: this.formInline.departureTime,
             },
           });
         } else {
@@ -178,8 +226,14 @@ export default {
           return false;
         }
       });
+        console.log(this.formInline.departureTime);
     },
-
+    // 实现往返程
+    rollBack (){
+      this.formInline.median =this.formInline.end
+      this.formInline.end =this.formInline.star
+      this.formInline.star =this.formInline.median
+    },
     init() {
       // 拿到表格挂载后的真实DOM
       const table = this.$refs.table;
