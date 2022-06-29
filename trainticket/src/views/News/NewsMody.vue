@@ -52,7 +52,7 @@
                             <el-input v-model="editNews.newsId" :disabled="true"></el-input>
                         </el-form-item>
                         <el-form-item label="管理员ID" prop="adminId">
-                            <el-select v-model="editNews.adminId" placeholder="请选择">
+                            <el-select v-model="editNews.adminId" placeholder="请选择" :disabled="disable">
                                 <el-option v-for="item in adminOptions" :key="item.adminId" :label="item.adminName"
                                     :value="item.adminId">
                                 </el-option>
@@ -77,7 +77,7 @@
                 <el-dialog title="添加新闻" :visible.sync="addVisible">
                     <el-form :model="newNews" ref="newNews" :rules="rule">
                         <el-form-item label="管理员ID" prop="adminId">
-                            <el-select v-model="newNews.adminId" placeholder="请选择">
+                            <el-select v-model="admin.adminId" placeholder="请选择" :disabled="disable">
                                 <el-option v-for="item in adminOptions" :key="item.adminId" :label="item.adminName"
                                     :value="item.adminId">
                                 </el-option>
@@ -106,7 +106,7 @@
 <script>
 
 import axios from 'axios'
-
+import { delToken, getToken } from "../../utils/tokenUtils";
 export default {
 
     data() {
@@ -115,6 +115,8 @@ export default {
             news: [],
             editNews: [],
             adminOptions: [],
+            admin: [],
+            disable: true,
             newNews: {
                 newsId: '',
                 adminId: '',
@@ -130,10 +132,6 @@ export default {
             size: 4,
             total: 0,
             rule: {
-                adminId: [
-                    { required: true, message: "未填写管理者ID", trigger: "blur" },
-
-                ],
                 newsTitle: [
                     { required: true, message: "未填写新闻标题", trigger: "blur" },
                     { min: 3, max: 25, message: "新闻标题长度必须在3-25之间" }
@@ -148,6 +146,12 @@ export default {
         this.queryNews()
         axios.get("/admin/all").then(res => {
             this.adminOptions = res['data']['data']
+        })
+        axios.get("/admin/getById/" + getToken()).then(res => {
+            console.log("res:")
+            this.admin = res['data']['data']
+            if (this.admin.permission == '1')
+                this.disable = false
         })
     },
     methods: {
@@ -167,6 +171,15 @@ export default {
         },
 
         deleteNews(index, row) {
+            if (!(this.admin.adminId == row.adminId || this.disable == false)) {
+                this.$message({
+                    title: "失败",
+                    message: "不能删除他人发布信息",
+                    type: "error",
+                    duration: 1500,
+                });
+                return false
+            }
             console.log(index)
             axios.delete('/news/delete/' + row['newsId']).then((response) => {
                 console.log(response)
@@ -188,7 +201,17 @@ export default {
         },
 
         handleEditClick(index, row) {
+            if (!(this.admin.adminId == row.adminId || this.disable == false)) {
+                this.$message({
+                    title: "失败",
+                    message: "不能修改他人发布信息",
+                    type: "error",
+                    duration: 1500,
+                });
+                return false
+            }
             console.log(index)
+            this.editNews.adminId = this.admin.adminId
             this.editNews = row
             this.dialogVisible = true
         },
@@ -218,6 +241,7 @@ export default {
 
         handleAddClick() {
             this.addVisible = true
+            this.newNews.adminId = this.admin.adminId
         },
 
         handleAddSaveClick() {

@@ -57,15 +57,15 @@
               <el-input v-model="trainstation.trainstationId" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="城市编号">
-              <el-input v-model="trainstation.cityId"></el-input>
-            </el-form-item>
-            <el-form-item label="车站名称">
-              <el-select v-model="trainstation.trainstationName">
+              <el-select v-model="trainstation.cityId">
                 <el-option v-for="item in citys" :key="item.cityId" :label="item.cityName" :value="item.cityId">
                   <span style="float: left">{{ item.cityName }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.cityId }}</span>
                 </el-option>
               </el-select>
+            </el-form-item>
+            <el-form-item label="车站名称">
+              <el-input v-model="trainstation.trainstationName"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="handleEditSaveClick(trainstation)">保存</el-button>
@@ -79,15 +79,15 @@
               <el-input v-model="newtrainstation.trainstationId"></el-input>
             </el-form-item>
             <el-form-item label="城市编号" label-width="80px" prop="cityId">
-              <el-input v-model="newtrainstation.cityId"></el-input>
-            </el-form-item>
-            <el-form-item label="车站名称" label-width="80px" prop="trainstationName">
-              <el-select v-model="newtrainstation.trainstationName">
+              <el-select v-model="newtrainstation.cityId">
                 <el-option v-for="item in citys" :key="item.cityId" :label="item.cityName" :value="item.cityId">
                   <span style="float: left">{{ item.cityName }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.cityId }}</span>
                 </el-option>
               </el-select>
+            </el-form-item>
+            <el-form-item label="车站名称" label-width="80px" prop="trainstationName">
+              <el-input v-model="newtrainstation.trainstationName"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="handleAddSaveClick('newtrainstation')">保存</el-button>
