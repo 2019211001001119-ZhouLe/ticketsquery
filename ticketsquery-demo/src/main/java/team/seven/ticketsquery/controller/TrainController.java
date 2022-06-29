@@ -14,8 +14,8 @@ import java.util.List;
 /**
  * @description: 列车Controller
  * @author: ZhouLe
- * @create: 2022-06-09
- * @version: 1.0
+ * @create: 2022-A06-09
+ * @version: 1.0A
  */
 @CrossOrigin
 @RestController
