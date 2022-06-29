@@ -1,22 +1,29 @@
 <!--  -->
 <template>
   <div>
-    {{this.$route.query.departureTime}}
     <!-- 顶部导航 -->
     <div>
-      <el-page-header @back="goBack" :content="
-        '由' +
-        this.$route.query.departureStation +
-        '开往' +
-        this.$route.query.arrivalStation +
-        '所有车次信息'
-      " style="color: #4490f1">
+      <el-page-header
+        @back="goBack"
+        :content="
+          '由' +
+          this.$route.query.departureStation +
+          '开往' +
+          this.$route.query.arrivalStation +
+          '所有车次信息'
+        "
+        style="color: #4490f1"
+      >
       </el-page-header>
     </div>
     <!-- 数据部分 -->
     <div>
-      <el-table :data="trainNumbers" :cell-style="tableRowStyle" :header-cell-style="tableHeaderColor"
-        style="width: 100%; overflow-y: auto">
+      <el-table
+        :data="trainNumbers"
+        :cell-style="tableRowStyle"
+        :header-cell-style="tableHeaderColor"
+        style="width: 100%; overflow-y: auto"
+      >
         <el-table-column fixed prop="routertrainId" label="车次">
         </el-table-column>
         <el-table-column prop="routertrainType" label="列车类型">
@@ -31,7 +38,12 @@
         </el-table-column>
         <el-table-column :reserve-selection="true" label="车次详情">
           <template slot-scope="scope">
-            <el-button @click="checkDetails(scope.$index, scope.row)" type="info" icon="el-icon-more-outline" circle>
+            <el-button
+              @click="checkDetails(scope.$index, scope.row)"
+              type="info"
+              icon="el-icon-more-outline"
+              circle
+            >
             </el-button>
           </template>
         </el-table-column>
@@ -48,7 +60,7 @@ export default {
       departureStation: "",
       // 终点站
       arrivalStation: "",
-      departureTime:"",
+      departureTime: "",
       //查询到的车次信息
       trainNumbers: [],
     };
@@ -59,7 +71,7 @@ export default {
     this.departureStation = this.$route.query.departureStation;
     // 获取到路由传参传递进来的arrivalStation
     this.arrivalStation = this.$route.query.arrivalStation;
-    this.departureTime = this.$route.query.departureTime
+    this.departureTime = this.$route.query.departureTime;
     // 自动查询传递过来的路线车次
     this.gteRoutrList();
   },
@@ -69,7 +81,12 @@ export default {
       let _this = this;
       this.myAxios
         .get(
-          "/train_number/" + _this.departureStation + "/" + _this.arrivalStation
+          "/train_number/" +
+            _this.departureStation +
+            "/" +
+            _this.arrivalStation +
+            "?departureTime=" +
+            _this.departureTime
         )
         .then(function (res) {
           console.log(res.data.data);

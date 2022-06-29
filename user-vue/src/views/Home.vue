@@ -41,12 +41,11 @@
                 v-model="formInline.star"
                 placeholder="成都"
               ></el-input> </el-form-item
-            ><i class="el-icon-sort" @click="rollBack" style="
-                    position: absolute;
-                    left: 460px;
-                    top: 313px;
-              
-                  "></i>
+            ><i
+              class="el-icon-sort"
+              @click="rollBack"
+              style="position: absolute; left: 460px; top: 313px"
+            ></i>
             <el-form-item label="终点站" prop="end">
               <el-input v-model="formInline.end" placeholder="深圳"></el-input>
             </el-form-item>
@@ -55,6 +54,8 @@
               <el-col :span="11">
                 <el-date-picker
                   type="date"
+                  value-format="yyyy-MM-dd"
+                  :picker-options="pickerOptions"
                   placeholder="出发日期"
                   v-model="formInline.departureTime"
                   style="
@@ -142,7 +143,7 @@ export default {
         star: "",
         end: "",
         // 中间值
-        median:""
+        median: "",
       },
       // 表单校验
       rules: {
@@ -164,6 +165,11 @@ export default {
             trigger: "blur",
           },
         ],
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7;
+        },
       },
     };
   },
@@ -226,13 +232,13 @@ export default {
           return false;
         }
       });
-        console.log(this.formInline.departureTime);
+      console.log(this.formInline.departureTime);
     },
     // 实现往返程
-    rollBack (){
-      this.formInline.median =this.formInline.end
-      this.formInline.end =this.formInline.star
-      this.formInline.star =this.formInline.median
+    rollBack() {
+      this.formInline.median = this.formInline.end;
+      this.formInline.end = this.formInline.star;
+      this.formInline.star = this.formInline.median;
     },
     init() {
       // 拿到表格挂载后的真实DOM
