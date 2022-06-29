@@ -124,7 +124,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
         </el-form>
       </el-dialog>
       <!-- 弹出窗添加列车 -->
-      <el-dialog title="添加车次" :visible.sync="addVisible">
+      <el-dialog title="添加车次" :visible.sync="addVisible" fullscreen="true">
         <el-steps :active="active" finish-status="success">
           <el-step title="步骤 1"></el-step>
           <el-step title="步骤 2"></el-step>
@@ -180,7 +180,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           <el-row>
             <el-col :span="2">
               <el-form-item>
-                <el-button @click="submitForm('newTrainNumbers')">保存</el-button>
+                <!-- <el-button @click="submitForm('newTrainNumbers')">保存</el-button> -->
               </el-form-item>
             </el-col>
             <el-col :span="2" :offset="19">
@@ -215,20 +215,18 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
               placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
-          <el-form-item>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item>
-                  <el-button @click="submitDetailForm()">保存</el-button>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item>
-                  <el-button @click="detailNext(detail)">下一步</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="2">
+              <el-form-item>
+                <el-button @click="submitDetailForm()">保存</el-button>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2" :offset="16">
+              <el-form-item>
+                <el-button @click="detailNext(detail)">下一步</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </el-dialog>
       <!-- 弹出窗晚点 -->
@@ -260,19 +258,19 @@ export default {
     return {
       rules: {
         routertrainId: [
-          { required: true, message: "请输入车次", trigger: "blur" },
+          { required: true, message: "请输入车次", trigger: "change" },
         ],
         trainId: [
-          { required: true, message: "请输入火车名称", trigger: "blur" },
+          { required: true, message: "请输入火车名称", trigger: "change" },
         ],
         routertrainType: [
-          { required: true, message: "请输入火车类型", trigger: "blur" },
+          { required: true, message: "请输入火车类型", trigger: "change" },
         ],
         departureStationId: [
-          { required: true, message: "请输入起始站", trigger: "blur" },
+          { required: true, message: "请输入起始站", trigger: "change" },
         ],
         arrivalStationId: [
-          { required: true, message: "请输入终点站", trigger: "blur" },
+          { required: true, message: "请输入终点站", trigger: "change" },
         ],
         departureTime: [
           { required: true, message: "请输入起始站发车时间", trigger: "change", },
@@ -291,13 +289,13 @@ export default {
       },
       detailRules: {
         trainstationId: [
-          { required: true, message: "请输入站点", trigger: "blur" },
+          { required: true, message: "请输入站点", trigger: "change" },
         ],
         arrivalTime: [
-          { required: true, message: "请输入到站时间", trigger: "blur" },
+          { required: true, message: "请输入到站时间", trigger: "change" },
         ],
         departureTime: [
-          { required: true, message: "请输入离站时间", trigger: "blur" },
+          { required: true, message: "请输入离站时间", trigger: "change" },
         ],
       },
       // 晚点数据
@@ -359,6 +357,7 @@ export default {
       ,
       choosed: 0,
       active: 0,
+      addtnBool: '',
     };
   },
   methods: {
@@ -540,16 +539,18 @@ export default {
               });
               this.newTrainNumbers = {};
               this.queryAll();
+              return true
             } else {
               this.$message({
                 type: "error",
                 message: "添加失败",
               });
+              return false
             }
           });
         } else {
           console.log("error submit!!");
-          return false;
+          return false
         }
       });
     },
@@ -780,12 +781,45 @@ export default {
       return "";
     },
     next() {
-      this.submitForm('newTrainNumbers')
-      this.choosed += 1;
-      // if (this.active++ > 2) this.active = 0;
-      this.detail.routertrainId = this.newTrainNumbers.routertrainId
-      this.detail.routerdetailId = 1
-      this.active += 1
+      this.$refs['newTrainNumbers'].validate((valid) => {
+        if (valid) {
+          // this.active = 3
+          // this.addVisible = false;
+          this.newTrainNumbers.departureTime = this.setTimeToSec(
+            this.newTrainNumbers.departureTime
+          );
+          this.newTrainNumbers.arrivalTime = this.setTimeToSec(
+            this.newTrainNumbers.arrivalTime
+          );
+          console.log(this.newTrainNumbers);
+          axios.post("/train_number", this.newTrainNumbers).then((response) => {
+            console.log(response);
+            if (response.data.code == 201) {
+              this.$message({
+                type: "success",
+                message: "添加成功",
+              });
+              this.newTrainNumbers = {};
+              this.queryAll();
+
+              return true
+            } else {
+              this.$message({
+                type: "error",
+                message: "添加失败",
+              });
+              return false
+            }
+          });
+        } else {
+          console.log("error submit!!");
+          return false
+        }
+        this.choosed += 1;
+        this.detail.routertrainId = this.newTrainNumbers.routertrainId
+        this.detail.routerdetailId = 1
+        this.active += 1
+      });
     },
     detailNext(detail) {
       let newDetail = JSON.parse(JSON.stringify(detail))
