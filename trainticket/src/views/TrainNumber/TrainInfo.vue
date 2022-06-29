@@ -1,3 +1,4 @@
+http://127.0.0.1:8888/admin/getById/qcjn472619
 <template>
   <div class="pageStyle">
     <p class="titleCap">车次管理</p>
@@ -5,181 +6,74 @@
       <el-main>
         <el-row>
           <el-col :span="10">
-            <el-input
-              v-model="keyword"
-              placeholder="请输入车次号查询"
-            ></el-input>
+            <el-input v-model="keyword" placeholder="请输入车次号查询"></el-input>
           </el-col>
           <el-col :span="1">
-            <el-button
-              icon="el-icon-search"
-              circle
-              @click="handleBtnClick(keyword)"
-            ></el-button>
+            <el-button icon="el-icon-search" circle @click="handleBtnClick(keyword)"></el-button>
           </el-col>
           <el-col :span="1">
-            <el-button
-              @click="flush($event)"
-              style="margin-left: 0px"
-              icon="el-icon-refresh"
-              circle
-            ></el-button>
+            <el-button @click="flush($event)" style="margin-left: 0px" icon="el-icon-refresh" circle></el-button>
           </el-col>
           <el-col :span="12" class="tableButton">
-            <el-button
-              type="danger"
-              plain
-              :disabled="noAnySelection"
-              @click="batchDelete(ids)"
-              ><span class="el-icon-close"></span> 批量删除</el-button
-            >
-            <el-button type="primary" @click="handleAddClick()"
-              ><span class="el-icon-plus"></span> 添加车次</el-button
-            >
+            <el-button type="danger" plain :disabled="noAnySelection" @click="batchDelete(ids)"><span
+                class="el-icon-close"></span> 批量删除</el-button>
+            <el-button type="primary" @click="handleAddClick(); choosed = 0"><span class="el-icon-plus"></span> 添加车次
+            </el-button>
           </el-col>
         </el-row>
         <!-- 数据表 -->
-        <el-table
-          ref="multipleTable"
-          :data="trainNumbers"
-          tooltip-effect="dark"
-          style="width: 100%"
-          stripe
-          :row-class-name="tableRowClassName"
-          :row-key="rowKey"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column
-            :reserve-selection="true"
-            type="selection"
-            width="65"
-          ></el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="routertrainId"
-            label="车次"
-            width="100"
-          >
+        <el-table ref="multipleTable" :data="trainNumbers" tooltip-effect="dark" style="width: 100%" stripe
+          :row-class-name="tableRowClassName" :row-key="rowKey" @selection-change="handleSelectionChange">
+          <el-table-column :reserve-selection="true" type="selection" width="65"></el-table-column>
+          <el-table-column :reserve-selection="true" prop="routertrainId" label="车次" width="100">
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="trainId"
-            label="火车名称"
-            width="140"
-          >
+          <el-table-column :reserve-selection="true" prop="trainId" label="火车名称" width="140">
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="departureStationId"
-            label="起始站"
-            width="140"
-          >
+          <el-table-column :reserve-selection="true" prop="departureStationId" label="起始站" width="140">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
-                <p style="text-align: center">
-                  {{ scope.row.departureStationId }}
-                </p>
+                <p style="text-align:center">{{ scope.row.departureStationId }}</p>
                 <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{
-                    stations.find(
-                      (item) => item.value == scope.row.departureStationId
-                    ).label
-                  }}</el-tag>
+                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.departureStationId).label }}
+                  </el-tag>
                 </div>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="arrivalStationId"
-            label="终点站"
-            width="140"
-          >
+          <el-table-column :reserve-selection="true" prop="arrivalStationId" label="终点站" width="140">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
-                <p style="text-align: center">
-                  {{ scope.row.arrivalStationId }}
-                </p>
+                <p style="text-align:center">{{ scope.row.arrivalStationId }}</p>
                 <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{
-                    stations.find(
-                      (item) => item.value == scope.row.arrivalStationId
-                    ).label
-                  }}</el-tag>
+                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.arrivalStationId).label }}
+                  </el-tag>
                 </div>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="departureTime"
-            label="起始站出发时间"
-            width="180"
-          >
+          <el-table-column :reserve-selection="true" prop="departureTime" label="起始站出发时间" width="180">
           </el-table-column>
-          <el-table-column
-            :reserve-selection="true"
-            prop="arrivalTime"
-            label="终点站到站时间"
-            width="180"
-          >
+          <el-table-column :reserve-selection="true" prop="arrivalTime" label="终点站到站时间" width="180">
           </el-table-column>
           <el-table-column :reserve-selection="true" label="操作">
             <template slot-scope="scope">
-              <el-row>
-                <el-col :span="6">
-                  <el-button
-                    @click="handleEditClick(scope.$index, scope.row)"
-                    icon="el-icon-edit"
-                    circle
-                  >
-                  </el-button>
-                </el-col>
-                <el-col :span="6">
-                  <el-popconfirm
-                    title="确认删除这行吗?"
-                    @confirm="deleteTrainNumber(scope.row)"
-                  >
-                    <el-button
-                      slot="reference"
-                      icon="el-icon-delete"
-                      type="danger"
-                      circle
-                    >
-                    </el-button>
-                  </el-popconfirm>
-                </el-col>
-                <el-col :span="6">
-                  <el-button
-                    @click="checkDetails(scope.$index, scope.row)"
-                    circle
-                    icon="el-icon-more"
-                    type="info"
-                  ></el-button>
-                </el-col>
-                <el-col :span="6">
-                  <el-button
-                    @click="lateClick(scope.row)"
-                    circle
-                    icon="el-icon-time"
-                    type="warning"
-                  ></el-button>
-                </el-col>
-              </el-row>
+              <el-button @click="handleEditClick(scope.$index, scope.row)" icon="el-icon-edit" circle>
+              </el-button>
+              <el-popconfirm title="确认删除这行吗?" @confirm="deleteTrainNumber(scope.row)">
+                <el-button slot="reference" icon="el-icon-delete" type="danger" circle>
+                </el-button>
+              </el-popconfirm>
+              <el-button @click="checkDetails(scope.$index, scope.row)" circle icon="el-icon-more" type="info">
+              </el-button>
+              <el-button @click="lateClick(scope.row)" circle icon="el-icon-time" type="warning"></el-button>
             </template>
           </el-table-column>
         </el-table>
         <!-- 分页栏 -->
         <div class="block">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="currentPage"
-            :page-size="pagesize"
-            layout="prev, pager, next, jumper"
-            :total="totalStation"
-            class="departPaging"
-          >
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            :current-page.sync="currentPage" :page-size="pagesize" layout="prev, pager, next, jumper"
+            :total="totalStation" class="departPaging">
           </el-pagination>
         </div>
       </el-main>
@@ -187,197 +81,147 @@
       <el-dialog title="编辑车次" :visible.sync="dialogVisible">
         <el-form :model="editTrainNumbers">
           <el-form-item label="车次">
-            <el-input
-              v-model="editTrainNumbers.routertrainId"
-              :disabled="true"
-            ></el-input>
+            <el-input v-model="editTrainNumbers.routertrainId" :disabled="true"></el-input>
           </el-form-item>
           <el-form-item label="火车名称">
             <el-input v-model="editTrainNumbers.trainId" disabled></el-input>
           </el-form-item>
           <el-form-item label="起始站">
-            <!-- <el-input
-              v-model="editTrainNumbers.departureStationId"
-              disabled
-            ></el-input> -->
             <el-select v-model="editTrainNumbers.departureStationId" disabled>
-              <el-option
-                v-for="item in stations"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  item.value
-                }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="终点站">
-            <!-- <el-input
-              v-model="editTrainNumbers.arrivalStationId"
-              disabled
-            ></el-input> -->
             <el-select v-model="editTrainNumbers.arrivalStationId" disabled>
-              <el-option
-                v-for="item in stations"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  item.value
-                }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="起始站出发时间">
-            <el-date-picker
-              v-model="editTrainNumbers.departureTime"
-              type="datetime"
-              placeholder="选择日期时间"
-              align="right"
-            >
+            <el-date-picker v-model="editTrainNumbers.departureTime" type="datetime" placeholder="选择日期时间" align="right">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="终点站到站时间">
-            <el-date-picker
-              v-model="editTrainNumbers.arrivalTime"
-              type="datetime"
-              placeholder="选择日期时间"
-              align="right"
-            >
+            <el-date-picker v-model="editTrainNumbers.arrivalTime" type="datetime" placeholder="选择日期时间" align="right">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button
-              type="primary"
-              @click="handleEditSaveClick(editTrainNumbers)"
-              >保存</el-button
-            >
+            <el-button type="primary" @click="handleEditSaveClick(editTrainNumbers)">保存</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
       <!-- 弹出窗添加列车 -->
-      <el-dialog title="添加车次" :visible.sync="addVisible">
-        <el-form :model="newTrainNumbers" :rules="rules" ref="newTrainNumbers">
+      <el-dialog title="添加车次" :visible.sync="addVisible" fullscreen>
+        <el-steps :active="active" finish-status="success">
+          <el-step title="步骤 1"></el-step>
+          <el-step title="步骤 2"></el-step>
+          <el-step title="步骤 3"></el-step>
+        </el-steps>
+        <el-form :model="newTrainNumbers" :rules="rules" ref="newTrainNumbers" v-if="choosed == 0">
           <el-form-item label="车次" label-width="80px" prop="routertrainId">
             <el-input v-model="newTrainNumbers.routertrainId"></el-input>
           </el-form-item>
           <el-form-item label="火车名称" label-width="80px" prop="trainId">
-            <el-autocomplete
-              class="inline-input"
-              v-model="newTrainNumbers.trainId"
-              :fetch-suggestions="querySearch"
-              placeholder="请输入内容"
-              @select="handleSelect"
-            ></el-autocomplete>
+            <el-autocomplete class="inline-input" v-model="newTrainNumbers.trainId" :fetch-suggestions="querySearch"
+              placeholder="请输入内容" @select="handleSelect"></el-autocomplete>
           </el-form-item>
-          <el-form-item
-            label="火车类型"
-            label-width="80px"
-            prop="routertrainType"
-          >
-            <el-input
-              v-model="newTrainNumbers.routertrainType"
-              disabled
-            ></el-input>
+          <el-form-item label="火车类型" label-width="80px" prop="routertrainType">
+            <el-input v-model="newTrainNumbers.routertrainType" disabled></el-input>
           </el-form-item>
-          <el-form-item
-            label="起始站"
-            label-width="80px"
-            prop="departureStationId"
-          >
-            <!-- <el-autocomplete
-              class="inline-input"
-              v-model="newTrainNumbers.departureStationId"
-              :fetch-suggestions="querySearchSta"
-              placeholder="请输入内容"
-            ></el-autocomplete> -->
+          <el-form-item label="起始站" label-width="80px" prop="departureStationId">
             <el-select v-model="newTrainNumbers.departureStationId">
-              <el-option
-                v-for="item in stations"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  item.value
-                }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            label="终点站"
-            label-width="80px"
-            prop="arrivalStationId"
-          >
-            <!-- <el-autocomplete
-              class="inline-input"
-              v-model="newTrainNumbers.arrivalStationId"
-              :fetch-suggestions="querySearchSta"
-              placeholder="请输入内容"
-            ></el-autocomplete> -->
+          <el-form-item label="终点站" label-width="80px" prop="arrivalStationId">
             <el-select v-model="newTrainNumbers.arrivalStationId">
-              <el-option
-                v-for="item in stations"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  item.value
-                }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="起始站出发时间" prop="departureTime">
-            <el-date-picker
-              v-model="newTrainNumbers.departureTime"
-              type="datetime"
-              placeholder="选择日期时间"
-              align="right"
-            >
+            <el-date-picker v-model="newTrainNumbers.departureTime" type="datetime" placeholder="选择日期时间" align="right">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="终点站到站时间" prop="arrivalTime">
-            <el-date-picker
-              v-model="newTrainNumbers.arrivalTime"
-              type="datetime"
-              placeholder="选择日期时间"
-              align="right"
-            >
+            <el-date-picker v-model="newTrainNumbers.arrivalTime" type="datetime" placeholder="选择日期时间" align="right">
             </el-date-picker>
           </el-form-item>
-          <el-form-item>
-            <el-button @click="submitForm('newTrainNumbers')">保存</el-button>
+          <el-row>
+            <el-col :span="2">
+              <el-form-item>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2" :offset="19">
+              <el-form-item>
+                <el-button @click="next()">下一步</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-form v-if="choosed >= 1" label-width="80px" :model="detail" :rules="detailRules" ref="detail">
+          <el-form-item label="站序" prop="routerdetailId">
+            <el-input v-model="detail.routerdetailId" :disabled="true"></el-input>
           </el-form-item>
+          <el-form-item label="经过站" prop="trainstationId">
+            <el-select v-model="detail.trainstationId">
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="车次号" prop="routertrainId">
+            <el-input v-model="detail.routertrainId" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="到站时间" prop="arrivalTime">
+            <el-date-picker v-model="detail.arrivalTime" type="datetime" placeholder="选择日期时间">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="离站时间" prop="departureTime">
+            <el-date-picker v-model="detail.departureTime" type="datetime" placeholder="选择日期时间">
+            </el-date-picker>
+          </el-form-item>
+          <el-row>
+            <el-col :span="2">
+              <el-form-item>
+                <el-button @click="submitDetailForm()">保存</el-button>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2" :offset="16">
+              <el-form-item>
+                <el-button @click="detailNext(detail)">下一步</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </el-dialog>
       <!-- 弹出窗晚点 -->
       <el-dialog title="添加晚点" :visible.sync="lateShow" @close="closeLate()">
         <el-form :model="lateTable" :rules="laterules" ref="lateTable">
           <el-form-item label="车站名称" label-width="80px" prop="latestation">
-            <el-autocomplete
-              class="inline-input"
-              v-model="lateTable.latestation"
-              :fetch-suggestions="queryLateSta"
-              placeholder="请输入内容"
-              @select="handleLateSelect"
-            ></el-autocomplete>
+            <el-autocomplete class="inline-input" v-model="lateTable.latestation" :fetch-suggestions="queryLateSta"
+              placeholder="请输入内容" @select="handleLateSelect">
+              <template slot-scope="{ item }">
+                <div>{{ stations.find(i => i.value == item.value).label }}</div>
+                <span>{{ item.value }}</span>
+              </template>
+            </el-autocomplete>
           </el-form-item>
           <el-form-item label="晚点时间" label-width="80px" prop="latetime">
-            <el-time-picker
-              v-model="lateTable.latetime"
-              :picker-options="{
-                selectableRange: '00:00:00   - 23:59:59',
-              }"
-              placeholder="选择晚点时间"
-            >
+            <el-time-picker v-model="lateTable.latetime" :picker-options="{
+              selectableRange: '00:00:00 - 23:59:59',
+            }" placeholder="选择晚点时间">
             </el-time-picker>
           </el-form-item>
           <el-form-item>
@@ -393,32 +237,146 @@ import axios from "axios";
 import Bus from "../../utils/bus.js";
 export default {
   data() {
+    var validTrain = (rule, value, callback) => {
+      console.log("value:")
+      console.log(value)
+      switch (this.newTrainNumbers.routertrainId.charAt(0)) {
+        case 'k':
+        case 'K':
+          if (value != '快速列车')
+            callback(new Error('K车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        case 't':
+        case 'T':
+          if (value != '特快列车')
+            callback(new Error('T车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        case 'z':
+        case 'Z':
+          if (value != '特快直达')
+            callback(new Error('Z车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        case 'g':
+        case 'G':
+          if (value != '高速动车')
+            callback(new Error('G车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        default:
+          callback();
+          break;
+      }
+    }
+    var validStation = (rule, value, callback) => {
+      if (value == this.newTrainNumbers.arrivalStationId) {
+        callback(new Error('起始站不能与终点站相同'));
+      }
+      callback();
+    }
+    var validStation1 = (rule, value, callback) => {
+      if (value == this.newTrainNumbers.departureStationId) {
+        callback(new Error('起始站不能与终点站相同'));
+      }
+      callback();
+    }
+    var validStation2 = (rule, value, callback) => {
+      if (this.details.find(item => item.trainstationId == value) != undefined) {
+        callback(new Error('该站已填写过'));
+      }
+      callback();
+    }
+    var validDate = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入起始站出发时间'));
+      } else {
+        if (value - this.newTrainNumbers.arrivalTime > 0) {
+          callback(new Error('起始站出发时间不得大于终点站到站时间'));
+        } else if (value - this.newTrainNumbers.arrivalTime == 0) {
+          callback(new Error('起始站出发时间和终点站到站时间不能相等'));
+        }
+        callback();
+      }
+    }
+    var validDate1 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入终点站到站时间'));
+      } else {
+        if (value - this.newTrainNumbers.departureTime < 0) {
+          callback(new Error('终点站到站时间不得小于起始站出发时间'));
+        } else if (value - this.newTrainNumbers.departureTime == 0) {
+          callback(new Error('起始站出发时间和终点站到站时间不能相等'));
+        } else {
+          this.$refs.newTrainNumbers.validateField('departureTime');
+        }
+        callback();
+      }
+    }
+    var validDetailDate = (rule, value, callback) => {
+      console.log("datailvalidate:")
+      console.log(value)
+      if (value == '' || value == null) {
+        callback(new Error('请输入到站时间'));
+      } else {
+        if (value - this.detail.departureTime > 0) {
+          callback(new Error('到站时间不得大于离站时间'));
+        } else if (value - this.detail.departureTime == 0) {
+          callback(new Error('到站时间和离站时间不能相等'));
+        }
+        callback();
+      }
+    }
+    var validDetailDate1 = (rule, value, callback) => {
+      console.log("datailvalidate1:")
+      console.log(value - this.detail.arrivalTime)
+      if (value == '' || value == null) {
+        callback(new Error('请输入离站时间'));
+      } else {
+        if (value - this.detail.arrivalTime < 0) {
+          callback(new Error('离站时间不得小于到站时间'));
+        } else if (value - this.detail.arrivalTime == 0) {
+          callback(new Error('离站时间和到站时间不能相等'));
+        }
+        callback();
+      }
+    }
     return {
       rules: {
         routertrainId: [
-          { required: true, message: "请输入车次", trigger: "blur" },
+          { required: true, message: "请输入车次", trigger: "change" },
         ],
         trainId: [
           { required: true, message: "请输入火车名称", trigger: "change" },
         ],
         routertrainType: [
           { required: true, message: "请输入火车类型", trigger: "change" },
+          { validator: validTrain, trigger: "change" }
         ],
         departureStationId: [
           { required: true, message: "请输入起始站", trigger: "change" },
+          { validator: validStation, trigger: "change" }
         ],
         arrivalStationId: [
           { required: true, message: "请输入终点站", trigger: "change" },
+          { validator: validStation1, trigger: "change" }
         ],
         departureTime: [
-          {
-            required: true,
-            message: "请输入起始站发车时间",
-            trigger: "change",
-          },
+          { required: true, message: "请输入起始站发车时间", trigger: "change", },
+          { validator: validDate, trigger: "change" }
         ],
         arrivalTime: [
-          { required: true, message: "请输入终点站到站时间", trigger: "blur" },
+          { required: true, message: "请输入终点站到站时间", trigger: "change" },
+          { validator: validDate1, trigger: "change" }
         ],
       },
       laterules: {
@@ -427,6 +385,20 @@ export default {
         ],
         latetime: [
           { required: true, message: "请输入晚点时间", trigger: "change" },
+        ],
+      },
+      detailRules: {
+        trainstationId: [
+          { required: true, message: "请输入站点", trigger: "change" },
+          { validator: validStation2, trigger: "change" }
+        ],
+        arrivalTime: [
+          { required: true, message: "请输入到站时间", trigger: "change" },
+          { validator: validDetailDate, trigger: "change" }
+        ],
+        departureTime: [
+          { required: true, message: "请输入离站时间", trigger: "change" },
+          { validator: validDetailDate1, trigger: "change" }
         ],
       },
       // 晚点数据
@@ -448,8 +420,6 @@ export default {
         routertrainType: "",
         departureStationId: "",
         arrivalStationId: "",
-        departureStationName: "",
-        arrivalStationName: "",
         departureTime: "",
         arrivalTime: "",
       },
@@ -477,6 +447,20 @@ export default {
       trainsArea: [],
       stationsArea: [],
       latestationsArea: [],
+      details: [
+      ],
+      detail:
+      {
+        routerdetailId: '',
+        trainstationId: '',
+        routertrainId: '',
+        arrivalTime: '',
+        departureTime: ''
+      }
+      ,
+      choosed: 0,
+      active: 0,
+      addtnBool: '',
     };
   },
   methods: {
@@ -485,9 +469,9 @@ export default {
       axios
         .get(
           "/train_number_page?current=" +
-            this.currentPage +
-            "&size=" +
-            this.pagesize
+          this.currentPage +
+          "&size=" +
+          this.pagesize
         )
         .then((response) => {
           console.log(response);
@@ -545,18 +529,18 @@ export default {
     },
     // 点击添加上列车类型
     handleSelect(item) {
-      console.log(item);
       this.newTrainNumbers.routertrainType = item.type;
     },
     // 点击获取当前车次车站信息
     handleLateSelect(item) {
+      console.log("test:")
       console.log(item);
-      this.getRouterStation(this.lateRouter.routertrainId, item.id);
+      this.getRouterStation(this.lateRouter.routertrainId, item.value);
     },
     // 点击晚点按钮
     lateClick(row) {
-      this.latestations = [];
-      this.latestationsArea = [];
+      this.latestations = []
+      this.latestationsArea = []
       console.log(row);
       this.lateRouter = row;
       this.lateShow = true;
@@ -593,45 +577,26 @@ export default {
       axios.get("/details/" + trainID).then((response) => {
         console.log(response);
         response.data.data.forEach((element) => {
-          let a = this.stations.filter(data=>
-            data.value===element.trainstationId
-          )
           let data = {
-            value: a[0].label,
-            id: element.trainstationId
+            value: element.trainstationId,
           };
           this.latestations.push(data);
-          console.log(this.latestations);
         });
       });
     },
     // 更改车次信息
     saveTrain(trainNumbers) {
       console.log(trainNumbers);
-      trainNumbers.departureTime = this.setTimeToSec(
-        trainNumbers.departureTime
-      );
-      trainNumbers.arrivalTime = this.setTimeToSec(trainNumbers.arrivalTime);
+      trainNumbers.departureTime = this.setTimeToSec(trainNumbers.departureTime)
+      trainNumbers.arrivalTime = this.setTimeToSec(trainNumbers.arrivalTime)
       console.log(trainNumbers["routertrainId"]);
       axios
         .put("/train_number/" + trainNumbers["routertrainId"], trainNumbers)
         .then((response) => {
           console.log(response);
-          if (response.data.code) {
-            this.$message({
-              type: "success",
-              message: "修改成功",
-            });
-            this.queryAll();
-          } else {
-            this.$message({
-              type: "error",
-              message: "修改失败",
-            });
-          }
+          this.queryAll();
         });
     },
-
 
     // 单个删除某个车次
     deleteTrainNumber(row) {
@@ -654,43 +619,7 @@ export default {
       });
     },
 
-    // 增加车次信息
-    submitForm(formName) {
-      console.log(this.$refs[formName].validate);
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.addVisible = false;
-          this.newTrainNumbers.departureTime = this.setTimeToSec(
-            this.newTrainNumbers.departureTime
-          );
-          this.newTrainNumbers.arrivalTime = this.setTimeToSec(
-            this.newTrainNumbers.arrivalTime
-          );
-          console.log(this.newTrainNumbers);
-          axios.post("/train_number", this.newTrainNumbers).then((response) => {
-            console.log(response);
-            if (response.data.code == 201) {
-              this.$message({
-                type: "success",
-                message: "添加成功",
-              });
-              this.newTrainNumbers = {};
-              this.queryAll();
-            } else {
-              this.$message({
-                type: "error",
-                message: "添加失败",
-              });
-            }
-          });
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
-
-    // 修改晚点信息
+    // 修改车次信息
     submitLate(formName) {
       console.log(this.$refs[formName].validate);
       this.$refs[formName].validate((valid) => {
@@ -708,9 +637,9 @@ export default {
                 type: "success",
                 duration: 1500,
               });
-              this.latestations = [];
-              this.lateTable = {};
-              this.lateShow = false;
+              this.latestations = []
+              this.lateTable = {}
+              this.lateShow = false
             } else {
               this.$notify({
                 title: "失败",
@@ -758,10 +687,11 @@ export default {
 
     // 关闭晚点弹出窗
     closeLate() {
-      this.latestations = [];
-      this.latestationsArea = [];
-      this.lateTable = {};
+      this.latestations = []
+      this.latestationsArea = []
+      this.lateTable = {}
     },
+
 
     // 点击编辑按钮
     handleEditClick(index, row) {
@@ -914,6 +844,95 @@ export default {
       }
       return "";
     },
+    next() {
+      this.$refs.newTrainNumbers.validate((valid) => {
+        console.log("????")
+        if (valid) {
+          console.log("???")
+          // this.active = 3
+          // this.addVisible = false;
+          this.newTrainNumbers.departureTime = this.setTimeToSec(this.newTrainNumbers.departureTime);
+          this.newTrainNumbers.arrivalTime = this.setTimeToSec(this.newTrainNumbers.arrivalTime);
+          axios.post("/train_number", this.newTrainNumbers).then((response) => {
+            console.log(response);
+            if (response.data.code == 201) {
+              this.$message({
+                type: "success",
+                message: "添加成功",
+              });
+              this.newTrainNumbers = {};
+              this.queryAll();
+
+              return true
+            } else {
+              this.$message({
+                type: "warning",
+                message: "该车次已存在",
+              });
+              return false
+            }
+          });
+        } else {
+          console.log("error submit!!");
+          return false
+        }
+        this.choosed += 1;
+        this.detail.routertrainId = this.newTrainNumbers.routertrainId
+        this.detail.routerdetailId = 1
+        this.active += 1
+      });
+    },
+    detailNext(detail) {
+      let newDetail = JSON.parse(JSON.stringify(detail))
+      this.$refs.detail.validate((valid) => {
+        if (valid) {
+          newDetail.departureTime = this.setTimeToSec(newDetail.departureTime);
+          newDetail.arrivalTime = this.setTimeToSec(newDetail.arrivalTime);
+          this.details.push(newDetail)
+          this.detail.routerdetailId++
+          this.$message({
+            title: "成功",
+            message: "修改下一站信息",
+            type: "success",
+            duration: 1500,
+          });
+        } else {
+          this.$message({
+            title: "失败",
+            message: "校验未通过",
+            type: "error",
+            duration: 1500,
+          });
+          return false;
+        }
+      })
+    },
+    submitDetailForm() {
+      for (let index = 0; index < this.details.length; index++) {
+        axios.post("/details/", this.details[index]).then(res => {
+          if (res.data.code != '201') {
+            this.$message({
+              title: "失败",
+              message: "提交失败",
+              type: "error",
+              duration: 1500,
+            })
+            return false
+          }
+        })
+        console.log(this.details[index])
+      }
+      this.$message({
+        title: "成功",
+        message: "添加车次完成",
+        type: "success",
+        duration: 1500,
+      })
+
+      console.log(this.details)
+      this.active = 3
+      this.addVisible = false
+    }
   },
   mounted() {
     this.getTrainStation();
