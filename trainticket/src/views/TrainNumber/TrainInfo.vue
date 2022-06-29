@@ -17,7 +17,8 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
           <el-col :span="12" class="tableButton">
             <el-button type="danger" plain :disabled="noAnySelection" @click="batchDelete(ids)"><span
                 class="el-icon-close"></span> 批量删除</el-button>
-            <el-button type="primary" @click="handleAddClick()"><span class="el-icon-plus"></span> 添加车次</el-button>
+            <el-button type="primary" @click="handleAddClick(); choosed = 0"><span class="el-icon-plus"></span> 添加车次
+            </el-button>
           </el-col>
         </el-row>
         <!-- 数据表 -->
@@ -33,17 +34,19 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
               <el-popover trigger="hover" placement="top">
                 <p style="text-align:center">{{ scope.row.departureStationId }}</p>
                 <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.departureStationId).label }}</el-tag>
+                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.departureStationId).label }}
+                  </el-tag>
                 </div>
               </el-popover>
             </template>
           </el-table-column>
           <el-table-column :reserve-selection="true" prop="arrivalStationId" label="终点站" width="140">
-          <template slot-scope="scope">
+            <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
                 <p style="text-align:center">{{ scope.row.arrivalStationId }}</p>
                 <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.arrivalStationId).label }}</el-tag>
+                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.arrivalStationId).label }}
+                  </el-tag>
                 </div>
               </el-popover>
             </template>
@@ -122,7 +125,12 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
       </el-dialog>
       <!-- 弹出窗添加列车 -->
       <el-dialog title="添加车次" :visible.sync="addVisible">
-        <el-form :model="newTrainNumbers" :rules="rules" ref="newTrainNumbers">
+        <el-steps :active="active" finish-status="success">
+          <el-step title="步骤 1"></el-step>
+          <el-step title="步骤 2"></el-step>
+          <el-step title="步骤 3"></el-step>
+        </el-steps>
+        <el-form :model="newTrainNumbers" :rules="rules" ref="newTrainNumbers" v-if="choosed == 0">
           <el-form-item label="车次" label-width="80px" prop="routertrainId">
             <el-input v-model="newTrainNumbers.routertrainId"></el-input>
           </el-form-item>
@@ -169,8 +177,57 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
             <el-date-picker v-model="newTrainNumbers.arrivalTime" type="datetime" placeholder="选择日期时间" align="right">
             </el-date-picker>
           </el-form-item>
+          <el-row>
+            <el-col :span="2">
+              <el-form-item>
+                <el-button @click="submitForm('newTrainNumbers')">保存</el-button>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2" :offset="19">
+              <el-form-item>
+                <el-button @click="next()">下一步</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-form v-if="choosed >= 1" label-width="80px" :model="detail" :rules="detailRules" ref="detail">
+          <el-form-item label="站序" prop="routerdetailId">
+            <el-input v-model="detail.routerdetailId" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="经过站" prop="trainstationId">
+            <el-select v-model="detail.trainstationId">
+              <el-option v-for="item in stations" :key="item.value" :label="item.label" :value="item.value">
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="车次号" prop="routertrainId">
+            <el-input v-model="detail.routertrainId" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="到站时间" prop="arrivalTime">
+            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="detail.arrivalTime" type="datetime"
+              placeholder="选择日期时间">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="离站时间" prop="departureTime">
+            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="detail.departureTime" type="datetime"
+              placeholder="选择日期时间">
+            </el-date-picker>
+          </el-form-item>
           <el-form-item>
-            <el-button @click="submitForm('newTrainNumbers')">保存</el-button>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item>
+                  <el-button @click="submitDetailForm()">保存</el-button>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item>
+                  <el-button @click="detailNext(detail)">下一步</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -206,26 +263,22 @@ export default {
           { required: true, message: "请输入车次", trigger: "blur" },
         ],
         trainId: [
-          { required: true, message: "请输入火车名称", trigger: "change" },
+          { required: true, message: "请输入火车名称", trigger: "blur" },
         ],
         routertrainType: [
-          { required: true, message: "请输入火车类型", trigger: "change" },
+          { required: true, message: "请输入火车类型", trigger: "blur" },
         ],
         departureStationId: [
-          { required: true, message: "请输入起始站", trigger: "change" },
+          { required: true, message: "请输入起始站", trigger: "blur" },
         ],
         arrivalStationId: [
-          { required: true, message: "请输入终点站", trigger: "change" },
+          { required: true, message: "请输入终点站", trigger: "blur" },
         ],
         departureTime: [
-          {
-            required: true,
-            message: "请输入起始站发车时间",
-            trigger: "change",
-          },
+          { required: true, message: "请输入起始站发车时间", trigger: "change", },
         ],
         arrivalTime: [
-          { required: true, message: "请输入终点站到站时间", trigger: "blur" },
+          { required: true, message: "请输入终点站到站时间", trigger: "change" },
         ],
       },
       laterules: {
@@ -234,6 +287,17 @@ export default {
         ],
         latetime: [
           { required: true, message: "请输入晚点时间", trigger: "change" },
+        ],
+      },
+      detailRules: {
+        trainstationId: [
+          { required: true, message: "请输入站点", trigger: "blur" },
+        ],
+        arrivalTime: [
+          { required: true, message: "请输入到站时间", trigger: "blur" },
+        ],
+        departureTime: [
+          { required: true, message: "请输入离站时间", trigger: "blur" },
         ],
       },
       // 晚点数据
@@ -282,6 +346,19 @@ export default {
       trainsArea: [],
       stationsArea: [],
       latestationsArea: [],
+      details: [
+      ],
+      detail:
+      {
+        routerdetailId: '',
+        trainstationId: '',
+        routertrainId: '',
+        arrivalTime: '',
+        departureTime: ''
+      }
+      ,
+      choosed: 0,
+      active: 0,
     };
   },
   methods: {
@@ -445,7 +522,8 @@ export default {
       console.log(this.$refs[formName].validate);
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.addVisible = false;
+          // this.active = 3
+          // this.addVisible = false;
           this.newTrainNumbers.departureTime = this.setTimeToSec(
             this.newTrainNumbers.departureTime
           );
@@ -701,6 +779,65 @@ export default {
       }
       return "";
     },
+    next() {
+      this.submitForm('newTrainNumbers')
+      this.choosed += 1;
+      // if (this.active++ > 2) this.active = 0;
+      this.detail.routertrainId = this.newTrainNumbers.routertrainId
+      this.detail.routerdetailId = 1
+      this.active += 1
+    },
+    detailNext(detail) {
+      let newDetail = JSON.parse(JSON.stringify(detail))
+      this.$refs.detail.validate((valid) => {
+        if (valid) {
+          console.log("detail.routerdetailId:")
+          console.log(newDetail.routerdetailId)
+          this.details.push(newDetail)
+          this.detail.routerdetailId++
+          this.$message({
+            title: "成功",
+            message: "修改下一站信息",
+            type: "success",
+            duration: 1500,
+          });
+        } else {
+          this.$message({
+            title: "失败",
+            message: "校验未通过",
+            type: "error",
+            duration: 1500,
+          });
+          return false;
+        }
+      })
+    },
+    submitDetailForm() {
+      for (let index = 0; index < this.details.length; index++) {
+        axios.post("/details/", this.details[index]).then(res => {
+          if (res.data.code != '201') {
+            this.$message({
+              title: "失败",
+              message: "提交失败",
+              type: "error",
+              duration: 1500,
+            })
+            return false
+          }
+        })
+        console.log(this.details[index])
+      }
+      this.$message({
+        title: "成功",
+        message: "添加车次完成",
+        type: "success",
+        duration: 1500,
+      })
+
+      console.log(this.details)
+      this.active = 3
+      this.addVisible = false
+    }
   },
   mounted() {
     this.getTrainStation();
