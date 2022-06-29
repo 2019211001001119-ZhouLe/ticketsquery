@@ -237,6 +237,47 @@ import axios from "axios";
 import Bus from "../../utils/bus.js";
 export default {
   data() {
+    var validTrain = (rule, value, callback) => {
+      console.log("value:")
+      console.log(value)
+      switch (this.newTrainNumbers.routertrainId.charAt(0)) {
+        case 'k':
+        case 'K':
+          if (value != '快速列车')
+            callback(new Error('K车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        case 't':
+        case 'T':
+          if (value != '特快列车')
+            callback(new Error('T车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        case 'z':
+        case 'Z':
+          if (value != '特快直达')
+            callback(new Error('Z车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        case 'g':
+        case 'G':
+          if (value != '高速动车')
+            callback(new Error('G车次不能选择该车型'))
+          else {
+            callback()
+            break;
+          }
+        default:
+          callback();
+          break;
+      }
+    }
     var validStation = (rule, value, callback) => {
       if (value == this.newTrainNumbers.arrivalStationId) {
         callback(new Error('起始站不能与终点站相同'));
@@ -319,6 +360,7 @@ export default {
         ],
         routertrainType: [
           { required: true, message: "请输入火车类型", trigger: "change" },
+          { validator: validTrain, trigger: "change" }
         ],
         departureStationId: [
           { required: true, message: "请输入起始站", trigger: "change" },
