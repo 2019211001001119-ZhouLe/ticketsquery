@@ -1,7 +1,6 @@
 <!-- 首页 -->
 <template>
   <div>
-    {{this.formInline.departureTime}}
     <!--顶部布局的实现-->
     <div class="tl1">
       <img class="tl1_img" src="../../public/imgs/logo.jpg" />
@@ -42,7 +41,12 @@
                 v-model="formInline.star"
                 placeholder="成都"
               ></el-input> </el-form-item
-            ><br />
+            ><i class="el-icon-sort" @click="rollBack" style="
+                    position: absolute;
+                    left: 460px;
+                    top: 313px;
+              
+                  "></i>
             <el-form-item label="终点站" prop="end">
               <el-input v-model="formInline.end" placeholder="深圳"></el-input>
             </el-form-item>
@@ -137,6 +141,8 @@ export default {
         departureTime: "",
         star: "",
         end: "",
+        // 中间值
+        median:""
       },
       // 表单校验
       rules: {
@@ -211,6 +217,7 @@ export default {
               departureStation: this.formInline.star,
               // 终点站
               arrivalStation: this.formInline.end,
+              // 出发时间
               departureTime: this.formInline.departureTime,
             },
           });
@@ -219,8 +226,14 @@ export default {
           return false;
         }
       });
+        console.log(this.formInline.departureTime);
     },
-
+    // 实现往返程
+    rollBack (){
+      this.formInline.median =this.formInline.end
+      this.formInline.end =this.formInline.star
+      this.formInline.star =this.formInline.median
+    },
     init() {
       // 拿到表格挂载后的真实DOM
       const table = this.$refs.table;
