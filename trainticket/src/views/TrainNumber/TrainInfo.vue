@@ -124,7 +124,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
         </el-form>
       </el-dialog>
       <!-- 弹出窗添加列车 -->
-      <el-dialog title="添加车次" :visible.sync="addVisible" fullscreen="true">
+      <el-dialog title="添加车次" :visible.sync="addVisible" fullscreen>
         <el-steps :active="active" finish-status="success">
           <el-step title="步骤 1"></el-step>
           <el-step title="步骤 2"></el-step>
@@ -234,7 +234,21 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
         <el-form :model="lateTable" :rules="laterules" ref="lateTable">
           <el-form-item label="车站名称" label-width="80px" prop="latestation">
             <el-autocomplete class="inline-input" v-model="lateTable.latestation" :fetch-suggestions="queryLateSta"
-              placeholder="请输入内容" @select="handleLateSelect"></el-autocomplete>
+              placeholder="请输入内容" @select="handleLateSelect">
+              <template slot-scope="{ item }">
+                <div>{{ stations.find(i => i.value == item.value).label }}</div>
+                <span>{{ item.value }}</span>
+
+                <!-- <span>{{ stations.find(i => i.value == item.trainstationId).label }}</span> -->
+              </template>
+            </el-autocomplete>
+
+            <!-- <el-select v-model="lateTable.latestation" @select="handleLateSelect">
+              <el-option v-for="item in lateTable" :key="item.value" :label="item.label" :value="item.value">
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+              </el-option>
+            </el-select> -->
           </el-form-item>
           <el-form-item label="晚点时间" label-width="80px" prop="latetime">
             <el-time-picker v-model="lateTable.latetime" :picker-options="{
@@ -431,6 +445,7 @@ export default {
     },
     // 点击获取当前车次车站信息
     handleLateSelect(item) {
+      console.log("test:")
       console.log(item);
       this.getRouterStation(this.lateRouter.routertrainId, item.value);
     },

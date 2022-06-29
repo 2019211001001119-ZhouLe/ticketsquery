@@ -116,7 +116,7 @@ export default {
             editNews: [],
             adminOptions: [],
             admin: [],
-            disable : true,
+            disable: true,
             newNews: {
                 newsId: '',
                 adminId: '',
@@ -150,7 +150,7 @@ export default {
         axios.get("/admin/getById/" + getToken()).then(res => {
             console.log("res:")
             this.admin = res['data']['data']
-            if(this.admin.permission == '1')
+            if (this.admin.permission == '1')
                 this.disable = false
         })
     },
@@ -171,6 +171,15 @@ export default {
         },
 
         deleteNews(index, row) {
+            if (!(this.admin.adminId == row.adminId || this.disable == false)) {
+                this.$message({
+                    title: "失败",
+                    message: "不能删除他人发布信息",
+                    type: "error",
+                    duration: 1500,
+                });
+                return false
+            }
             console.log(index)
             axios.delete('/news/delete/' + row['newsId']).then((response) => {
                 console.log(response)
