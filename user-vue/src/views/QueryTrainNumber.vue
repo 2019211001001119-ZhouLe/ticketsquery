@@ -40,9 +40,12 @@
             <el-form-item label="车次" prop="trainNunber">
               <el-input
                 v-model="formInline.trainNunber"
-                placeholder="K288"
+                placeholder="G2963"
               ></el-input> </el-form-item
             ><br />
+
+            <br />
+            <br />
             <el-form-item>
               <el-button
                 type="primary"
@@ -105,7 +108,7 @@
     <div class="tl10"></div>
     <!-- 底部标识 -->
     <div class="tl11">
-      <p>版权所有，侵权必究</p>
+      <p>版权所有©2022 火车车次查询系统</p>
     </div>
   </div>
 </template>

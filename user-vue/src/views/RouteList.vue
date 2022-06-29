@@ -1,6 +1,7 @@
 <!--  -->
 <template>
   <div>
+    {{this.$route.query.departureTime}}
     <!-- 顶部导航 -->
     <div>
       <el-page-header @back="goBack" :content="
@@ -47,6 +48,7 @@ export default {
       departureStation: "",
       // 终点站
       arrivalStation: "",
+      departureTime:"",
       //查询到的车次信息
       trainNumbers: [],
     };
@@ -57,6 +59,7 @@ export default {
     this.departureStation = this.$route.query.departureStation;
     // 获取到路由传参传递进来的arrivalStation
     this.arrivalStation = this.$route.query.arrivalStation;
+    this.departureTime = this.$route.query.departureTime
     // 自动查询传递过来的路线车次
     this.gteRoutrList();
   },

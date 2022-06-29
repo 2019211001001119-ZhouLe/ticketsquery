@@ -31,8 +31,9 @@
 export default {
   data() {
     return {
-      // 传递过来的车次
+      // 传递过来的车次,日期
       trainNumber: "",
+      departureTime:"",
       // 储存查询到的车次信息
       tableData: [],
     };
@@ -40,6 +41,8 @@ export default {
   created() {
     // 获取到路由传参传递进来的arrivalStation
     this.trainNumber = this.$route.query.trainNumber;
+    // 获取到路由传参传递进来的arrivalStation
+    this.departureTime =this.$route.query.departureTime
     // 自动查询传递过来的路线车次
     this.gteTrainNumberList();
   },
