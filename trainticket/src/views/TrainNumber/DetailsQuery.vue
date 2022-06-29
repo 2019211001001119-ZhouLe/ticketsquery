@@ -4,120 +4,66 @@
       <p class="titleCap">车次管理</p>
       <el-card class="box-card">
         <!-- 使用面包屑来进行跳转处理 -->
-        <el-breadcrumb
-          separator-class="el-icon-arrow-right"
-          style="margin-bottom: 20px"
-        >
-          <el-breadcrumb-item
-            ><a href="/manage/traininfo">车次管理</a></el-breadcrumb-item
-          >
-          <el-breadcrumb-item
-            ><a href="/manage/traininfo"
-              >{{ trainID }}车次</a
-            ></el-breadcrumb-item
-          >
+        <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-bottom: 20px">
+          <el-breadcrumb-item><a href="/manage/traininfo">车次管理</a></el-breadcrumb-item>
+          <el-breadcrumb-item><a href="/manage/traininfo">{{ trainID }}车次</a></el-breadcrumb-item>
         </el-breadcrumb>
         <!-- 表格内容 -->
-        <el-table
-          ref="multipleTable"
-          :data="tableData"
-          tooltip-effect="dark"
-          style="width: 100%"
-          stripe
-          :row-class-name="tableRowClassName"
-          :default-sort="{ prop: 'routerdetailId', order: 'ascending' }"
-        >
-          <el-table-column
-            prop="routerdetailId"
-            label="站序"
-            width="180"
-            type="index"
-          >
+        <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" stripe
+          :row-class-name="tableRowClassName" :default-sort="{ prop: 'routerdetailId', order: 'ascending' }">
+          <el-table-column prop="routerdetailId" label="站序" width="180" type="index">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{
-                scope.row.routerdetailId
+                  scope.row.routerdetailId
               }}</span>
-              <el-input
-                v-else
-                v-model="scope.row.routerdetailId"
-                disabled
-              ></el-input>
+              <el-input v-else v-model="scope.row.routerdetailId" disabled></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="trainstationId" label="经过站" width="180">
             <template slot-scope="scope">
-              <span v-if="scope.row.visible">{{
-                scope.row.trainstationId
-              }}</span>
-              <el-input
-                v-else
-                v-model="scope.row.trainstationId"
-                disabled
-              ></el-input>
+              <el-popover trigger="hover" placement="top" v-if="scope.row.visible">
+                <p style="text-align:center">{{ scope.row.trainstationId }}</p>
+                <div slot="reference" class="name-wrapper">
+                  <el-tag size="medium">{{ stations.find(item => item.value == scope.row.trainstationId).label }}
+                  </el-tag>
+                </div>
+              </el-popover>
+              <el-input v-else v-model="scope.row.trainstationId" disabled></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="routertrainId" label="车次" width="180">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{
-                scope.row.routertrainId
+                  scope.row.routertrainId
               }}</span>
-              <el-input
-                v-else
-                v-model="scope.row.routertrainId"
-                disabled
-              ></el-input>
+              <el-input v-else v-model="scope.row.routertrainId" disabled></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="arrivalTime" label="到站时间" width="200">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{ scope.row.arrivalTime }}</span>
-              <el-date-picker
-                v-else
-                v-model="scope.row.arrivalTime"
-                type="datetime"
-                placeholder="选择日期时间"
-                align="right"
-              >
+              <el-date-picker v-else v-model="scope.row.arrivalTime" type="datetime" placeholder="选择日期时间" align="right">
               </el-date-picker>
             </template>
           </el-table-column>
           <el-table-column prop="departureTime" label="出发时间" width="200">
             <template slot-scope="scope">
               <span v-if="scope.row.visible">{{
-                scope.row.departureTime
+                  scope.row.departureTime
               }}</span>
-              <el-date-picker
-                v-else
-                v-model="scope.row.departureTime"
-                type="datetime"
-                placeholder="选择日期时间"
-                align="right"
-              >
+              <el-date-picker v-else v-model="scope.row.departureTime" type="datetime" placeholder="选择日期时间"
+                align="right">
               </el-date-picker>
             </template>
           </el-table-column>
           <el-table-column label="操作" class="operateButton">
             <template slot-scope="scope">
-              <el-button
-                @click="handleEdit(scope.$index, scope.row)"
-                v-if="scope.row.visible"
-                icon="el-icon-edit"
-                circle
-              ></el-button>
-              <el-button
-                size="mini"
-                @click="handleFinish(scope.$index, scope.row)"
-                v-if="!scope.row.visible"
-              >
-                完成</el-button
-              >
-              <el-button
-                size="mini"
-                @click="handleCancel(scope.$index, scope.row)"
-                v-if="!scope.row.visible"
-              >
-                取消</el-button
-              >
+              <el-button @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.visible" icon="el-icon-edit"
+                circle></el-button>
+              <el-button size="mini" @click="handleFinish(scope.$index, scope.row)" v-if="!scope.row.visible">
+                完成</el-button>
+              <el-button size="mini" @click="handleCancel(scope.$index, scope.row)" v-if="!scope.row.visible">
+                取消</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -135,6 +81,9 @@ export default {
     this.hasTrainId();
     this.getDataByID();
   },
+  mounted() {
+    this.getTrainStation();
+  },
   data() {
     return {
       // 表格数据
@@ -150,6 +99,7 @@ export default {
         arrivalTime: "",
         departureTime: "",
       },
+      stations: [],
     };
   },
   methods: {
@@ -254,6 +204,18 @@ export default {
       }
       return "";
     },
+    // 获取车站数据
+    getTrainStation() {
+      axios.get("/trainstationbypage?current=1&size=10000").then((response) => {
+        response.data.records.forEach((element) => {
+          let data = {
+            value: element.trainstationId,
+            label: element.trainstationName,
+          };
+          this.stations.push(data);
+        });
+      });
+    },
   },
 };
 </script>
@@ -262,6 +224,7 @@ export default {
 .tableTitle span {
   font-size: 14px;
 }
+
 .tableTitle button {
   float: right;
   margin: 0 20px;
