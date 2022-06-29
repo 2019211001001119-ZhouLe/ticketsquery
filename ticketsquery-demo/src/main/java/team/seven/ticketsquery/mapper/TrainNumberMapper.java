@@ -2,9 +2,12 @@ package team.seven.ticketsquery.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.format.annotation.DateTimeFormat;
 import team.seven.ticketsquery.domain.TrainNumber;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +26,9 @@ public interface TrainNumberMapper extends BaseMapper<TrainNumber> {
             "WHERE departure_station_id = a.trainstation_id " +
             "AND arrival_station_id = b.trainstation_id " +
             "AND a.trainstation_name LIKE '%${departureStationId}%' " +
-            "AND b.trainstation_name LIKE '%${arrivalStationId}%'")
-    List<TrainNumber> findTrainNumberByDepartAndArrive(String departureStationId, String arrivalStationId);
+            "AND b.trainstation_name LIKE '%${arrivalStationId}%'" +
+            "AND departure_time LIKE '%${departureTime}%'")
+    List<TrainNumber> findTrainNumberByDepartAndArrive(String departureStationId, String arrivalStationId ,@DateTimeFormat(pattern = "yyyy-MM-dd")String departureTime );
 
     @Select("SELECT r.*, c.city_name FROM tb_routertrain AS r, tb_city AS c, tb_trainstation AS ts " +
             "WHERE r.departure_station_id = ts.trainstation_id " +

@@ -3,12 +3,15 @@ package team.seven.ticketsquery.controller;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import team.seven.ticketsquery.domain.ResultVO;
 import team.seven.ticketsquery.domain.TrainNumber;
 import team.seven.ticketsquery.enums.ResultStatusEnum;
 import team.seven.ticketsquery.service.TrainNumberService;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +35,12 @@ public class TrainNumberController {
     //例如 成都 武汉 会查出G2963和Z334这两条数据
     //分别是 成都东 到  深圳北
     //和    成都   到  深圳
-    @RequestMapping("/train_number/{departureStationId}/{arrivalStationId}")
-    ResultVO<?> queryTrainNumberByDepartureAndArrival(@PathVariable String departureStationId, @PathVariable String arrivalStationId) {
-        List<TrainNumber> tnList = service.TrainNumberByDepartAndArrive(departureStationId, arrivalStationId);
+    @RequestMapping(value = "/train_number/{departureStationId}/{arrivalStationId}", method = RequestMethod.GET)
+    ResultVO<?> queryTrainNumberByDepartureAndArrival(@PathVariable String departureStationId, @PathVariable String arrivalStationId,
+                                                      @RequestParam(value = "departureTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date departureTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(departureTime.getTime());
+        List<TrainNumber> tnList = service.TrainNumberByDepartAndArrive(departureStationId, arrivalStationId, date);
         return new ResultVO<>(tnList);
     }
 
