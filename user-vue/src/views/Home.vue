@@ -44,7 +44,7 @@
             ><i
               class="el-icon-sort"
               @click="rollBack"
-              style="position: absolute; left: 460px; top: 313px"
+              style="position: absolute; left: 460px; top: 293px"
             ></i>
             <el-form-item label="终点站" prop="end">
               <el-input v-model="formInline.end" placeholder="深圳"></el-input>
