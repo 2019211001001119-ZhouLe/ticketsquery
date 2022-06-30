@@ -32,7 +32,7 @@
         </el-row>
         <el-row :gutter="40">
           <el-col :span="16">
-            <p class="dataSta">车次最多的市</p>
+            <p class="dataSta">发出车次最多的市</p>
             <dv-capsule-chart :config="maxSta" class="fiveSta" />
           </el-col>
           <el-col :span="7">
