@@ -50,7 +50,7 @@
               <el-input v-model="formInline.end" placeholder="深圳"></el-input>
             </el-form-item>
             <br />
-            <el-form-item>
+            <el-form-item label="出发时间" prop="departureTime">
               <el-col :span="11">
                 <el-date-picker
                   type="date"
@@ -58,16 +58,10 @@
                   :picker-options="pickerOptions"
                   placeholder="出发日期"
                   v-model="formInline.departureTime"
-                  style="
-                    position: absolute;
-                    left: -70px;
-                    top: 0px;
-                    width: 207px;
-                  "
                 ></el-date-picker>
               </el-col>
             </el-form-item>
-            <br /><br />
+            <br />
             <el-form-item>
               <el-button type="primary" @click="toRoutePage('formInline')"
                 >查询</el-button
@@ -165,6 +159,14 @@ export default {
             trigger: "blur",
           },
         ],
+        departureTime: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择日期",
+            trigger: "change",
+          },
+        ],
       },
       pickerOptions: {
         disabledDate(time) {
@@ -232,7 +234,6 @@ export default {
           return false;
         }
       });
-      console.log(this.formInline.departureTime);
     },
     // 实现往返程
     rollBack() {
