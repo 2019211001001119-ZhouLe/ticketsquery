@@ -235,6 +235,7 @@ http://127.0.0.1:8888/admin/getById/qcjn472619
 <script>
 import axios from "axios";
 import Bus from "../../utils/bus.js";
+import { delToken, getToken } from "../../utils/tokenUtils";
 export default {
   data() {
     var validTrain = (rule, value, callback) => {
@@ -641,6 +642,8 @@ export default {
           console.log(data);
           data.laterTime = this.setTimeToHour(this.lateTable.latetime);
           data.routerdetailStatus = 1;
+          let userName = getToken();
+          data.adminId = userName
           axios.put("/details/", data).then((response) => {
             console.log(response);
             if (response.data.code == 200) {
