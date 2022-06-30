@@ -323,8 +323,13 @@ export default {
       }
     }
     var validDetailDate = (rule, value, callback) => {
-      console.log("datailvalidate:")
+      let tmpRID = parseInt(this.detail.routerdetailId)
+      let tmpDetail = this.details[tmpRID - 1]
+      var tmpDate = this.stringToDate(tmpDetail.departureTime)
+      console.log("valid1:")
+      console.log(tmpDate)
       console.log(value)
+      let bool = value - tmpDate > 0 ? true : false
       if (value == '' || value == null) {
         callback(new Error('请输入到站时间'));
       } else {
@@ -333,12 +338,16 @@ export default {
         } else if (value - this.detail.departureTime == 0) {
           callback(new Error('到站时间和离站时间不能相等'));
         }
+        if (bool == false) {
+          callback(new Error('到站时间应该大于上一站离站时间'));
+        }
         callback();
       }
     }
     var validDetailDate1 = (rule, value, callback) => {
-      console.log("datailvalidate1:")
-      console.log(value - this.detail.arrivalTime)
+      let tmpDetail = this.details[0]
+      var tmpDate = this.stringToDate(tmpDetail.arrivalTime)
+      let bool = value - tmpDate < 0 ? true : false
       if (value == '' || value == null) {
         callback(new Error('请输入离站时间'));
       } else {
@@ -346,6 +355,9 @@ export default {
           callback(new Error('离站时间不得小于到站时间'));
         } else if (value - this.detail.arrivalTime == 0) {
           callback(new Error('离站时间和到站时间不能相等'));
+        }
+        if (bool == false) {
+          callback(new Error('离站时间应该小于终点站到站时间'));
         }
         callback();
       }
@@ -461,6 +473,7 @@ export default {
       choosed: 0,
       active: 0,
       addtnBool: '',
+      lastDetail: {}
     };
   },
   methods: {
@@ -846,11 +859,7 @@ export default {
     },
     next() {
       this.$refs.newTrainNumbers.validate((valid) => {
-        console.log("????")
         if (valid) {
-          console.log("???")
-          // this.active = 3
-          // this.addVisible = false;
           this.newTrainNumbers.departureTime = this.setTimeToSec(this.newTrainNumbers.departureTime);
           this.newTrainNumbers.arrivalTime = this.setTimeToSec(this.newTrainNumbers.arrivalTime);
           axios.post("/train_number", this.newTrainNumbers).then((response) => {
@@ -862,7 +871,6 @@ export default {
               });
               this.newTrainNumbers = {};
               this.queryAll();
-
               return true
             } else {
               this.$message({
@@ -878,7 +886,23 @@ export default {
         }
         this.choosed += 1;
         this.detail.routertrainId = this.newTrainNumbers.routertrainId
-        this.detail.routerdetailId = 1
+        let firstDetail = {
+          routerdetailId: 1,
+          trainstationId: this.newTrainNumbers.departureStationId,
+          routertrainId: this.newTrainNumbers.routertrainId,
+          arrivalTime: this.newTrainNumbers.departureTime,
+          departureTime: this.newTrainNumbers.departureTime,
+        }
+        this.lastDetail = {
+          routerdetailId: 0,
+          trainstationId: this.newTrainNumbers.arrivalStationId,
+          routertrainId: this.newTrainNumbers.routertrainId,
+          arrivalTime: this.newTrainNumbers.arrivalTime,
+          departureTime: this.newTrainNumbers.arrivalTime,
+        }
+        this.details.push(this.lastDetail)
+        this.details.push(firstDetail)
+        this.detail.routerdetailId = 2
         this.active += 1
       });
     },
@@ -909,6 +933,9 @@ export default {
     },
     submitDetailForm() {
       for (let index = 0; index < this.details.length; index++) {
+        if (index == 0) {
+          this.details[index].routerdetailId = this.detail.routerdetailId
+        }
         axios.post("/details/", this.details[index]).then(res => {
           if (res.data.code != '201') {
             this.$message({
@@ -928,10 +955,23 @@ export default {
         type: "success",
         duration: 1500,
       })
-
+      console.log("details:::")
       console.log(this.details)
       this.active = 3
       this.addVisible = false
+    },
+    stringToDate(strDate) {
+      var tempStrs = strDate.split(" ");
+      var dateStrs = tempStrs[0].split("-");
+      var year = parseInt(dateStrs[0], 10);
+      var month = parseInt(dateStrs[1], 10) - 1;
+      var day = parseInt(dateStrs[2], 10);
+      var timeStrs = tempStrs[1].split(":");
+      var hour = parseInt(timeStrs[0], 10);
+      var minute = parseInt(timeStrs[1], 10);
+      var second = parseInt(timeStrs[2], 10);
+      var date = new Date(year, month, day, hour, minute, second);
+      return date;
     }
   },
   mounted() {
