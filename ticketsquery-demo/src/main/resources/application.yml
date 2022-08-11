@@ -6,9 +6,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://120.76.219.165:3306/TrainTicket?useUnicode=true&characterEncoding=utf-8&useSSL=true
-    username: liuenwen
-    password: lew123456
+    url: 
+    username: 
+    password: 
     hikari.max-lifetime: 30000
 
   jackson:
